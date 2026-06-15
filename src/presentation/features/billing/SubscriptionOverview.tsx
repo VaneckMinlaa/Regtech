@@ -1,7 +1,9 @@
-import React from "react";
-import { Calendar, MapPin, CreditCard, CheckCircle2, AlertCircle } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { Calendar, MapPin, CreditCard, CheckCircle2, AlertCircle, BarChart3 } from "lucide-react";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { getPlanById } from "@/domain/billing/plans";
+import { regtechApi } from "@/infrastructure/http/regtechApi";
+import type { AnalyticsSummaryResponse } from "@/infrastructure/http/regtechApiTypes";
 
 interface SubscriptionOverviewProps {
   darkMode?: boolean;
@@ -11,6 +13,11 @@ interface SubscriptionOverviewProps {
 export function SubscriptionOverview({ darkMode = true, returnStatus }: SubscriptionOverviewProps) {
   const { subscription } = useSubscription();
   const plan = getPlanById(subscription.plan);
+  const [analytics, setAnalytics] = useState<AnalyticsSummaryResponse | null>(null);
+
+  useEffect(() => {
+    void regtechApi.getMonetizationAnalytics().then(setAnalytics).catch(() => undefined);
+  }, []);
 
   const periodEndLabel = subscription.periodEnd
     ? new Date(subscription.periodEnd).toLocaleDateString("fr-FR", {
@@ -74,6 +81,37 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
           )}
         </div>
       </div>
+
+      {analytics && (
+        <div
+          className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] ${
+            darkMode ? "border-gray-800" : "border-gray-100"
+          }`}
+          id="subscription_analytics"
+        >
+          <div className="flex items-start gap-2">
+            <BarChart3 className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="font-bold">{analytics.simulationsCount} simulations</p>
+              <p className={darkMode ? "text-gray-500" : "text-gray-500"}>ce mois</p>
+            </div>
+          </div>
+          <div>
+            <p className="font-bold text-primary-400">
+              {analytics.afcftaSavingsEstimateLocal.toLocaleString("fr-FR")} XAF
+            </p>
+            <p className={darkMode ? "text-gray-500" : "text-gray-500"}>économies AfCFTA estimées</p>
+          </div>
+          <div>
+            <p className="font-bold">
+              {analytics.topCorridors[0]?.route ?? "—"}
+            </p>
+            <p className={darkMode ? "text-gray-500" : "text-gray-500"}>
+              corridor principal ({analytics.topCorridors[0]?.count ?? 0} sim.)
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

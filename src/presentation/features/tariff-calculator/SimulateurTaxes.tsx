@@ -610,6 +610,9 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <CameroonFiscalPreview
                   cifValue={declaredValue}
                   hsCode={currentResult.hsCode}
+                  originCountryIso={origin}
+                  year={year}
+                  applyZlecaf={currentResult.isEligiblePrefAfCFTA}
                   darkMode={darkMode}
                 />
               )}

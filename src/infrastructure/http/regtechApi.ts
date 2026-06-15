@@ -7,12 +7,41 @@ import type {
 import type {
   CheckoutRequest,
   CheckoutResponse,
+  PlanQuotas,
   SubscriptionState,
+  UsageCounters,
 } from "@/domain/billing/types";
 import {
   mapBackendCountry,
   type BackendCountryListResponse,
 } from "@/infrastructure/http/countriesMapper";
+import {
+  mapBackendSubscription,
+  mapBackendUsage,
+  type BackendSubscriptionResponse,
+  type BackendUsageResponse,
+} from "@/infrastructure/http/monetizationMapper";
+import type {
+  AfcftaValidateRequest,
+  AfcftaValidateResponse,
+  AnalyticsSummaryResponse,
+  CameroonFiscalRequest,
+  CameroonFiscalResponse,
+  CamcisRegimeRequest,
+  CamcisRegimeResponse,
+  CertificateDraftRequest,
+  CertificateDraftResponse,
+  LandedCostRequest,
+  LandedCostResponse,
+  PhoneImportPackRequest,
+  PhoneImportPackResponse,
+  PortFeesRequest,
+  PortFeesResponse,
+  ReferenceVersionsResponse,
+  ZlecafDutyRequest,
+  ZlecafDutyResponse,
+  ZlecafProjectionResponse,
+} from "@/infrastructure/http/regtechApiTypes";
 import { apiGet, apiPost } from "./apiClient";
 
 export interface SimulatePayload {
@@ -101,6 +130,12 @@ export interface UserProfile {
   name: string;
 }
 
+export interface MonetizationSnapshot {
+  subscription: SubscriptionState;
+  quotas: PlanQuotas;
+  usage: UsageCounters;
+}
+
 /** Client HTTP vers l'API Back `/api/v1` (voir ADR-007, ADR-011). */
 
 const referenceCache = new Map<string, Promise<unknown>>();
@@ -115,6 +150,19 @@ function cachedFetch<T>(key: string, fetcher: () => Promise<T>): Promise<T> {
 
 export function clearReferenceCache(): void {
   referenceCache.clear();
+}
+
+async function fetchMonetizationSnapshot(): Promise<MonetizationSnapshot> {
+  const [subscriptionRes, usageRes] = await Promise.all([
+    apiGet<BackendSubscriptionResponse>("/api/v1/monetization/subscription", true),
+    apiGet<BackendUsageResponse>("/api/v1/monetization/usage", true),
+  ]);
+  const { subscription, quotas } = mapBackendSubscription(subscriptionRes);
+  return {
+    subscription,
+    quotas,
+    usage: mapBackendUsage(usageRes),
+  };
 }
 
 export const regtechApi = {
@@ -175,15 +223,86 @@ export const regtechApi = {
     return apiPost<BatchResponse>("/api/v1/batch", payload, true, 120_000);
   },
 
-  getPricing(): Promise<{ plans: unknown[] }> {
-    return apiGet("/api/v1/pricing", false);
+  async getMonetizationPlans(): Promise<BackendSubscriptionResponse[]> {
+    return apiGet<BackendSubscriptionResponse[]>("/api/v1/monetization/plans", false);
   },
 
-  getSubscription(): Promise<SubscriptionState> {
-    return apiGet<SubscriptionState>("/api/v1/billing/subscription", true);
+  async getSubscription(): Promise<SubscriptionState> {
+    const snapshot = await fetchMonetizationSnapshot();
+    return snapshot.subscription;
   },
 
+  getMonetizationSnapshot: fetchMonetizationSnapshot,
+
+  async getUsage(): Promise<UsageCounters> {
+    const response = await apiGet<BackendUsageResponse>("/api/v1/monetization/usage", true);
+    return mapBackendUsage(response);
+  },
+
+  /** PawaPay — fallback démo côté front tant que le checkout API n'est pas exposé. */
   startCheckout(payload: CheckoutRequest): Promise<CheckoutResponse> {
     return apiPost<CheckoutResponse>("/api/v1/billing/checkout", payload, true);
+  },
+
+  computeZlecafDuty(payload: ZlecafDutyRequest): Promise<ZlecafDutyResponse> {
+    return apiPost<ZlecafDutyResponse>("/api/v1/afcfta/duty", payload, false);
+  },
+
+  getZlecafProjection(params: {
+    hsCode: string;
+    originCountryIso: string;
+    initialDutyRate?: number;
+    sensitive?: boolean;
+  }): Promise<ZlecafProjectionResponse> {
+    const qs = new URLSearchParams({
+      hsCode: params.hsCode,
+      originCountryIso: params.originCountryIso,
+      initialDutyRate: String(params.initialDutyRate ?? 0.2),
+      sensitive: String(params.sensitive ?? false),
+    });
+    return apiGet<ZlecafProjectionResponse>(
+      `/api/v1/afcfta/duty/projection?${qs.toString()}`,
+      false,
+    );
+  },
+
+  validateAfcftaOrigin(payload: AfcftaValidateRequest): Promise<AfcftaValidateResponse> {
+    return apiPost<AfcftaValidateResponse>("/api/v1/afcfta/validate", payload, true);
+  },
+
+  createCertificateDraft(payload: CertificateDraftRequest): Promise<CertificateDraftResponse> {
+    return apiPost<CertificateDraftResponse>(
+      "/api/v1/afcfta/certificate/draft",
+      payload,
+      true,
+    );
+  },
+
+  computeCameroonFiscal(payload: CameroonFiscalRequest): Promise<CameroonFiscalResponse> {
+    return apiPost<CameroonFiscalResponse>("/api/v1/cameroon/fiscal", payload, true);
+  },
+
+  estimatePortFees(payload: PortFeesRequest): Promise<PortFeesResponse> {
+    return apiPost<PortFeesResponse>("/api/v1/cameroon/port-fees", payload, true);
+  },
+
+  suggestCamcisRegime(payload: CamcisRegimeRequest): Promise<CamcisRegimeResponse> {
+    return apiPost<CamcisRegimeResponse>("/api/v1/cameroon/camcis/regime", payload, true);
+  },
+
+  getPhoneImportPack(payload: PhoneImportPackRequest): Promise<PhoneImportPackResponse> {
+    return apiPost<PhoneImportPackResponse>("/api/v1/cameroon/pack/phones-2026", payload, true);
+  },
+
+  computeLandedCost(payload: LandedCostRequest): Promise<LandedCostResponse> {
+    return apiPost<LandedCostResponse>("/api/v1/cameroon/landed-cost", payload, true);
+  },
+
+  getMonetizationAnalytics(): Promise<AnalyticsSummaryResponse> {
+    return apiGet<AnalyticsSummaryResponse>("/api/v1/monetization/analytics", true);
+  },
+
+  getReferenceVersions(): Promise<ReferenceVersionsResponse> {
+    return apiGet<ReferenceVersionsResponse>("/api/v1/monetization/reference-versions", false);
   },
 };

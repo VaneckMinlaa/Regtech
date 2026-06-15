@@ -31,6 +31,7 @@ export interface SimulationResult {
   hsCode: string;
   productDescription: string;
   declaredValueLocal: number;
+  declaredValueTotalLocal?: number;
   declaredValueUSD: number;
   quantity: number;
   isCheckedOrigin: boolean;

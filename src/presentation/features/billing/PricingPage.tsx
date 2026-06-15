@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Check,
   Globe,
@@ -13,8 +13,12 @@ import {
   PRICING_PLANS,
   PAWAPAY_COUNTRIES,
 } from "@/domain/billing/plans";
+import type { PricingPlan } from "@/domain/billing/types";
+import { regtechApi } from "@/infrastructure/http/regtechApi";
+import { mergeApiPlansWithPricing } from "@/infrastructure/http/monetizationMapper";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { SubscriptionOverview } from "./SubscriptionOverview";
+import { ReferenceVersionsFooter } from "./ReferenceVersionsFooter";
 
 interface PricingPageProps {
   darkMode?: boolean;
@@ -31,8 +35,23 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
   const [yearly, setYearly] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState("");
+  const [paidPlans, setPaidPlans] = useState<PricingPlan[]>(() =>
+    PRICING_PLANS.filter((p) => p.id !== "free" && p.id !== "enterprise"),
+  );
 
-  const paidPlans = PRICING_PLANS.filter((p) => p.id !== "free" && p.id !== "enterprise");
+  useEffect(() => {
+    void regtechApi
+      .getMonetizationPlans()
+      .then((apiPlans) => {
+        const merged = mergeApiPlansWithPricing(apiPlans).filter(
+          (p) => p.id !== "free" && p.id !== "enterprise",
+        );
+        if (merged.length > 0) setPaidPlans(merged);
+      })
+      .catch(() => {
+        /* garde les plans locaux */
+      });
+  }, []);
 
   const handleCheckout = async (planId: PlanId) => {
     if (planId === "free" || planId === "enterprise") return;
@@ -249,6 +268,8 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
             Docs API <ExternalLink className="w-3 h-3" />
           </a>
         </div>
+
+        <ReferenceVersionsFooter darkMode={darkMode} />
       </div>
     </div>
   );

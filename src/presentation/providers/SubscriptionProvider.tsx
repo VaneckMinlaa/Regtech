@@ -10,6 +10,7 @@ import type {
   CheckoutRequest,
   CheckoutResponse,
   PlanId,
+  PlanQuotas,
   SubscriptionState,
   UsageCounters,
 } from "@/domain/billing/types";
@@ -22,15 +23,17 @@ import {
 } from "@/presentation/features/billing/quotaNotifications";
 
 const STORAGE_KEY = "regtech_subscription_v1";
-const USAGE_KEY = "regtech_usage_v1";
 
 interface SubscriptionContextValue {
   subscription: SubscriptionState;
   usage: UsageCounters;
+  quotas: PlanQuotas;
   loading: boolean;
+  apiLinked: boolean;
   billingCountry: (typeof PAWAPAY_COUNTRIES)[number];
   setBillingCountryIso: (code: string) => void;
   refreshSubscription: () => Promise<void>;
+  refreshUsage: () => Promise<void>;
   recordUsage: (field: keyof Omit<UsageCounters, "yearMonth">, amount?: number) => void;
   canUse: (field: keyof Omit<UsageCounters, "yearMonth">, amount?: number) => boolean;
   remaining: (field: keyof Omit<UsageCounters, "yearMonth">) => number | null;
@@ -69,22 +72,22 @@ function loadStoredSubscription(): SubscriptionState {
   }
 }
 
-function loadStoredUsage(): UsageCounters {
-  try {
-    const raw = localStorage.getItem(USAGE_KEY);
-    if (!raw) return defaultUsage;
-    const parsed = JSON.parse(raw) as UsageCounters;
-    if (parsed.yearMonth !== currentYearMonth()) return { ...defaultUsage, yearMonth: currentYearMonth() };
-    return parsed;
-  } catch {
-    return defaultUsage;
-  }
+function quotaLimitForField(quotas: PlanQuotas, field: QuotaUsageField): number | null | undefined {
+  const limits: Record<string, number | null | undefined> = {
+    simulations: quotas.simulationsPerMonth,
+    classifications: quotas.classificationsPerMonth,
+    batchRows: quotas.batchRows,
+    pdfExports: quotas.pdfExport ? null : 0,
+  };
+  return limits[field];
 }
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
   const [subscription, setSubscription] = useState<SubscriptionState>(loadStoredSubscription);
-  const [usage, setUsage] = useState<UsageCounters>(loadStoredUsage);
+  const [usage, setUsage] = useState<UsageCounters>(defaultUsage);
+  const [quotas, setQuotas] = useState<PlanQuotas>(getPlanById("free").quotas);
   const [loading, setLoading] = useState(true);
+  const [apiLinked, setApiLinked] = useState(false);
   const [billingCountryIso, setBillingCountryIso] = useState(subscription.countryIso);
   const [quotaAlert, setQuotaAlert] = useState<QuotaAlert | null>(null);
 
@@ -100,18 +103,27 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
   }, []);
 
-  const persistUsage = useCallback((next: UsageCounters) => {
-    setUsage(next);
-    localStorage.setItem(USAGE_KEY, JSON.stringify(next));
+  const refreshUsage = useCallback(async () => {
+    try {
+      const remoteUsage = await regtechApi.getUsage();
+      setUsage(remoteUsage);
+      setApiLinked(true);
+    } catch {
+      /* conserve l'usage en mémoire si l'API est indisponible */
+    }
   }, []);
 
   const refreshSubscription = useCallback(async () => {
     try {
-      const remote = await regtechApi.getSubscription();
-      persistSubscription(remote);
-      setBillingCountryIso(remote.countryIso);
+      const snapshot = await regtechApi.getMonetizationSnapshot();
+      persistSubscription(snapshot.subscription);
+      setQuotas(snapshot.quotas);
+      setUsage(snapshot.usage);
+      setBillingCountryIso(snapshot.subscription.countryIso);
+      setApiLinked(true);
     } catch {
-      /* API billing pas encore déployée — état local conservé */
+      setQuotas(getPlanById(loadStoredSubscription().plan).quotas);
+      setApiLinked(false);
     } finally {
       setLoading(false);
     }
@@ -119,67 +131,49 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     void refreshSubscription();
-  }, [refreshSubscription]);
-
-  const plan = useMemo(() => getPlanById(subscription.plan), [subscription.plan]);
-
-  const getQuotaLimit = useCallback(
-    (field: QuotaUsageField): number | null | undefined => {
-      const limits: Record<string, number | null | undefined> = {
-        simulations: plan.quotas.simulationsPerMonth,
-        classifications: plan.quotas.classificationsPerMonth,
-        batchRows: plan.quotas.batchRows,
-        pdfExports: plan.quotas.pdfExport ? null : 0,
-      };
-      return limits[field];
-    },
-    [plan],
-  );
+  }, []);
 
   const canUse = useCallback(
     (field: keyof Omit<UsageCounters, "yearMonth">, amount = 1): boolean => {
-      const limits: Record<string, number | null | undefined> = {
-        simulations: plan.quotas.simulationsPerMonth,
-        classifications: plan.quotas.classificationsPerMonth,
-        batchRows: plan.quotas.batchRows,
-        pdfExports: plan.quotas.pdfExport ? null : 0,
-      };
-      const limit = limits[field];
+      const limit = quotaLimitForField(quotas, field as QuotaUsageField);
       if (limit === null || limit === undefined) return true;
       if (limit === 0) return false;
       return usage[field] + amount <= limit;
     },
-    [plan, usage],
+    [quotas, usage],
   );
 
   const remaining = useCallback(
     (field: keyof Omit<UsageCounters, "yearMonth">): number | null => {
-      const limits: Record<string, number | null | undefined> = {
-        simulations: plan.quotas.simulationsPerMonth,
-        classifications: plan.quotas.classificationsPerMonth,
-        batchRows: plan.quotas.batchRows,
-        pdfExports: plan.quotas.pdfExport ? null : 0,
-      };
-      const limit = limits[field];
+      const limit = quotaLimitForField(quotas, field as QuotaUsageField);
       if (limit === null || limit === undefined) return null;
       return Math.max(0, limit - usage[field]);
     },
-    [plan, usage],
+    [quotas, usage],
   );
 
   const recordUsage = useCallback(
-    (field: keyof Omit<UsageCounters, "yearMonth">, amount = 1) => {
-      const ym = currentYearMonth();
-      const base = usage.yearMonth === ym ? usage : { ...defaultUsage, yearMonth: ym };
-      const newValue = base[field] + amount;
-      persistUsage({ ...base, [field]: newValue });
-
-      const limit = getQuotaLimit(field);
-      if (limit !== null && limit !== undefined && limit > 0 && newValue >= limit) {
-        setQuotaAlert(buildQuotaExhaustedAlert(field));
-      }
+    (field: keyof Omit<UsageCounters, "yearMonth">) => {
+      void (async () => {
+        try {
+          const remoteUsage = await regtechApi.getUsage();
+          setUsage(remoteUsage);
+          setApiLinked(true);
+          const limit = quotaLimitForField(quotas, field as QuotaUsageField);
+          if (
+            limit !== null &&
+            limit !== undefined &&
+            limit > 0 &&
+            remoteUsage[field] >= limit
+          ) {
+            setQuotaAlert(buildQuotaExhaustedAlert(field as QuotaUsageField));
+          }
+        } catch {
+          /* API indisponible — pas de toast quota */
+        }
+      })();
     },
-    [usage, persistUsage, getQuotaLimit],
+    [quotas],
   );
 
   const startCheckout = useCallback(
@@ -217,6 +211,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
         currency: country.currency,
         periodEnd: periodEnd.toISOString(),
       });
+      setQuotas(getPlanById(planId).quotas);
     },
     [billingCountryIso, persistSubscription],
   );
@@ -225,10 +220,13 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     () => ({
       subscription,
       usage,
+      quotas,
       loading,
+      apiLinked,
       billingCountry,
       setBillingCountryIso,
       refreshSubscription,
+      refreshUsage,
       recordUsage,
       canUse,
       remaining,
@@ -240,9 +238,12 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     [
       subscription,
       usage,
+      quotas,
       loading,
+      apiLinked,
       billingCountry,
       refreshSubscription,
+      refreshUsage,
       recordUsage,
       canUse,
       remaining,
