@@ -87,13 +87,13 @@ export function AfcftaDutyProjection({
       )}
       {error && <p className="text-[10px] text-rose-400">{error}</p>}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
         {projections.map((p) => {
           const isActive = p.calculationYear === CURRENT_YEAR;
           return (
             <div
               key={p.calculationYear}
-              className={`p-2.5 rounded border ${
+              className={`p-4 rounded-lg border min-h-[88px] flex flex-col justify-between ${
                 isActive
                   ? darkMode
                     ? "bg-dark-secondary border-primary-500/35 text-gray-100 font-bold"

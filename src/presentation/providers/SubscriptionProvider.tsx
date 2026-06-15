@@ -6,6 +6,7 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { useAuth } from "@clerk/react";
 import type {
   CheckoutRequest,
   CheckoutResponse,
@@ -83,6 +84,7 @@ function quotaLimitForField(quotas: PlanQuotas, field: QuotaUsageField): number 
 }
 
 export function SubscriptionProvider({ children }: { children: React.ReactNode }) {
+  const { isSignedIn, isLoaded } = useAuth();
   const [subscription, setSubscription] = useState<SubscriptionState>(loadStoredSubscription);
   const [usage, setUsage] = useState<UsageCounters>(defaultUsage);
   const [quotas, setQuotas] = useState<PlanQuotas>(getPlanById("free").quotas);
@@ -130,8 +132,15 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   }, [persistSubscription]);
 
   useEffect(() => {
+    if (!isLoaded) return;
+    if (!isSignedIn) {
+      setQuotas(getPlanById(loadStoredSubscription().plan).quotas);
+      setApiLinked(false);
+      setLoading(false);
+      return;
+    }
     void refreshSubscription();
-  }, []);
+  }, [isLoaded, isSignedIn, refreshSubscription]);
 
   const canUse = useCallback(
     (field: keyof Omit<UsageCounters, "yearMonth">, amount = 1): boolean => {

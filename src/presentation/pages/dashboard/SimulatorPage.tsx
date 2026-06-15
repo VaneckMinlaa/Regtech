@@ -34,7 +34,10 @@ export function SimulatorPage({
       />
 
       {selectedSimulation && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          className={`space-y-8 pt-8 border-t ${darkMode ? "border-gray-800" : "border-gray-200"}`}
+          id="simulation_results_panel"
+        >
           <MetricsChart
             baseTax={selectedSimulation.baseTariffRate}
             projection={selectedSimulation.tariffProjection ?? []}

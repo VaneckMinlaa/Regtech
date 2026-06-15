@@ -26,13 +26,13 @@ function MissingClerkConfig() {
 function AppRoot() {
   return (
     <ReferenceDataProvider>
-      <SubscriptionProvider>
-        <ClerkTokenBridge>
+      <ClerkTokenBridge>
+        <SubscriptionProvider>
           <AuthGate>
             <RegTechShell />
           </AuthGate>
-        </ClerkTokenBridge>
-      </SubscriptionProvider>
+        </SubscriptionProvider>
+      </ClerkTokenBridge>
     </ReferenceDataProvider>
   );
 }
