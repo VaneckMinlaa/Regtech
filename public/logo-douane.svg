@@ -1,0 +1,24 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RegTech  Douane">
+  <rect x="2" y="2" width="44" height="44" rx="10" fill="#059669"/>
+  <!-- Bouclier officiel -->
+  <path
+    d="M24 8.5L35.5 13.2V22.8C35.5 28.6 24 37.5 24 37.5C24 37.5 12.5 28.6 12.5 22.8V13.2L24 8.5Z"
+    stroke="#ffffff"
+    stroke-width="1.6"
+    fill="none"
+  />
+  <!-- Sceau / tampon douanier -->
+  <circle cx="24" cy="19.5" r="5.5" stroke="rgba(255,255,255,0.9)" stroke-width="1.4" fill="none"/>
+  <path
+    d="M24 16.2V22.8M21.4 19.5H26.6"
+    stroke="rgba(255,255,255,0.75)"
+    stroke-width="1.1"
+    stroke-linecap="round"
+  />
+  <!-- Déclaration (lignes HS) -->
+  <rect x="17" y="25" width="14" height="8" rx="1.2" stroke="rgba(255,255,255,0.85)" stroke-width="1.2" fill="none"/>
+  <path d="M19 27.5H29M19 29.5H27M19 31.5H25" stroke="rgba(255,255,255,0.5)" stroke-width="1" stroke-linecap="round"/>
+  <!-- Poste frontière -->
+  <path d="M20 36.5H28" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M24 36.5V39.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/>
+</svg>

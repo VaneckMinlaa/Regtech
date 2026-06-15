@@ -1,0 +1,156 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --color-primary-50: #f4f3ff;
+  --color-primary-100: #ebe9fe;
+  --color-primary-200: #d9d6fe;
+  --color-primary-300: #bdb4fe;
+  --color-primary-400: #9b8afb;
+  --color-primary-500: #7a5af8;
+  --color-primary-600: #6938ef;
+  --color-primary-700: #5925dc;
+  --color-primary-800: #4a1fb8;
+  --color-dark-primary: #171f2e;
+  --color-dark-secondary: #1a2231;
+  --text-title-lg: 44px;
+  --text-title-lg--line-height: 52px;
+  --shadow-theme-xs: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  --shadow-theme-sm: 0px 8px 20px 0px rgba(0, 0, 0, 0.08);
+}
+
+@layer base {
+  body {
+    background-color: #ffffff;
+    color: #111827;
+    font-family: var(--font-sans);
+  }
+
+  .dark body {
+    background-color: #101828;
+    color: #f3f4f6;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+  }
+
+  .platform-page {
+    font-family: var(--font-sans);
+  }
+
+  .platform-page .font-display,
+  .platform-page h1,
+  .platform-page h2,
+  .platform-page h3,
+  .platform-page h4 {
+    font-family: var(--font-display);
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+.dark ::-webkit-scrollbar-track {
+  background: #1a2231;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background: #374151;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #4b5563;
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes logo-spin-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out;
+}
+
+.logo-spin {
+  animation: logo-spin 12s linear infinite;
+}
+
+.logo-spin-reverse {
+  animation: logo-spin-reverse 8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-spin,
+  .logo-spin-reverse {
+    animation: none;
+  }
+}
+
+/* UserProfile intégré dans le modal RegTech (évite le layout Clerk cassé) */
+.regtech-user-profile {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.regtech-user-profile > div {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.regtech-user-profile [class*="cl-rootBox"],
+.regtech-user-profile [class*="cl-cardBox"],
+.regtech-user-profile [class*="cl-card"] {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.regtech-user-profile [class*="cl-modalBackdrop"],
+.regtech-user-profile [class*="cl-drawerRoot"] {
+  position: absolute !important;
+}
