@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { ZlecafDutyResponse } from "@/infrastructure/http/regtechApiTypes";
+import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface AfcftaDutyProjectionProps {
   originCountryIso: string;
@@ -14,14 +15,14 @@ interface AfcftaDutyProjectionProps {
 const CURRENT_YEAR = new Date().getFullYear();
 
 function formatReduction(p: ZlecafDutyResponse): string {
-  if (p.excluded) return "Exclusion (full tariff)";
+  if (p.excluded) return "Exclusion — full tariff applies";
   const pct = Math.round(p.reductionFraction * 100);
-  if (pct >= 100) return "Total exemption (-100%)";
+  if (pct >= 100) return "Total exemption (−100%)";
   if (pct === 0) return "Full tariff (0% reduction)";
-  return `Reduction of -${pct}%`;
+  return `Reduction of −${pct}%`;
 }
 
-/** Projection ZLECAf 2025–2030 via `GET /afcfta/duty/projection`. */
+/** AfCFTA duty projection 2025–2030 via `GET /afcfta/duty/projection`. */
 export function AfcftaDutyProjection({
   originCountryIso,
   hsCode,
@@ -33,8 +34,10 @@ export function AfcftaDutyProjection({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  const ready = Boolean(originCountryIso && hsCode);
+
   useEffect(() => {
-    if (!originCountryIso || !hsCode) {
+    if (!ready) {
       setProjections([]);
       return;
     }
@@ -61,66 +64,56 @@ export function AfcftaDutyProjection({
     return () => {
       cancelled = true;
     };
-  }, [originCountryIso, hsCode, initialDutyRate, sensitive]);
-
-  if (!originCountryIso || !hsCode) {
-    return (
-      <p className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-        Select an origin country and an HS code to load the API projection.
-      </p>
-    );
-  }
+  }, [originCountryIso, hsCode, initialDutyRate, sensitive, ready]);
 
   return (
-    <div className="space-y-3" id="afcfta_duty_projection">
-      <span className={`text-[11px] font-bold uppercase tracking-widest block font-mono ${
-        darkMode ? "text-gray-500" : "text-gray-500"
-      }`}>
-        Progressive reductions (AfCFTA API)
-      </span>
-
-      {loading && (
-        <p className="text-[10px] text-gray-500 flex items-center gap-2">
-          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          Calculating projection…
+    <div id="afcfta_duty_projection">
+      <HelpToggle
+        label="What are progressive AfCFTA reductions?"
+        darkMode={darkMode}
+        loading={loading}
+        disabled={!ready}
+      >
+        <p>
+          Under the AfCFTA tariff schedule, eligible goods benefit from a phased reduction of customs duties
+          between 2025 and 2030. Each calendar year applies a different concession rate for the same origin
+          country and HS code — the active year is used in your simulations.
         </p>
-      )}
-      {error && <p className="text-[10px] text-rose-400">{error}</p>}
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-        {projections.map((p) => {
-          const isActive = p.calculationYear === CURRENT_YEAR;
-          return (
-            <div
-              key={p.calculationYear}
-              className={`p-4 rounded-lg border min-h-[88px] flex flex-col justify-between ${
-                isActive
-                  ? darkMode
-                    ? "bg-dark-secondary border-primary-500/35 text-gray-100 font-bold"
-                    : "bg-primary-50/50 border-primary-300 text-gray-900 font-bold"
-                  : darkMode
-                    ? "bg-[#101828] border-gray-800"
-                    : "bg-gray-50 border-gray-200 text-gray-800 shadow-sm"
-              }`}
-            >
-              <span className={`text-[10px] font-mono ${
-                isActive
-                  ? darkMode ? "text-primary-400" : "text-primary-600"
-                  : darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                {p.calculationYear}
-                {isActive ? " (Active year)" : ""}
-              </span>
-              <strong className={`text-xs block py-0.5 ${darkMode && !isActive ? "text-white" : ""}`}>
-                {formatReduction(p)}
-              </strong>
-              <span className={`text-[9px] font-mono block ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                Applied rate: {(p.appliedDutyRate * 100).toFixed(1)}%
-              </span>
-            </div>
-          );
-        })}
-      </div>
+        {!ready && (
+          <p className={platform.textMuted(darkMode)}>
+            Select an origin country and an HS code to load the projection from the API.
+          </p>
+        )}
+
+        {error && <p className="text-rose-500">{error}</p>}
+
+        {ready && projections.length > 0 && (
+          <ul className="space-y-2">
+            {projections.map((p) => {
+              const isActive = p.calculationYear === CURRENT_YEAR;
+              return (
+                <li
+                  key={p.calculationYear}
+                  className={`flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 border-b py-2 last:border-b-0 ${platform.borderSubtle(darkMode)}`}
+                >
+                  <span className={`font-medium ${isActive ? "text-primary-500" : platform.textPrimary(darkMode)}`}>
+                    {p.calculationYear}
+                    {isActive ? " (active year)" : ""}
+                  </span>
+                  <span className={platform.textMuted(darkMode)}>
+                    {formatReduction(p)} · Applied rate {(p.appliedDutyRate * 100).toFixed(1)}%
+                  </span>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+
+        {ready && !loading && !error && projections.length === 0 && (
+          <p className={platform.textMuted(darkMode)}>No projection data available for this corridor.</p>
+        )}
+      </HelpToggle>
     </div>
   );
 }

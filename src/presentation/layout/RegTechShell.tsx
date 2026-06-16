@@ -17,7 +17,6 @@ import {
   CreditCard,
   ClipboardList,
   Landmark,
-  HelpCircle,
 } from "lucide-react";
 
 import { PricingPage } from "@/presentation/features/billing/PricingPage";
@@ -49,6 +48,7 @@ import {
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
 import { PlatformPageContent } from "@/presentation/components/shared/PlatformPageContent";
+import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
 
 interface RegTechShellProps {
   initialTab?: string;
@@ -276,13 +276,13 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
                 darkMode={darkMode}
                 trailing={
                   activeTab === "IA" ? (
-                    <span
-                      title="HS code is an international 8-digit nomenclature that uniquely identifies each exported product."
-                      className={`inline-flex items-center gap-1.5 ${platform.textMuted(darkMode)}`}
-                    >
-                      <HelpCircle className="h-4 w-4 shrink-0" aria-hidden />
-                      What is the HS code?
-                    </span>
+                    <HelpToggle label="What is the HS code?" darkMode={darkMode}>
+                      <p>
+                        The Harmonized System (HS) code is an international 8-digit nomenclature that uniquely
+                        identifies each product for customs. RegTech proposes a code from your description and
+                        shows a confidence score — you can correct it before running a tariff simulation.
+                      </p>
+                    </HelpToggle>
                   ) : undefined
                 }
               />
