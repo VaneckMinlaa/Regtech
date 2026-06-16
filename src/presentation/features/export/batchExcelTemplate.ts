@@ -1,8 +1,11 @@
 /**
- * Génère et télécharge le modèle Excel + guide (archive ZIP).
+ * Generate and download the batch Excel template and user guide (separate files).
  */
 
 import { BATCH_COLUMNS, BATCH_SAMPLE_ROWS } from "@/presentation/features/export/batchColumnDefs";
+
+export const BATCH_TEMPLATE_FILENAME = "RegTech_Simulations_Template.xlsx";
+export const BATCH_GUIDE_FILENAME = "RegTech_Batch_User_Guide.xlsx";
 
 const BRAND_PRIMARY = "FF7A5AF8";
 const BRAND_PRIMARY_DARK = "FF5925DC";
@@ -24,9 +27,6 @@ const NUMERIC_KEYS = new Set([
   "year",
 ]);
 
-const TEMPLATE_FILENAME = "01_RegTech_Simulations_Template.xlsx";
-const GUIDE_FILENAME = "02_RegTech_User_Guide.xlsx";
-
 const FORMAT_HINTS = [
   "e.g. CMR",
   "e.g. NGA",
@@ -43,30 +43,46 @@ function colLetter(count: number): string {
   return String.fromCharCode(64 + count);
 }
 
-export async function downloadBatchExcelTemplate(): Promise<void> {
-  const [ExcelJS, JSZip] = await Promise.all([import("exceljs"), import("jszip")]);
-
-  const templateWorkbook = new ExcelJS.Workbook();
-  templateWorkbook.creator = "RegTech";
-  buildTemplateSheet(templateWorkbook.addWorksheet("Simulations"));
-  const templateBuffer = await templateWorkbook.xlsx.writeBuffer();
-
-  const guideWorkbook = new ExcelJS.Workbook();
-  guideWorkbook.creator = "RegTech";
-  buildGuideSheet(guideWorkbook.addWorksheet("Guide", { views: [{ showGridLines: false }] }));
-  const guideBuffer = await guideWorkbook.xlsx.writeBuffer();
-
-  const zip = new JSZip.default();
-  zip.file(TEMPLATE_FILENAME, templateBuffer);
-  zip.file(GUIDE_FILENAME, guideBuffer);
-
-  const zipBlob = await zip.generateAsync({ type: "blob" });
-  const url = URL.createObjectURL(zipBlob);
+function triggerDownload(buffer: ArrayBuffer, filename: string) {
+  const blob = new Blob([buffer], {
+    type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+  });
+  const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "RegTech_Simulation_AfCFTA.zip";
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+async function buildTemplateBuffer(): Promise<ArrayBuffer> {
+  const ExcelJS = await import("exceljs");
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "RegTech";
+  buildTemplateSheet(workbook.addWorksheet("Simulations"));
+  return (await workbook.xlsx.writeBuffer()) as ArrayBuffer;
+}
+
+async function buildGuideBuffer(): Promise<ArrayBuffer> {
+  const ExcelJS = await import("exceljs");
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = "RegTech";
+  buildGuideSheet(workbook.addWorksheet("Guide", { views: [{ showGridLines: false }] }));
+  return (await workbook.xlsx.writeBuffer()) as ArrayBuffer;
+}
+
+export async function downloadBatchTemplateFile(): Promise<void> {
+  triggerDownload(await buildTemplateBuffer(), BATCH_TEMPLATE_FILENAME);
+}
+
+export async function downloadBatchGuideFile(): Promise<void> {
+  triggerDownload(await buildGuideBuffer(), BATCH_GUIDE_FILENAME);
+}
+
+/** @deprecated Use downloadBatchTemplateFile + downloadBatchGuideFile */
+export async function downloadBatchExcelTemplate(): Promise<void> {
+  await downloadBatchTemplateFile();
+  await downloadBatchGuideFile();
 }
 
 function buildGuideSheet(sheet: import("exceljs").Worksheet) {
@@ -80,8 +96,7 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
   sheet.getRow(1).height = 36;
 
   const subtitle = sheet.getCell("A2");
-  subtitle.value =
-    `This file comes with the "${TEMPLATE_FILENAME}" Excel template. Import only the Excel template in RegTech.`;
+  subtitle.value = `Read this guide for instructions. Import only "${BATCH_TEMPLATE_FILENAME}" in RegTech.`;
   subtitle.font = { name: "Calibri", size: 11, color: { argb: TEXT_MUTED } };
   subtitle.alignment = { wrapText: true, vertical: "top" };
   sheet.getRow(2).height = 28;
@@ -90,8 +105,8 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
     [
       "Step 1 — Open the template",
       [
-        "1. Unzip the downloaded ZIP file.",
-        `2. Open "${TEMPLATE_FILENAME}" (not this guide).`,
+        `1. Download "${BATCH_TEMPLATE_FILENAME}" from RegTech.`,
+        "2. Open the template file (not this guide).",
         "3. You’ll see the table to fill in, with examples already included.",
       ].join("\n"),
     ],
@@ -110,7 +125,7 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
       [
         "1. Save the filled template.",
         "2. RegTech → Batch processing → Import CSV or Excel.",
-        `3. Select "${TEMPLATE_FILENAME}".`,
+        `3. Select "${BATCH_TEMPLATE_FILENAME}".`,
         "4. Tax calculation and AfCFTA eligibility start automatically.",
       ].join("\n"),
     ],
@@ -170,8 +185,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
 
   sheet.mergeCells(`A2:${lastCol}2`);
   const hint = sheet.getCell("A2");
-  hint.value =
-    `Fill the yellow rows. Blue rows are examples. The detailed guide is in the "${GUIDE_FILENAME}" file.`;
+  hint.value = `Fill the yellow rows. Blue rows are examples. See "${BATCH_GUIDE_FILENAME}" for detailed instructions.`;
   hint.font = { name: "Calibri", size: 10, italic: true, color: { argb: TEXT_MUTED } };
   hint.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_SURFACE } };
   hint.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
@@ -181,16 +195,27 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
   headerRow.height = 36;
   BATCH_COLUMNS.forEach((col, i) => {
     const cell = headerRow.getCell(i + 1);
-    cell.value = col.label;
+    cell.value = col.key;
     cell.font = { name: "Calibri", size: 10, bold: true, color: { argb: "FFFFFFFF" } };
     cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_PRIMARY } };
     cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
     cell.border = thinBorder();
-    cell.note = col.hint;
+    cell.note = `${col.label} — ${col.hint}`;
     sheet.getColumn(i + 1).width = col.width;
   });
 
-  const formatRow = sheet.getRow(4);
+  const labelRow = sheet.getRow(4);
+  labelRow.height = 28;
+  BATCH_COLUMNS.forEach((col, i) => {
+    const cell = labelRow.getCell(i + 1);
+    cell.value = col.label;
+    cell.font = { name: "Calibri", size: 9, color: { argb: TEXT_MUTED } };
+    cell.fill = { type: "pattern", pattern: "solid", fgColor: { argb: "FFF9FAFB" } };
+    cell.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
+    cell.border = thinBorder();
+  });
+
+  const formatRow = sheet.getRow(5);
   formatRow.height = 20;
   FORMAT_HINTS.forEach((hintText, i) => {
     const cell = formatRow.getCell(i + 1);
@@ -201,10 +226,10 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
     cell.border = thinBorder();
   });
 
-  addSectionRow(sheet, 5, lastCol, "▼ EXAMPLES — you can edit or delete these rows");
+  addSectionRow(sheet, 6, lastCol, "▼ EXAMPLES — you can edit or delete these rows");
 
   BATCH_SAMPLE_ROWS.forEach((sample, rowIdx) => {
-    const row = sheet.getRow(6 + rowIdx);
+    const row = sheet.getRow(7 + rowIdx);
     row.height = 24;
     sample.forEach((value, colIdx) => {
       const key = BATCH_COLUMNS[colIdx]?.key ?? "";
@@ -212,7 +237,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
     });
   });
 
-  const fillStart = 6 + BATCH_SAMPLE_ROWS.length;
+  const fillStart = 7 + BATCH_SAMPLE_ROWS.length;
   addSectionRow(sheet, fillStart, lastCol, "▼ YOUR SIMULATIONS — fill in below");
 
   for (let r = 0; r < 12; r++) {
@@ -232,7 +257,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
     });
   }
 
-  sheet.views = [{ state: "frozen", ySplit: 3, activeCell: "A6" }];
+  sheet.views = [{ state: "frozen", ySplit: 3, activeCell: "A7" }];
   sheet.autoFilter = { from: "A3", to: `${lastCol}3` };
 }
 

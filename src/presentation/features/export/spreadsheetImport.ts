@@ -5,8 +5,41 @@
 import {
   BATCH_HEADERS_CSV,
   gridToNormalizedCsv,
+  resolveBatchHeader,
 } from "@/presentation/features/export/batchColumnDefs";
 import { parseCsvLine } from "@/presentation/features/export/batchCsvUtils";
+
+function textToGrid(text: string): (string | number)[][] {
+  return text
+    .trim()
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => (line.includes("\t") ? line.split("\t") : parseCsvLine(line)));
+}
+
+function isNormalizedCsv(content: string): boolean {
+  const lines = content
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+  if (lines.length < 2) return false;
+  const headers = parseCsvLine(lines[0]);
+  const resolved = headers.filter((h) => resolveBatchHeader(h) !== null).length;
+  return resolved >= 5;
+}
+
+/** Normalize pasted CSV/TSV or raw grid text into technical-column CSV. */
+export function parseSpreadsheetText(content: string): string {
+  const trimmed = content.trim();
+  if (!trimmed) {
+    throw new Error("Paste or import a CSV/Excel file with at least one data row.");
+  }
+  if (isNormalizedCsv(trimmed)) {
+    return trimmed;
+  }
+  return gridToNormalizedCsv(textToGrid(trimmed));
+}
 
 export async function fileToCsvText(file: File): Promise<string> {
   const name = file.name.toLowerCase();
@@ -42,15 +75,7 @@ export async function fileToCsvText(file: File): Promise<string> {
 }
 
 function normalizeCsvText(content: string): string {
-  const lines = content.split("\n").map((l) => l.trim()).filter(Boolean);
-  if (lines.length < 2) {
-    throw new Error(
-      "The file must contain at least one header row and one data row.",
-    );
-  }
-
-  const rows = lines.map((line) => parseCsvLine(line));
-  return gridToNormalizedCsv(rows);
+  return parseSpreadsheetText(content);
 }
 
 export function validateBatchCsvContent(content: string): string {

@@ -370,6 +370,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
         </HelpToggle>
       </div>
 
+      {(currentResult || isLoading) && (
       <SectionPanel darkMode={darkMode} id="simulation_tax_results" className="scroll-mt-24">
         <div className="space-y-6">
           <div className={`flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
@@ -496,11 +497,12 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             </div>
           ) : (
             <div className={`flex items-center justify-center py-12 text-sm ${platform.textMuted(darkMode)}`}>
-              Run a simulation to see your tax estimate.
+              Calculating…
             </div>
           )}
         </div>
       </SectionPanel>
+      )}
     </div>
   );
 };

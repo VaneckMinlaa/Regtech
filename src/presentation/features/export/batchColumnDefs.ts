@@ -135,8 +135,14 @@ export function gridToNormalizedCsv(rows: (string | number)[][]): string {
 
   const resolvedCount = keyIndexes.filter(Boolean).length;
   if (resolvedCount < 5) {
+    const firstCell = String(headerRow[0] ?? "").toLowerCase();
+    if (firstCell.includes("user guide") || firstCell.includes("regtech — user guide")) {
+      throw new Error(
+        `This is the user guide file. Download and import "RegTech_Simulations_Template.xlsx" instead.`,
+      );
+    }
     throw new Error(
-      "Unrecognized headers. Use the RegTech Excel template or the technical columns (origin, destination, hsCode…).",
+      "Unrecognized headers. Download the Excel template or use technical columns (origin, destination, hsCode…).",
     );
   }
 
@@ -189,7 +195,7 @@ function isNonDataRow(values: string[]): boolean {
   if (first.includes("▼") || first.includes("your simulations") || first.includes("example")) {
     return true;
   }
-  if (values.some((v) => /^ex\.\s/i.test(v.trim()) || /^ex\s/i.test(v.trim()))) {
+  if (values.some((v) => /^e\.?g\.?\s/i.test(v.trim()) || /^ex\.\s/i.test(v.trim()) || /^ex\s/i.test(v.trim()))) {
     return true;
   }
   return false;

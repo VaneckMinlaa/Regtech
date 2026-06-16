@@ -1,13 +1,17 @@
 import { BATCH_COLUMNS } from "@/presentation/features/export/batchColumnDefs";
+import {
+  BATCH_GUIDE_FILENAME,
+  BATCH_TEMPLATE_FILENAME,
+} from "@/presentation/features/export/batchExcelTemplate";
 
-export const BATCH_TEMPLATE_FILENAME = "01_RegTech_Simulations_Template.xlsx";
+export { BATCH_TEMPLATE_FILENAME };
 
 export const BATCH_GUIDE_BLOCKS: [string, string][] = [
   [
     "Step 1 — Open the template",
     [
-      "1. Unzip the downloaded ZIP file.",
-      `2. Open "${BATCH_TEMPLATE_FILENAME}" (not the PDF guide).`,
+      `1. Download "${BATCH_TEMPLATE_FILENAME}" from RegTech.`,
+      `2. Open the template file (not "${BATCH_GUIDE_FILENAME}").`,
       "3. You’ll see the table to fill in, with examples already included.",
     ].join("\n"),
   ],
@@ -15,7 +19,7 @@ export const BATCH_GUIDE_BLOCKS: [string, string][] = [
     "Step 2 — Fill your simulations",
     [
       "• One row = one customs simulation.",
-      "• Row 4: expected formats (e.g. CMR, e.g. 851712…) — do not import as-is.",
+      "• Format hint row (e.g. CMR, e.g. 851712…) — do not import as-is.",
       "• Blue rows: concrete examples you can keep, edit, or delete.",
       "• Yellow rows: your rows to complete.",
       "• Amounts in the local currency of the origin country.",
@@ -44,4 +48,4 @@ export const BATCH_GUIDE_BLOCKS: [string, string][] = [
   ],
 ];
 
-export const BATCH_GUIDE_SUBTITLE = `This guide accompanies the "${BATCH_TEMPLATE_FILENAME}" Excel template. Import only the Excel model in RegTech.`;
+export const BATCH_GUIDE_SUBTITLE = `This guide accompanies the "${BATCH_TEMPLATE_FILENAME}" Excel template. Import only the template in RegTech.`;

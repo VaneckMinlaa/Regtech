@@ -24,13 +24,17 @@ import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { platform } from "@/presentation/theme/platformStyles";
 import {
   fileToCsvText,
+  parseSpreadsheetText,
   validateBatchCsvContent,
 } from "@/presentation/features/export/spreadsheetImport";
 import {
   fxSourceLabel,
   parseBatchCsvContent,
 } from "@/presentation/features/export/batchCsvParser";
-import { downloadBatchExcelTemplate } from "@/presentation/features/export/batchExcelTemplate";
+import {
+  downloadBatchGuideFile,
+  downloadBatchTemplateFile,
+} from "@/presentation/features/export/batchExcelTemplate";
 import { BatchPreviewTable } from "@/presentation/features/export/BatchPreviewTable";
 import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 
@@ -52,12 +56,13 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
   const [dragOver, setDragOver] = useState(false);
 
   const [isDownloadingTemplate, setIsDownloadingTemplate] = useState(false);
+  const [isDownloadingGuide, setIsDownloadingGuide] = useState(false);
 
   const handleDownloadTemplate = async () => {
     setIsDownloadingTemplate(true);
     setErrorMsg("");
     try {
-      await downloadBatchExcelTemplate();
+      await downloadBatchTemplateFile();
     } catch (err) {
       setErrorMsg(
         err instanceof Error ? err.message : "Unable to generate the Excel template.",
@@ -67,6 +72,25 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
     }
   };
 
+  const handleDownloadGuide = async () => {
+    setIsDownloadingGuide(true);
+    setErrorMsg("");
+    try {
+      await downloadBatchGuideFile();
+    } catch (err) {
+      setErrorMsg(
+        err instanceof Error ? err.message : "Unable to generate the user guide.",
+      );
+    } finally {
+      setIsDownloadingGuide(false);
+    }
+  };
+
+  const normalizeBatchContent = (content: string) => {
+    const normalized = parseSpreadsheetText(content);
+    return validateBatchCsvContent(normalized);
+  };
+
   const runBatch = async (content: string) => {
     setIsProcessing(true);
     setErrorMsg("");
@@ -74,8 +98,9 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
     setSummary(null);
 
     try {
-      validateBatchCsvContent(content);
-      const rowsToProcess = parseBatchCsvContent(content);
+      const normalized = parseSpreadsheetText(content);
+      validateBatchCsvContent(normalized);
+      const rowsToProcess = parseBatchCsvContent(normalized);
       if (rowsToProcess.length === 0) {
         throw new Error("No valid rows (declared value and export price are required).");
       }
@@ -111,7 +136,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
     setIsImporting(true);
     setErrorMsg("");
     try {
-      const text = validateBatchCsvContent(await fileToCsvText(file));
+      const text = normalizeBatchContent(await fileToCsvText(file));
       setCsvText(text);
       setImportedFileName(file.name);
       await runBatch(text);
@@ -148,24 +173,39 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                 Batch simulation (CSV / Excel)
               </h2>
               <p className={`mt-1 text-sm ${platform.textMuted(darkMode)}`}>
-                ZIP template + guide · import triggers automatic calculation for all rows
+                Download the template and guide separately · import triggers automatic calculation
               </p>
             </div>
           </div>
 
-          <button
-            onClick={() => void handleDownloadTemplate()}
-            id="btn_download_template"
-            disabled={isDownloadingTemplate}
-            className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
-          >
-            {isDownloadingTemplate ? (
-              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-            ) : (
-              <Download className="w-3.5 h-3.5" />
-            )}
-            <span>{isDownloadingTemplate ? "Generating…" : "Download template + guide"}</span>
-          </button>
+          <div className="flex shrink-0 flex-col gap-2 sm:flex-row">
+            <button
+              onClick={() => void handleDownloadTemplate()}
+              id="btn_download_template"
+              disabled={isDownloadingTemplate}
+              className={`inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
+            >
+              {isDownloadingTemplate ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5" />
+              )}
+              <span>{isDownloadingTemplate ? "Generating…" : "Download template"}</span>
+            </button>
+            <button
+              onClick={() => void handleDownloadGuide()}
+              id="btn_download_guide"
+              disabled={isDownloadingGuide}
+              className={`inline-flex items-center justify-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
+            >
+              {isDownloadingGuide ? (
+                <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <Download className="w-3.5 h-3.5" />
+              )}
+              <span>{isDownloadingGuide ? "Generating…" : "Download guide"}</span>
+            </button>
+          </div>
         </div>
 
         <input
@@ -234,10 +274,16 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
               try {
                 const text = await navigator.clipboard.readText();
                 if (text.trim()) {
-                  setCsvText(validateBatchCsvContent(text));
+                  const normalized = normalizeBatchContent(text);
+                  setCsvText(normalized);
+                  setErrorMsg("");
                 }
-              } catch {
-                setErrorMsg("Unable to read clipboard. Paste your CSV into a file and import it.");
+              } catch (err) {
+                setErrorMsg(
+                  err instanceof Error
+                    ? err.message
+                    : "Unable to read clipboard. Paste your CSV into a file and import it.",
+                );
               }
             }}
             className={`sm:w-auto w-full ${platform.buttonSecondary(darkMode)} text-sm py-2.5`}
