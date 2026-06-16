@@ -1,6 +1,21 @@
 import { resolveAuthToken } from "./authToken";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+const RAW_API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").trim();
+
+function buildApiUrl(path: string): string {
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+  if (!RAW_API_BASE) return normalizedPath;
+
+  const normalizedBase = RAW_API_BASE.replace(/\/+$/, "");
+  // Guard against duplicated prefix when env already includes /api/v1.
+  if (normalizedBase.endsWith("/api/v1") && normalizedPath.startsWith("/api/v1/")) {
+    return `${normalizedBase}${normalizedPath.slice("/api/v1".length)}`;
+  }
+  if (normalizedBase.endsWith("/api/v1") && normalizedPath === "/api/v1") {
+    return normalizedBase;
+  }
+  return `${normalizedBase}${normalizedPath}`;
+}
 
 export class ApiError extends Error {
   constructor(
@@ -43,7 +58,7 @@ export async function apiGet<T>(
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(buildApiUrl(path), {
       headers,
       signal: controller.signal,
     });
@@ -72,7 +87,7 @@ export async function apiPost<T>(
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(`${API_BASE}${path}`, {
+    const res = await fetch(buildApiUrl(path), {
       method: "POST",
       headers,
       body: JSON.stringify(body),
