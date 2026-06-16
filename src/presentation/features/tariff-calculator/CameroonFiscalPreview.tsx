@@ -135,7 +135,7 @@ export function CameroonFiscalPreview({
                 <td colSpan={3} className="py-2">
                   Total estimated taxes
                 </td>
-                <td className="py-2 text-right font-mono text-primary-500">
+                <td className={`py-2 text-right font-mono ${platform.totalAmount(darkMode)}`}>
                   {data.totalTaxes.toLocaleString("en-US")} XAF
                 </td>
               </tr>

@@ -2,7 +2,18 @@
  * Utilitaires de parsing CSV / nombres pour les imports par lot.
  */
 
-export function parseCsvLine(line: string): string[] {
+export function detectCsvDelimiter(line: string): "," | ";" | "\t" {
+  if (line.includes("\t")) return "\t";
+  const semicolons = (line.match(/;/g) ?? []).length;
+  const commas = (line.match(/,/g) ?? []).length;
+  return semicolons > commas ? ";" : ",";
+}
+
+export function parseDelimitedLine(line: string, delimiter: "," | ";" | "\t"): string[] {
+  if (delimiter === "\t") {
+    return line.split("\t").map((field) => unquoteCsvField(field.trim()));
+  }
+
   const result: string[] = [];
   let current = "";
   let inQuotes = false;
@@ -16,7 +27,7 @@ export function parseCsvLine(line: string): string[] {
       } else {
         inQuotes = !inQuotes;
       }
-    } else if (char === "," && !inQuotes) {
+    } else if (char === delimiter && !inQuotes) {
       result.push(unquoteCsvField(current.trim()));
       current = "";
     } else {
@@ -25,6 +36,10 @@ export function parseCsvLine(line: string): string[] {
   }
   result.push(unquoteCsvField(current.trim()));
   return result;
+}
+
+export function parseCsvLine(line: string): string[] {
+  return parseDelimitedLine(line, detectCsvDelimiter(line));
 }
 
 function unquoteCsvField(value: string): string {

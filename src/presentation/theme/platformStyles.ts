@@ -132,6 +132,8 @@ export const platform = {
       ? "bg-primary-500/10 text-primary-300 border-primary-500/20"
       : "bg-primary-50 text-primary-700 border-primary-200",
 
+  totalAmount: (dark: boolean) => (dark ? "text-emerald-400" : "text-emerald-600"),
+
   highlightCard: (dark: boolean) =>
     dark
       ? "rounded-2xl border border-primary-500/30 bg-dark-secondary text-gray-100"

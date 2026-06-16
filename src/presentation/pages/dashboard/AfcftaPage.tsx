@@ -280,7 +280,7 @@ export function AfcftaPage({
                   >
                     {c.isEligiblePrefAfCFTA ? "Preferential" : "Standard"}
                   </span>
-                  <span className="font-mono text-sm font-semibold text-primary-500">
+                  <span className="font-mono text-sm font-semibold text-emerald-600 dark:text-emerald-400">
                     {c.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} {c.currency}
                   </span>
                 </div>

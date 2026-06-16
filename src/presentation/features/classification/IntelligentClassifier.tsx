@@ -18,6 +18,7 @@ import {
   ClassifierPageSkeleton,
   ClassifierResultSkeleton,
 } from "@/presentation/components/shared/PlatformSkeletons";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 
 interface IntelligentClassifierProps {
   onSelectHSCode: (code: string, description: string) => void;
@@ -116,8 +117,8 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
   }
 
   return (
-    <div className="space-y-8 font-sans" id="ai_classification_panel">
-      <div className="flex flex-col gap-8">
+    <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2" id="ai_classification_panel">
+      <SectionPanel darkMode={darkMode} id="classifier_input_panel">
         <div className="space-y-4">
           <div>
             <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
@@ -161,8 +162,10 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
             </div>
           )}
         </div>
+      </SectionPanel>
 
-        <div className="space-y-4 border-t pt-8">
+      <SectionPanel darkMode={darkMode} id="classifier_results_panel">
+        <div className="space-y-4 min-h-[280px]">
             {isLoading ? (
               <ClassifierResultSkeleton darkMode={darkMode} />
             ) : result ? (
@@ -319,7 +322,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
               </p>
             )}
         </div>
-      </div>
+      </SectionPanel>
     </div>
   );
 };

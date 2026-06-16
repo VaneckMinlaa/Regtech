@@ -70,20 +70,22 @@ export function SimulatorTaxResultsSkeleton({ darkMode = true }: SkeletonLayoutP
 
 export function ClassifierPageSkeleton({ darkMode = true, id = "classifier_page_skeleton" }: SkeletonLayoutProps) {
   return (
-    <div className="space-y-8" id={id} aria-busy="true" aria-label="Loading classifier">
-      <div className="space-y-4">
+    <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2" id={id} aria-busy="true" aria-label="Loading classifier">
+      <div className={`${platform.panel(darkMode)} ${platform.panelPadding} space-y-4`}>
         <Skeleton darkMode={darkMode} className="h-3 w-40" />
         <Skeleton darkMode={darkMode} className="h-28 w-full rounded-lg" />
         <Skeleton darkMode={darkMode} className="h-11 w-full" />
       </div>
-      <ClassifierResultSkeleton darkMode={darkMode} />
+      <div className={`${platform.panel(darkMode)} ${platform.panelPadding}`}>
+        <ClassifierResultSkeleton darkMode={darkMode} />
+      </div>
     </div>
   );
 }
 
 export function ClassifierResultSkeleton({ darkMode = true }: SkeletonLayoutProps) {
   return (
-    <div className="space-y-4 border-t pt-8" aria-busy="true" aria-label="Classification in progress">
+    <div className="space-y-4" aria-busy="true" aria-label="Classification in progress">
       <div className="flex items-start justify-between gap-4">
         <div className="flex-1 space-y-2">
           <Skeleton darkMode={darkMode} className="h-3 w-28" />

@@ -87,38 +87,94 @@ const NUMERIC_KEYS = new Set([
   "year",
 ]);
 
+const LEGACY_HEADER_ALIASES: [string, string][] = [
+  // Ancien modèle Excel (libellés FR)
+  ["Pays origine (code ISO)", "origin"],
+  ["Pays destination (code ISO)", "destination"],
+  ["Code HS", "hsCode"],
+  ["Code SH", "hsCode"],
+  ["Valeur déclarée (devise locale)", "declaredValueLocal"],
+  ["Coût matière locale", "costMatiereLocale"],
+  ["Main-d'œuvre locale", "mainOeuvreLocale"],
+  ["Main d'œuvre locale", "mainOeuvreLocale"],
+  ["Frais locaux", "fraisLocaux"],
+  ["Prix de vente export", "prixVenteExport"],
+  ["Année de simulation", "year"],
+  // Variantes anglaises / exports Excel
+  ["Origin Country (ISO Code)", "origin"],
+  ["Destination Country (ISO Code)", "destination"],
+  ["HS Code", "hsCode"],
+  ["Declared Value (Local Currency)", "declaredValueLocal"],
+  ["Local Raw Material Cost", "costMatiereLocale"],
+  ["Local Labor Cost", "mainOeuvreLocale"],
+  ["Local Fees/Expenses", "fraisLocaux"],
+  ["Export Sale Price", "prixVenteExport"],
+  ["Simulation Year", "year"],
+  // Clés snake_case
+  ["declared_value_local", "declaredValueLocal"],
+  ["cost_matiere_locale", "costMatiereLocale"],
+  ["main_oeuvre_locale", "mainOeuvreLocale"],
+  ["frais_locaux", "fraisLocaux"],
+  ["prix_vente_export", "prixVenteExport"],
+  ["hs_code", "hsCode"],
+];
+
 const HEADER_LOOKUP = new Map<string, string>();
 
 for (const col of BATCH_COLUMNS) {
-  HEADER_LOOKUP.set(col.key.toLowerCase(), col.key);
-  HEADER_LOOKUP.set(col.label.toLowerCase(), col.key);
-  HEADER_LOOKUP.set(normalizeHeaderText(col.label), col.key);
+  registerHeaderAlias(col.key, col.key);
+  registerHeaderAlias(col.label, col.key);
+}
+
+for (const [alias, key] of LEGACY_HEADER_ALIASES) {
+  registerHeaderAlias(alias, key);
+}
+
+function registerHeaderAlias(alias: string, key: string) {
+  HEADER_LOOKUP.set(alias.toLowerCase(), key);
+  HEADER_LOOKUP.set(normalizeHeaderText(alias), key);
 }
 
 function normalizeHeaderText(value: string): string {
   return value
+    .replace(/^\uFEFF/, "")
+    .replace(/[\u2018\u2019\u201B\u2032]/g, "'")
+    .replace(/œ/gi, "oe")
+    .replace(/æ/gi, "ae")
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
+    .replace(/\s+/g, " ")
     .toLowerCase()
     .trim();
 }
 
 /** Résout un libellé de colonne (FR ou clé technique) vers la clé API. */
 export function resolveBatchHeader(header: string): string | null {
-  const raw = header.trim();
+  const raw = String(header ?? "").trim();
   if (!raw) return null;
-  return HEADER_LOOKUP.get(raw.toLowerCase()) ?? HEADER_LOOKUP.get(normalizeHeaderText(raw)) ?? null;
+  return (
+    HEADER_LOOKUP.get(raw.toLowerCase()) ??
+    HEADER_LOOKUP.get(normalizeHeaderText(raw)) ??
+    null
+  );
 }
 
 /** Repère la ligne d'en-tête dans une grille Excel/CSV (clés ou libellés FR). */
 export function findBatchHeaderRowIndex(rows: (string | number)[][]): number {
-  for (let i = 0; i < Math.min(rows.length, 20); i++) {
+  let bestIndex = 0;
+  let bestMatches = 0;
+
+  for (let i = 0; i < Math.min(rows.length, 30); i++) {
     const row = rows[i];
     if (!row?.length) continue;
     const matches = row.filter((cell) => resolveBatchHeader(String(cell ?? "")) !== null).length;
-    if (matches >= 5) return i;
+    if (matches > bestMatches) {
+      bestMatches = matches;
+      bestIndex = i;
+    }
   }
-  return 0;
+
+  return bestMatches >= 5 ? bestIndex : 0;
 }
 
 /** Convertit une grille brute en lignes CSV normalisées (clés techniques). */
@@ -160,6 +216,7 @@ export function gridToNormalizedCsv(rows: (string | number)[][]): string {
 
     if (values.every((v) => !v)) continue;
     if (isNonDataRow(values)) continue;
+    if (isHeaderLikeRow(values)) continue;
 
     lines.push(
       values
@@ -192,11 +249,30 @@ function normalizeGridCell(key: string, cell: unknown): string {
 
 function isNonDataRow(values: string[]): boolean {
   const first = values[0]?.toLowerCase().trim() ?? "";
-  if (first.includes("▼") || first.includes("your simulations") || first.includes("example")) {
+  if (
+    first.includes("▼") ||
+    first.includes("your simulations") ||
+    first.includes("vos simulations") ||
+    first.includes("example") ||
+    first.includes("exemple")
+  ) {
     return true;
   }
-  if (values.some((v) => /^e\.?g\.?\s/i.test(v.trim()) || /^ex\.\s/i.test(v.trim()) || /^ex\s/i.test(v.trim()))) {
+  if (
+    values.some(
+      (v) =>
+        /^e\.?g\.?\s/i.test(v.trim()) ||
+        /^ex\.\s/i.test(v.trim()) ||
+        /^ex\s/i.test(v.trim()) ||
+        /^ex\s*:/i.test(v.trim()),
+    )
+  ) {
     return true;
   }
   return false;
+}
+
+function isHeaderLikeRow(values: string[]): boolean {
+  const resolved = values.filter((v) => resolveBatchHeader(v) !== null).length;
+  return resolved >= 5;
 }

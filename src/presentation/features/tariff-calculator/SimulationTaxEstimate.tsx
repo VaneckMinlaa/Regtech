@@ -22,10 +22,10 @@ export function SimulationTaxEstimate({ simulation, darkMode = true }: Simulatio
         <p className={`text-xs uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
           Total estimated taxes
         </p>
-        <div className="mt-2 font-display text-3xl font-bold text-primary-500">
+        <div className={`mt-2 font-display text-3xl font-bold ${platform.totalAmount(darkMode)}`}>
           {simulation.totalTaxLocal.toLocaleString()} {destCountry?.currency ?? ""}
         </div>
-        <div className={`text-xs font-mono ${platform.textMuted(darkMode)}`}>
+        <div className={`text-xs font-mono ${platform.totalAmount(darkMode)}`}>
           ≈ {simulation.totalTaxUSD.toLocaleString()} USD
         </div>
       </div>

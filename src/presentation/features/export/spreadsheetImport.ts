@@ -10,12 +10,22 @@ import {
 import { parseCsvLine } from "@/presentation/features/export/batchCsvUtils";
 
 function textToGrid(text: string): (string | number)[][] {
-  return text
-    .trim()
+  const normalized = text.replace(/^\uFEFF/, "").trim();
+  return normalized
     .split(/\r?\n/)
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => (line.includes("\t") ? line.split("\t") : parseCsvLine(line)));
+    .map((line) => parseCsvLine(line));
+}
+
+function sanitizeSpreadsheetRows(rows: (string | number)[][]): (string | number)[][] {
+  return rows.map((row) =>
+    row.map((cell) => {
+      if (cell === null || cell === undefined) return "";
+      if (typeof cell === "string") return cell.replace(/^\uFEFF/, "").trim();
+      return cell;
+    }),
+  );
 }
 
 function isNormalizedCsv(content: string): boolean {
@@ -66,9 +76,10 @@ export async function fileToCsvText(file: File): Promise<string> {
       header: 1,
       defval: "",
       raw: true,
+      blankrows: true,
     }) as (string | number)[][];
 
-    return gridToNormalizedCsv(rows);
+    return gridToNormalizedCsv(sanitizeSpreadsheetRows(rows));
   }
 
   throw new Error("Unsupported format. Use .csv, .xlsx, or .xls");

@@ -136,18 +136,23 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
   const ingestFile = async (file: File) => {
     setIsImporting(true);
     setErrorMsg("");
+    let text = "";
     try {
-      const text = normalizeBatchContent(await fileToCsvText(file));
+      text = normalizeBatchContent(await fileToCsvText(file));
       setCsvText(text);
       setImportedFileName(file.name);
-      await runBatch(text);
     } catch (err) {
+      setCsvText("");
+      setImportedFileName("");
       setErrorMsg(
         err instanceof Error ? err.message : "Unable to read the file.",
       );
+      return;
     } finally {
       setIsImporting(false);
     }
+
+    await runBatch(text);
   };
 
   const handleFileInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -343,7 +348,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                   </div>
                   <div className={`rounded-xl border p-3 col-span-2 ${platform.border(darkMode)}`}>
                     <div className={platform.textMuted(darkMode)}>Total taxes (USD)</div>
-                    <div className="text-lg font-bold">{summary.totalTaxUSD.toLocaleString()} USD</div>
+                    <div className={`text-lg font-bold ${platform.totalAmount(darkMode)}`}>{summary.totalTaxUSD.toLocaleString()} USD</div>
                   </div>
                 </div>
 
@@ -406,10 +411,10 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                           <td className="px-2 py-2 text-right whitespace-nowrap">
                             {r.hasError ? "—" : `${r.vatPaidLocal.toLocaleString()} ${r.currency}`}
                           </td>
-                          <td className={`px-2 py-2 text-right font-bold whitespace-nowrap ${darkMode ? "text-white" : "text-gray-900"}`}>
+                          <td className={`px-2 py-2 text-right font-bold whitespace-nowrap ${platform.totalAmount(darkMode)}`}>
                             {r.hasError ? "—" : `${r.totalTaxLocal.toLocaleString()} ${r.currency}`}
                           </td>
-                          <td className="px-2 py-2 text-right whitespace-nowrap">
+                          <td className={`px-2 py-2 text-right font-bold whitespace-nowrap ${platform.totalAmount(darkMode)}`}>
                             {r.hasError ? "—" : `${r.totalTaxUSD.toLocaleString()} USD`}
                           </td>
                           <td className="px-2 py-2 text-[9px] text-gray-500">
@@ -430,7 +435,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                   <CheckCircle2 className="mb-0.5 mr-1 inline h-4 w-4 text-primary-500" />
                   <strong>Batch complete:</strong> {summary.successCount} simulation(s) with duties, VAT, and FX via{" "}
                   {fxSourceLabel(summary.exchangeRateSource)}. Consolidated total:{" "}
-                  <strong>{summary.totalTaxUSD.toLocaleString()} USD</strong>.
+                  <strong className={platform.totalAmount(darkMode)}>{summary.totalTaxUSD.toLocaleString()} USD</strong>.
                 </p>
               </div>
             ) : null}
