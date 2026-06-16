@@ -1,4 +1,4 @@
-/** Shared NewsAPI fetch + relevance filter (dev middleware + Vercel serverless). */
+/** NewsAPI fetch + relevance filter (Vercel serverless + Vite dev middleware). */
 
 export interface TradeNewsArticle {
   id: string;

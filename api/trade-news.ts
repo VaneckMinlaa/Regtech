@@ -1,28 +1,29 @@
-import { loadTradeNewsFromNewsApi } from "../shared/tradeNewsCore";
+import { loadTradeNewsFromNewsApi } from "./_lib/tradeNewsCore";
 
-interface VercelRequest {
-  method?: string;
-}
-
-interface VercelResponse {
-  status(code: number): VercelResponse;
-  json(body: unknown): void;
-  setHeader(name: string, value: string): void;
-}
-
-export default async function handler(_req: VercelRequest, res: VercelResponse) {
-  const apiKey = process.env.NEWS_API_KEY || process.env.VITE_NEWS_API_KEY || "";
-
-  if (!apiKey) {
-    res.status(503).json({ articles: [], error: "NEWS_API_KEY is not configured" });
-    return;
-  }
-
+export async function GET() {
   try {
+    const apiKey = process.env.NEWS_API_KEY || process.env.VITE_NEWS_API_KEY || "";
+
+    if (!apiKey) {
+      return Response.json(
+        { articles: [], error: "NEWS_API_KEY is not configured" },
+        { status: 503 },
+      );
+    }
+
     const articles = await loadTradeNewsFromNewsApi(apiKey);
-    res.setHeader("Cache-Control", "s-maxage=1800, stale-while-revalidate=3600");
-    res.status(200).json({ articles });
-  } catch {
-    res.status(502).json({ articles: [], error: "NewsAPI request failed" });
+    return Response.json(
+      { articles },
+      {
+        status: 200,
+        headers: {
+          "Cache-Control": "s-maxage=1800, stale-while-revalidate=3600",
+        },
+      },
+    );
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "NewsAPI request failed";
+    console.error("[trade-news]", message);
+    return Response.json({ articles: [], error: message }, { status: 502 });
   }
 }

@@ -25,7 +25,7 @@ function tradeNewsDevApi(apiKey: string): Plugin {
         }
 
         try {
-          const { loadTradeNewsFromNewsApi } = await import("./shared/tradeNewsCore.ts");
+          const { loadTradeNewsFromNewsApi } = await import("./api/_lib/tradeNewsCore.ts");
           const articles = await loadTradeNewsFromNewsApi(apiKey);
           sendJson(200, { articles });
         } catch {

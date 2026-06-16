@@ -1,18 +1,18 @@
 /** NewsAPI client — calls same-origin `/api/trade-news` (Vite dev plugin + Vercel serverless). */
 
-export type { TradeNewsArticle } from "../../../shared/tradeNewsCore";
+export type { TradeNewsArticle } from "./tradeNewsTypes";
 export { formatNewsDate } from "./newsApiFormat";
 
 const CACHE_KEY = "regtech_trade_news_v2";
 const CACHE_TTL_MS = 30 * 60 * 1000;
 
-function readCache(): import("../../../shared/tradeNewsCore").TradeNewsArticle[] | null {
+function readCache(): import("./tradeNewsTypes").TradeNewsArticle[] | null {
   try {
     const raw = sessionStorage.getItem(CACHE_KEY);
     if (!raw) return null;
     const { at, items } = JSON.parse(raw) as {
       at: number;
-      items: import("../../../shared/tradeNewsCore").TradeNewsArticle[];
+      items: import("./tradeNewsTypes").TradeNewsArticle[];
     };
     if (Date.now() - at > CACHE_TTL_MS) return null;
     return items;
@@ -21,7 +21,7 @@ function readCache(): import("../../../shared/tradeNewsCore").TradeNewsArticle[]
   }
 }
 
-function writeCache(items: import("../../../shared/tradeNewsCore").TradeNewsArticle[]): void {
+function writeCache(items: import("./tradeNewsTypes").TradeNewsArticle[]): void {
   try {
     sessionStorage.setItem(CACHE_KEY, JSON.stringify({ at: Date.now(), items }));
   } catch {
@@ -30,9 +30,7 @@ function writeCache(items: import("../../../shared/tradeNewsCore").TradeNewsArti
 }
 
 /** Returns up to 3 relevant articles, or [] if none / API unavailable. */
-export async function fetchTradeNews(): Promise<
-  import("../../../shared/tradeNewsCore").TradeNewsArticle[]
-> {
+export async function fetchTradeNews(): Promise<import("./tradeNewsTypes").TradeNewsArticle[]> {
   const cached = readCache();
   if (cached?.length) return cached;
 
@@ -40,7 +38,7 @@ export async function fetchTradeNews(): Promise<
   if (!res.ok) return [];
 
   const data = (await res.json()) as {
-    articles?: import("../../../shared/tradeNewsCore").TradeNewsArticle[];
+    articles?: import("./tradeNewsTypes").TradeNewsArticle[];
   };
   const articles = data.articles ?? [];
 
