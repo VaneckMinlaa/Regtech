@@ -59,31 +59,9 @@ export function HeroSection({ onGetStarted, animate = true }: HeroSectionProps) 
                 destinations — pay your subscription with Mobile Money via PawaPay.
               </motion.p>
 
-              <motion.dl
-                variants={fadeUp}
-                transition={landingTransition(0.6, 0.15)}
-                className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3 text-center sm:gap-6"
-              >
-                {[
-                  { value: "5", label: "Pilot countries" },
-                  { value: "1", label: "PawaPay checkout" },
-                  { value: "30s", label: "MoMo upgrade" },
-                ].map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-2xl border border-gray-200/80 bg-white/80 px-3 py-4 dark:border-white/10 dark:bg-white/5"
-                  >
-                    <dt className="text-2xl font-bold font-display text-primary-600 dark:text-primary-400">
-                      {stat.value}
-                    </dt>
-                    <dd className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">{stat.label}</dd>
-                  </div>
-                ))}
-              </motion.dl>
-
               <motion.div
                 variants={scaleIn}
-                transition={landingTransition(0.5, 0.22)}
+                transition={landingTransition(0.5, 0.15)}
                 className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center"
               >
                 <button
