@@ -30,6 +30,7 @@ import type {
   AnalyticsSummaryResponse,
   BackendCompareResponse,
   BillingCountriesResponse,
+  PlanPricesResponse,
   CompareRequest,
   CameroonFiscalRequest,
   CameroonFiscalResponse,
@@ -257,6 +258,11 @@ export const regtechApi = {
   async getBillingCountries(): Promise<BillingCountriesResponse["countries"]> {
     const response = await apiGet<BillingCountriesResponse>("/api/v1/billing/countries", false);
     return response.countries;
+  },
+
+  getBillingPlanPrices(countryIso: string): Promise<PlanPricesResponse> {
+    const qs = new URLSearchParams({ countryIso });
+    return apiGet<PlanPricesResponse>(`/api/v1/billing/plan-prices?${qs.toString()}`, false);
   },
 
   getBillingTransactionStatus(depositId: string): Promise<BillingTransactionStatus> {

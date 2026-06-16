@@ -8,15 +8,13 @@ import {
   Shield,
 } from "lucide-react";
 import type { PlanId, PawapayCountry } from "@/domain/billing/types";
-import {
-  formatLocalPrice,
-  PRICING_PLANS,
-  PAWAPAY_COUNTRIES,
-} from "@/domain/billing/plans";
+import { PRICING_PLANS, PAWAPAY_COUNTRIES } from "@/domain/billing/plans";
 import type { PricingPlan } from "@/domain/billing/types";
+import type { PlanPriceItem } from "@/infrastructure/http/regtechApiTypes";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { mergeApiPlansWithPricing } from "@/infrastructure/http/monetizationMapper";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
+import { formatPlanAmount } from "./formatPlanAmount";
 import { SubscriptionOverview } from "./SubscriptionOverview";
 import { SubscriptionPageSkeleton } from "./SubscriptionPageSkeleton";
 import { ReferenceVersionsFooter } from "./ReferenceVersionsFooter";
@@ -41,6 +39,8 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     PRICING_PLANS.filter((p) => p.id !== "free" && p.id !== "enterprise"),
   );
   const [billingCountries, setBillingCountries] = useState<PawapayCountry[]>(PAWAPAY_COUNTRIES);
+  const [planPrices, setPlanPrices] = useState<Record<string, PlanPriceItem>>({});
+  const [planPricesLoading, setPlanPricesLoading] = useState(false);
 
   const selectedCountry =
     billingCountries.find((c) => c.code === billingCountry.code) ?? billingCountry;
@@ -50,18 +50,36 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     void regtechApi
       .getBillingCountries()
       .then((remote) => {
-        const enabledByCode = new Map(remote.map((r) => [r.code, r.checkoutEnabled]));
+        if (remote.length === 0) return;
         setBillingCountries(
-          PAWAPAY_COUNTRIES.map((c) => ({
-            ...c,
-            checkoutEnabled: enabledByCode.get(c.code) ?? false,
-          })),
+          remote.map((item) => {
+            const local = PAWAPAY_COUNTRIES.find((c) => c.code === item.code);
+            return {
+              code: item.code,
+              name: item.name,
+              currency: item.currency,
+              pawapaySupported: true,
+              checkoutEnabled: item.checkoutEnabled,
+              operators: local?.operators ?? [],
+            };
+          }),
         );
       })
       .catch(() => {
         /* garde la liste locale */
       });
   }, []);
+
+  useEffect(() => {
+    setPlanPricesLoading(true);
+    void regtechApi
+      .getBillingPlanPrices(selectedCountry.code)
+      .then((response) => {
+        setPlanPrices(Object.fromEntries(response.plans.map((plan) => [plan.plan, plan])));
+      })
+      .catch(() => setPlanPrices({}))
+      .finally(() => setPlanPricesLoading(false));
+  }, [selectedCountry.code]);
 
   useEffect(() => {
     void regtechApi
@@ -207,6 +225,12 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {paidPlans.map((plan) => {
             const priceXaf = yearly ? plan.priceXafYearly : plan.priceXafMonthly;
+            const apiPrice = planPrices[plan.id];
+            const localAmount = apiPrice
+              ? yearly
+                ? apiPrice.amountYearly
+                : apiPrice.amountMonthly
+              : null;
             const isCurrent = subscription.plan === plan.id;
             const isHighlighted = plan.highlighted;
 
@@ -236,7 +260,17 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   {plan.description}
                 </p>
                 <p className={`text-2xl font-extrabold font-display mt-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
-                  {formatLocalPrice(priceXaf, selectedCountry.currency)}
+                  {planPricesLoading ? (
+                    <span
+                      className={`inline-block h-8 w-28 rounded animate-pulse ${
+                        darkMode ? "bg-gray-800/80" : "bg-gray-200"
+                      }`}
+                    />
+                  ) : localAmount != null && apiPrice ? (
+                    formatPlanAmount(localAmount, apiPrice.currency)
+                  ) : (
+                    <span className="text-base font-semibold text-rose-400">Prix indisponible</span>
+                  )}
                   <span className={`text-xs font-normal ml-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
                     /{yearly ? "an" : "mois"}
                   </span>

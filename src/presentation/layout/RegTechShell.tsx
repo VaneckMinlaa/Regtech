@@ -39,17 +39,30 @@ import { useTheme } from "@/presentation/providers/ThemeProvider";
 import { useSubscription, PENDING_DEPOSIT_STORAGE_KEY } from "@/presentation/providers/SubscriptionProvider";
 import { platform } from "@/presentation/theme/platformStyles";
 import { QuotaToast } from "@/presentation/features/billing/QuotaToast";
+import {
+  isDashboardTab,
+  readDashboardTabFromUrl,
+  writeDashboardTabToUrl,
+  type DashboardTab,
+} from "@/presentation/layout/dashboardTabs";
 
 interface RegTechShellProps {
   /** Onglet initial (ex. depuis landing). */
   initialTab?: string;
 }
 
+function resolveInitialTab(initialTab?: string): DashboardTab {
+  if (initialTab && isDashboardTab(initialTab)) {
+    return initialTab.toUpperCase() as DashboardTab;
+  }
+  return readDashboardTabFromUrl();
+}
+
 export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
   const { countries, products, apiOnline, isLoading: refLoading } = useReferenceData();
   const { darkMode, toggleDarkMode } = useTheme();
 
-  const [activeTab, setActiveTab] = useState<string>(initialTab?.toUpperCase() ?? "SIM");
+  const [activeTab, setActiveTab] = useState<DashboardTab>(() => resolveInitialTab(initialTab));
   const [billingReturnStatus, setBillingReturnStatus] = useState<string | null>(null);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
   const [utcClock, setUtcClock] = useState<string>("");
@@ -62,20 +75,23 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
   const { confirmPaymentReturn, quotaAlert, dismissQuotaAlert } = useSubscription();
 
-  const goToPricing = useCallback(() => {
-    setActiveTab("PRICING");
+  const navigateToTab = useCallback((tab: DashboardTab) => {
+    setActiveTab(tab);
     setIsMobileSidebarOpen(false);
+    writeDashboardTabToUrl(tab);
   }, []);
 
+  const goToPricing = useCallback(() => {
+    navigateToTab("PRICING");
+  }, [navigateToTab]);
+
   const goToHistory = useCallback(() => {
-    setActiveTab("HIST");
-    setIsMobileSidebarOpen(false);
-  }, []);
+    navigateToTab("HIST");
+  }, [navigateToTab]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const billing = params.get("billing");
-    const tab = params.get("tab");
     const status = params.get("status");
     const depositId =
       params.get("depositId") ?? sessionStorage.getItem(PENDING_DEPOSIT_STORAGE_KEY);
@@ -96,17 +112,14 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
     };
 
     if (billing === "return" || depositId) {
-      setActiveTab("PRICING");
+      navigateToTab("PRICING");
       if (depositId) {
         handlePaymentReturn(depositId);
       } else if (status === "success" || status === "pending" || status === "failed") {
         setBillingReturnStatus(status);
       }
-      window.history.replaceState({}, "", window.location.pathname);
-    } else if (tab) {
-      setActiveTab(tab.toUpperCase());
     }
-  }, [confirmPaymentReturn]);
+  }, [confirmPaymentReturn, navigateToTab]);
 
   useEffect(() => {
     const tick = () => {
@@ -177,7 +190,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </span>
           
           <button
-            onClick={() => { setActiveTab("SIM"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("SIM")}
             id="tab_simulator"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "SIM" 
@@ -190,7 +203,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </button>
 
           <button
-            onClick={() => { setActiveTab("IA"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("IA")}
             id="tab_ai_classifier"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "IA" 
@@ -203,7 +216,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </button>
 
           <button
-            onClick={() => { setActiveTab("AFT"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("AFT")}
             id="tab_afcfta_rules"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "AFT" 
@@ -216,7 +229,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </button>
 
           <button
-            onClick={() => { setActiveTab("CSV"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("CSV")}
             id="tab_batch_csv"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "CSV" 
@@ -229,7 +242,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </button>
 
           <button
-            onClick={() => { setActiveTab("HIST"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("HIST")}
             id="tab_history"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "HIST"
@@ -246,7 +259,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </span>
 
           <button
-            onClick={() => { setActiveTab("CMR"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("CMR")}
             id="tab_cameroon_fiscal"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "CMR"
@@ -259,7 +272,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </button>
 
           <button
-            onClick={() => { setActiveTab("CHECKLIST"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("CHECKLIST")}
             id="tab_checklist"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "CHECKLIST"
@@ -276,7 +289,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           </span>
 
           <button
-            onClick={() => { setActiveTab("PRICING"); setIsMobileSidebarOpen(false); }}
+            onClick={() => navigateToTab("PRICING")}
             id="tab_pricing"
             className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
               activeTab === "PRICING"
@@ -389,7 +402,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
               onSelectHSCode={(code, desc) => {
                 setPassedHSCode(code);
                 setPassedDesc(desc);
-                setActiveTab("SIM");
+                navigateToTab("SIM");
               }}
               onUpgrade={goToPricing}
             />

@@ -252,3 +252,18 @@ export interface BillingCountryItem {
 export interface BillingCountriesResponse {
   countries: BillingCountryItem[];
 }
+
+export interface PlanPriceItem {
+  plan: string;
+  priceXafMonthly: number;
+  priceXafYearly: number;
+  amountMonthly: number;
+  amountYearly: number;
+  currency: string;
+}
+
+export interface PlanPricesResponse {
+  countryIso: string;
+  currency: string;
+  plans: PlanPriceItem[];
+}
