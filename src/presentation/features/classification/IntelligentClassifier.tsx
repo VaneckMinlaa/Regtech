@@ -117,8 +117,8 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2" id="ai_classification_panel">
-      <SectionPanel darkMode={darkMode} id="classifier_input_panel" className="flex h-full flex-col">
+    <div className="grid min-w-0 grid-cols-1 items-stretch gap-5 lg:grid-cols-2" id="ai_classification_panel">
+      <SectionPanel darkMode={darkMode} id="classifier_input_panel" className="flex h-full min-w-0 flex-col">
         <div className="flex h-full flex-col space-y-4">
           <div className="flex min-h-0 flex-1 flex-col">
             <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
@@ -164,44 +164,46 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
         </div>
       </SectionPanel>
 
-      <SectionPanel darkMode={darkMode} id="classifier_results_panel" className="flex h-full flex-col">
-        <div className="flex h-full flex-col space-y-4">
+      <SectionPanel darkMode={darkMode} id="classifier_results_panel" className="flex h-full min-w-0 flex-col">
+        <div className="flex h-full min-w-0 flex-col space-y-4">
             {isLoading ? (
               <ClassifierResultSkeleton darkMode={darkMode} />
             ) : result ? (
-              <div className="space-y-4">
-                <div className="flex items-start justify-between">
-                  <div>
+              <div className="space-y-4 min-w-0">
+                <div className="flex flex-col gap-3">
+                  <div className="min-w-0">
                     <span className={`text-[10px] font-bold uppercase tracking-wider font-mono block mb-0.5 ${
                       darkMode ? "text-gray-500" : "text-gray-500"
                     }`}>
                       Identified HS code
                     </span>
-                    <h3 className="text-xl font-black tracking-tight font-display flex items-center gap-2">
-                      <span className="text-primary-600 dark:text-primary-400 font-mono">{result.hs_code}</span>
-                      <span className={`text-xs px-2 py-0.5 rounded border font-semibold ${
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-xl font-black tracking-tight font-display font-mono text-primary-600 dark:text-primary-400 break-all">
+                        {result.hs_code}
+                      </span>
+                      <span className={`shrink-0 text-xs px-2 py-0.5 rounded border font-semibold ${
                         darkMode ? "bg-primary-500/15 border-primary-500/30 text-primary-300" : "bg-primary-100 border-primary-200 text-primary-800"
                       }`}>
                         {result.category}
                       </span>
-                    </h3>
+                    </div>
                   </div>
 
-                  {/* Mode badge */}
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded border font-mono ${
-                    result.mode === "cloud" 
-                      ? "bg-purple-500/10 text-purple-650 dark:text-purple-300 border-purple-500/20" 
+                  <span className={`self-start shrink-0 text-[10px] font-bold px-2 py-0.5 rounded border font-mono ${
+                    result.mode === "cloud"
+                      ? "bg-purple-500/10 text-purple-650 dark:text-purple-300 border-purple-500/20"
                       : "bg-gray-200 text-gray-700 border-gray-300 dark:bg-dark-secondary dark:text-gray-400 dark:border-gray-700"
                   }`}>
                     {result.mode === "cloud" ? "Cloud classification" : "Local classification"}
                   </span>
                 </div>
 
-                {/* Score de confiance */}
                 <div>
-                  <div className="flex justify-between text-xs mb-1 font-mono">
+                  <div className="mb-1 flex items-center justify-between gap-3 text-xs font-mono">
                     <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Confidence score:</span>
-                    <span className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>{result.confidence}%</span>
+                    <span className={`shrink-0 font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
+                      {result.confidence}%
+                    </span>
                   </div>
                   <div className={`w-full rounded-full h-1.5 overflow-hidden ${darkMode ? "bg-dark-primary" : "bg-gray-205"}`}>
                     <div 
@@ -218,7 +220,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                 </div>
 
                 {/* Reasoning comment */}
-                <div className={`p-3.5 rounded-lg border text-xs leading-relaxed font-sans ${
+                <div className={`min-w-0 break-words rounded-lg border p-3.5 text-xs leading-relaxed font-sans ${
                   darkMode ? "bg-dark-primary border-gray-800 text-gray-300" : "bg-white border-gray-200 text-gray-700 shadow-sm"
                 }`}>
                 <strong className={`text-[11px] uppercase tracking-wider block mb-1 ${darkMode ? "text-white" : "text-gray-800"}`}>Customs reasoning</strong>
@@ -227,8 +229,10 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
 
                 {/* Alternative suggestions */}
                 {result.suggestions && result.suggestions.length > 0 && (
-                  <div className="text-xs">
-                    <span className={`font-semibold block mb-1.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>Alternative suggestions (AI-03):</span>
+                  <div className="min-w-0 text-xs">
+                    <span className={`font-semibold block mb-1.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+                      Alternative suggestions (AI-03):
+                    </span>
                     <div className="flex flex-wrap gap-2">
                       {result.suggestions.map((code) => {
                         const product = products.find((p) => p.code === code);
@@ -253,7 +257,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                 )}
 
                 {/* Main Action to push to simulator */}
-                <div className={`flex gap-2.5 pt-3 border-t ${
+                <div className={`flex flex-col gap-2.5 border-t pt-3 sm:flex-row sm:items-stretch ${
                   darkMode ? "border-gray-800" : "border-gray-200"
                 }`}>
                   <button
@@ -262,7 +266,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                       onSelectHSCode(result.hs_code, desc);
                     }}
                     id="btn_load_in_simulator"
-                    className={`flex-1 ${platform.buttonPrimary} py-2 text-xs`}
+                    className={`w-full sm:flex-1 ${platform.buttonPrimary} py-2 text-xs`}
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Load into simulator</span>
@@ -270,7 +274,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
 
                   <button
                     onClick={() => setShowCorrection(!showCorrection)}
-                    className={`px-3 py-2 rounded-lg text-xs leading-none transition-colors border ${
+                    className={`w-full shrink-0 rounded-lg border px-3 py-2 text-xs leading-none transition-colors sm:w-auto ${
                       darkMode ? "bg-dark-primary hover:bg-dark-secondary border-gray-800 text-gray-400 hover:text-gray-200" : "bg-white hover:bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-800"
                     }`}
                   >
@@ -285,22 +289,22 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                   }`}>
                     <strong className={darkMode ? "text-white" : "text-gray-905"}>Manually adjust the HS code of the goods</strong>
                     
-                    <div className="flex gap-2">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                       <SearchableSelect
                         id="select_correction_code"
                         value={correctedCode}
                         onChange={setCorrectedCode}
                         darkMode={darkMode}
                         loading={refLoading}
-                        className="flex-1"
+                        className="w-full min-w-0 sm:flex-1"
                         options={productToOptions(products)}
                         placeholder="Type HS code or description…"
                         noDataPlaceholder="Products unavailable"
                       />
- 
+
                       <button
                         onClick={handleSaveCorrection}
-                        className="bg-primary-600 hover:bg-primary-600 text-white font-medium px-4 py-1.5 rounded transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
+                        className="inline-flex w-full shrink-0 items-center justify-center gap-1 rounded bg-primary-600 px-4 py-2 text-white transition-colors hover:bg-primary-600 sm:w-auto sm:py-1.5"
                       >
                         <Save className="w-3.5 h-3.5" />
                         <span>Save</span>

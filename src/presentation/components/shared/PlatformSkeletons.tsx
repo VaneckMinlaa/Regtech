@@ -85,13 +85,13 @@ export function ClassifierPageSkeleton({ darkMode = true, id = "classifier_page_
 
 export function ClassifierResultSkeleton({ darkMode = true }: SkeletonLayoutProps) {
   return (
-    <div className="space-y-4" aria-busy="true" aria-label="Classification in progress">
-      <div className="flex items-start justify-between gap-4">
-        <div className="flex-1 space-y-2">
+    <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Classification in progress">
+      <div className="flex flex-col gap-3">
+        <div className="space-y-2">
           <Skeleton darkMode={darkMode} className="h-3 w-28" />
-          <Skeleton darkMode={darkMode} className="h-7 w-36" />
+          <Skeleton darkMode={darkMode} className="h-7 w-36 max-w-full" />
         </div>
-        <Skeleton darkMode={darkMode} className="h-6 w-24 rounded-full" />
+        <Skeleton darkMode={darkMode} className="h-6 w-32 rounded-full" />
       </div>
       <Skeleton darkMode={darkMode} className="h-2 w-full rounded-full" />
       <Skeleton darkMode={darkMode} className="h-20 w-full" />
