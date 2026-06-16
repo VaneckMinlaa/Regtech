@@ -51,11 +51,10 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
   };
 
   return (
-    <div className="animate-fadeIn space-y-5" id="checklist_cameroon_page">
-      <ChecklistProgressStepper checked={checked} darkMode={darkMode} />
-
+    <div className="animate-fadeIn" id="checklist_cameroon_page">
       <SectionPanel darkMode={darkMode} id="checklist_steps_panel">
-        <h2 className={`mb-4 text-sm font-semibold ${platform.textPrimary(darkMode)}`}>e-GUCE / CAMCIS steps</h2>
+        <ChecklistProgressStepper checked={checked} darkMode={darkMode} />
+        <h2 className={`mb-4 mt-6 text-sm font-semibold ${platform.textPrimary(darkMode)}`}>e-GUCE / CAMCIS steps</h2>
         <ol className="space-y-3">
         {CAMEROON_IMPORT_STEPS.map((step, index) => {
           const isDone = !!checked[step.id];

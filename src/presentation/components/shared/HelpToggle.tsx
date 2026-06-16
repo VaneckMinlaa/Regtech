@@ -10,6 +10,8 @@ interface HelpToggleProps {
   /** Section title shown on the left; help button aligns to the right (HS classification style). */
   title?: string;
   description?: string;
+  /** Renders expanded content inside a card panel (simulator / AfCFTA forms). */
+  expandAsPanel?: boolean;
   children: ReactNode;
 }
 
@@ -21,6 +23,7 @@ export function HelpToggle({
   disabled = false,
   title,
   description,
+  expandAsPanel = false,
   children,
 }: HelpToggleProps) {
   const [open, setOpen] = useState(false);
@@ -64,7 +67,13 @@ export function HelpToggle({
 
       {open && !disabled && (
         <div
-          className={`${title ? "mt-4" : "mt-4"} space-y-3 text-sm leading-relaxed border-t pt-4 ${platform.borderSubtle(darkMode)} ${platform.textSecondary(darkMode)}`}
+          className={
+            expandAsPanel
+              ? `mt-4 space-y-4 rounded-[20px] border p-4 sm:p-5 ${platform.border(darkMode)} ${
+                  darkMode ? "bg-dark-primary" : "bg-white shadow-theme-sm"
+                }`
+              : `${title ? "mt-4" : "mt-4"} space-y-3 text-sm leading-relaxed border-t pt-4 ${platform.borderSubtle(darkMode)} ${platform.textSecondary(darkMode)}`
+          }
           role="region"
         >
           {children}

@@ -7,6 +7,7 @@ import {
 } from "@/presentation/features/afcfta/AfcftaDutyProjection";
 import { AfcftaToolsPanel } from "@/presentation/features/afcfta/AfcftaToolsPanel";
 import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
+import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
 import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import {
@@ -148,14 +149,23 @@ export function AfcftaPage({
         />
       </SectionPanel>
 
-      <SectionPanel darkMode={darkMode} id="afcfta_validation_panel">
-        <AfcftaToolsPanel
-          origin={compOrigin}
-          hsCode={compProduct}
-          declaredValue={compVal}
+      <div id="afcfta_validation_panel">
+        <HelpToggle
+          title="AfCFTA origin validation & certificate"
+          description="Production inputs used to calculate local value addition"
+          label="Is this eligible for AfCFTA?"
           darkMode={darkMode}
-        />
-      </SectionPanel>
+          expandAsPanel
+        >
+          <AfcftaToolsPanel
+            origin={compOrigin}
+            hsCode={compProduct}
+            declaredValue={compVal}
+            darkMode={darkMode}
+            embedded
+          />
+        </HelpToggle>
+      </div>
 
       <p className={`text-sm leading-relaxed text-rose-500`} id="afcfta_sensitive_goods">
         <strong>Sensitive goods — blacklist (AFT-04).</strong> Automobiles, valuable textiles, code{" "}

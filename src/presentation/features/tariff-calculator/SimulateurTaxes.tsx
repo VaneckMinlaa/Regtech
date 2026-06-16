@@ -19,6 +19,7 @@ import {
 } from "@/presentation/components/shared/SearchableSelect";
 import { platform } from "@/presentation/theme/platformStyles";
 import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
+import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
 
 interface SimulateurTaxesProps {
   onSimulationRun: (result: SimulationResult) => void;
@@ -306,17 +307,28 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
           </button>
       </SectionPanel>
 
-      <SectionPanel darkMode={darkMode} id="simulator_origin_panel">
-          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-            <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Rule of origin (AFT)</p>
-            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${originValueRatio >= originThreshold ? "border-primary-500/20 bg-primary-500/10 text-primary-600" : "border-rose-500/20 bg-rose-500/10 text-rose-600"}`}>
+      <div id="simulator_origin_panel">
+        <HelpToggle
+          title="Rule of origin (AfT)"
+          label="Is this eligible for AfCFTA?"
+          darkMode={darkMode}
+          expandAsPanel
+        >
+          <div className="flex flex-wrap items-center justify-end gap-3">
+            <span
+              className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${
+                originValueRatio >= originThreshold
+                  ? "border-primary-500/20 bg-primary-500/10 text-primary-600"
+                  : "border-rose-500/20 bg-rose-500/10 text-rose-600"
+              }`}
+            >
               {originValueRatio >= originThreshold
                 ? `Eligible (≥${originThreshold}%)`
                 : `Non-compliant (<${originThreshold}%)`}
             </span>
           </div>
 
-          <div className={`mb-4 rounded-2xl px-4 py-3 text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
+          <div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${platform.textMuted(darkMode)} ${platform.cardNested(darkMode)}`}>
             <span className={`mb-2 block text-xs font-semibold uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
               AfCFTA origin formula
             </span>
@@ -355,7 +367,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <input type="number" value={prixVenteExport} onChange={(e) => setPrixVenteExport(Number(e.target.value))} className={fieldClass} />
             </div>
           </div>
-      </SectionPanel>
+        </HelpToggle>
+      </div>
 
       <SectionPanel darkMode={darkMode} id="simulation_tax_results" className="scroll-mt-24">
         <div className="space-y-6">

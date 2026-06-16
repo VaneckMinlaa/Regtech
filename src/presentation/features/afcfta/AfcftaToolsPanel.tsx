@@ -13,6 +13,8 @@ interface AfcftaToolsPanelProps {
   hsCode: string;
   declaredValue?: number;
   darkMode?: boolean;
+  /** Hide section header when rendered inside HelpToggle. */
+  embedded?: boolean;
 }
 
 /** AfCFTA origin validation + certificate draft (authenticated API). */
@@ -22,6 +24,7 @@ export function AfcftaToolsPanel({
   hsCode,
   declaredValue = 1_000_000,
   darkMode = true,
+  embedded = false,
 }: AfcftaToolsPanelProps) {
   const [costMatiere, setCostMatiere] = useState(400_000);
   const [mainOeuvre, setMainOeuvre] = useState(200_000);
@@ -86,14 +89,16 @@ export function AfcftaToolsPanel({
 
   return (
     <div id="afcfta_tools_panel" className="space-y-6">
-      <div>
-        <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
-          AfCFTA origin validation & certificate
-        </h3>
-        <p className={`text-xs mt-1 ${platform.textMuted(darkMode)}`}>
-          Production inputs used to calculate local value addition
-        </p>
-      </div>
+      {!embedded && (
+        <div>
+          <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
+            AfCFTA origin validation & certificate
+          </h3>
+          <p className={`text-xs mt-1 ${platform.textMuted(darkMode)}`}>
+            Production inputs used to calculate local value addition
+          </p>
+        </div>
+      )}
 
       <div className="flex flex-col gap-4">
         {[
