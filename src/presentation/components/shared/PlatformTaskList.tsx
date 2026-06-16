@@ -16,7 +16,7 @@ export function TaskListShell({
   return (
     <div
       id={id}
-      className={`overflow-hidden rounded-[20px] border ${platform.border(darkMode)} ${
+      className={`overflow-hidden rounded-xl border ${platform.border(darkMode)} ${
         darkMode ? "bg-dark-primary" : "bg-white shadow-theme-sm"
       }`}
     >

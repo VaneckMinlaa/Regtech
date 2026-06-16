@@ -149,14 +149,6 @@ export function AfcftaPage({
         </p>
       </div>
 
-      <SectionPanel darkMode={darkMode} id="afcfta_duty_projection_panel">
-        <AfcftaDutyProjection
-          originCountryIso={compOrigin}
-          hsCode={compProduct}
-          darkMode={darkMode}
-        />
-      </SectionPanel>
-
       <div id="afcfta_validation_panel">
         <HelpToggle
           title="AfCFTA origin validation & certificate"
@@ -180,113 +172,123 @@ export function AfcftaPage({
         <strong>98010000</strong>: excluded from concessions, full-rate tax applied automatically.
       </p>
 
-      <SectionPanel darkMode={darkMode} id="afcfta_compare_panel">
-        <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
-          Multi-destination comparison
-        </h3>
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2">
+        <SectionPanel darkMode={darkMode} id="afcfta_duty_projection_panel">
+          <AfcftaDutyProjection
+            originCountryIso={compOrigin}
+            hsCode={compProduct}
+            darkMode={darkMode}
+          />
+        </SectionPanel>
 
-        <div className="mt-6 space-y-4">
-          <div>
-            <label className={platform.fieldLabel(darkMode)}>Origin country</label>
-            <SearchableSelect
-              value={compOrigin}
-              onChange={setCompOrigin}
-              loading={refLoading}
-              darkMode={darkMode}
-              options={countryToOptions(countries)}
-              placeholder="Select a country…"
-              noDataPlaceholder="API required"
-            />
-          </div>
-          <div>
-            <label className={platform.fieldLabel(darkMode)}>Product (HS code)</label>
-            <SearchableSelect
-              value={compProduct}
-              onChange={setCompProduct}
-              loading={refLoading}
-              darkMode={darkMode}
-              options={productToOptions(products)}
-              placeholder="Code or description…"
-              noDataPlaceholder="API required"
-            />
-          </div>
-          <div>
-            <label className={platform.fieldLabel(darkMode)}>Comparable value (FCFA)</label>
-            <input
-              type="number"
-              value={compVal}
-              onChange={(e) => setCompVal(Number(e.target.value))}
-              className={inputClass}
-            />
-          </div>
-        </div>
+        <SectionPanel darkMode={darkMode} id="afcfta_compare_panel">
+          <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
+            Multi-destination comparison
+          </h3>
 
-        <div className="mt-6 space-y-3">
-          <p className={platform.fieldLabel(darkMode)}>Destinations to compare</p>
-          {[
-            { label: "Destination 1", value: dest1, set: setDest1 },
-            { label: "Destination 2", value: dest2, set: setDest2 },
-            { label: "Destination 3", value: dest3, set: setDest3 },
-          ].map(({ label, value, set }) => (
-            <div key={label}>
-              <label className={`text-xs font-medium mb-1.5 block ${platform.textMuted(darkMode)}`}>
-                {label}
-              </label>
+          <div className="mt-6 space-y-4">
+            <div>
+              <label className={platform.fieldLabel(darkMode)}>Origin country</label>
               <SearchableSelect
-                value={value}
-                onChange={set}
+                value={compOrigin}
+                onChange={setCompOrigin}
                 loading={refLoading}
                 darkMode={darkMode}
                 options={countryToOptions(countries)}
                 placeholder="Select a country…"
-                noDataPlaceholder="—"
+                noDataPlaceholder="API required"
               />
             </div>
-          ))}
-        </div>
-
-        <div className={`mt-6 space-y-3 border-t pt-6 ${platform.borderSubtle(darkMode)}`}>
-          {compLoading && <CompareRowsSkeleton darkMode={darkMode} rows={3} />}
-          {!compLoading && compTariffs.length === 0 && (
-            <p className={`text-sm ${platform.textMuted(darkMode)}`}>
-              Select origin, product, and value to compare.
-            </p>
-          )}
-          {compTariffs.map((c, i) => (
-            <div
-              key={i}
-              className={`flex flex-wrap items-center justify-between gap-3 border-b py-4 last:border-b-0 ${platform.borderSubtle(darkMode)}`}
-            >
-              <div>
-                <span className={`font-semibold text-sm ${platform.textPrimary(darkMode)}`}>
-                  {c.countryName}
-                </span>
-                <span className={`ml-1 font-mono text-xs ${platform.textMuted(darkMode)}`}>
-                  ({c.countryCode})
-                </span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span
-                  className={`text-xs font-medium rounded-full px-2.5 py-0.5 ${
-                    c.isEligiblePrefAfCFTA
-                      ? darkMode
-                        ? "bg-primary-500/15 text-primary-300"
-                        : "bg-primary-50 text-primary-700"
-                      : darkMode
-                        ? "bg-amber-500/15 text-amber-300"
-                        : "bg-amber-50 text-amber-700"
-                  }`}
-                >
-                  {c.isEligiblePrefAfCFTA ? "Preferential" : "Standard"}
-                </span>
-                <span className="font-mono text-sm font-semibold text-primary-500">
-                  {c.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} {c.currency}
-                </span>
-              </div>
+            <div>
+              <label className={platform.fieldLabel(darkMode)}>Product (HS code)</label>
+              <SearchableSelect
+                value={compProduct}
+                onChange={setCompProduct}
+                loading={refLoading}
+                darkMode={darkMode}
+                options={productToOptions(products)}
+                placeholder="Code or description…"
+                noDataPlaceholder="API required"
+              />
             </div>
-          ))}
-        </div>
-      </SectionPanel>
+            <div>
+              <label className={platform.fieldLabel(darkMode)}>Comparable value (FCFA)</label>
+              <input
+                type="number"
+                value={compVal}
+                onChange={(e) => setCompVal(Number(e.target.value))}
+                className={inputClass}
+              />
+            </div>
+          </div>
+
+          <div className="mt-6 space-y-3">
+            <p className={platform.fieldLabel(darkMode)}>Destinations to compare</p>
+            {[
+              { label: "Destination 1", value: dest1, set: setDest1 },
+              { label: "Destination 2", value: dest2, set: setDest2 },
+              { label: "Destination 3", value: dest3, set: setDest3 },
+            ].map(({ label, value, set }) => (
+              <div key={label}>
+                <label className={`text-xs font-medium mb-1.5 block ${platform.textMuted(darkMode)}`}>
+                  {label}
+                </label>
+                <SearchableSelect
+                  value={value}
+                  onChange={set}
+                  loading={refLoading}
+                  darkMode={darkMode}
+                  options={countryToOptions(countries)}
+                  placeholder="Select a country…"
+                  noDataPlaceholder="—"
+                />
+              </div>
+            ))}
+          </div>
+
+          <div className={`mt-6 space-y-3 border-t pt-6 ${platform.borderSubtle(darkMode)}`}>
+            {compLoading && <CompareRowsSkeleton darkMode={darkMode} rows={3} />}
+            {!compLoading && compTariffs.length === 0 && (
+              <p className={`text-sm ${platform.textMuted(darkMode)}`}>
+                Select origin, product, and value to compare.
+              </p>
+            )}
+            {compTariffs.map((c, i) => (
+              <div
+                key={i}
+                className={`flex flex-wrap items-center justify-between gap-3 border-b py-4 last:border-b-0 ${platform.borderSubtle(darkMode)}`}
+              >
+                <div>
+                  <span className={`font-semibold text-sm ${platform.textPrimary(darkMode)}`}>
+                    {c.countryName}
+                  </span>
+                  <span className={`ml-1 font-mono text-xs ${platform.textMuted(darkMode)}`}>
+                    ({c.countryCode})
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`text-xs font-medium rounded-full px-2.5 py-0.5 ${
+                      c.isEligiblePrefAfCFTA
+                        ? darkMode
+                          ? "bg-primary-500/15 text-primary-300"
+                          : "bg-primary-50 text-primary-700"
+                        : darkMode
+                          ? "bg-amber-500/15 text-amber-300"
+                          : "bg-amber-50 text-amber-700"
+                    }`}
+                  >
+                    {c.isEligiblePrefAfCFTA ? "Preferential" : "Standard"}
+                  </span>
+                  <span className="font-mono text-sm font-semibold text-primary-500">
+                    {c.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} {c.currency}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionPanel>
+      </div>
     </div>
   );
 }

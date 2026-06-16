@@ -21,7 +21,7 @@ export function TestimonialsSection() {
           {visible.map((testimonial) => (
             <div
               key={testimonial.id}
-              className="p-2 bg-gray-50 dark:bg-white/5 dark:border-gray-800 border rounded-[20px] border-gray-100 hover:border-primary-200 transition"
+              className="p-2 bg-gray-50 dark:bg-white/5 dark:border-gray-800 border rounded-xl border-gray-100 hover:border-primary-200 transition"
             >
               <div className="flex items-center p-3 mb-3 bg-white/90 dark:bg-white/[0.03] rounded-2xl">
                 <img

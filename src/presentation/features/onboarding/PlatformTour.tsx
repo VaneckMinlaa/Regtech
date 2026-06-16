@@ -82,7 +82,7 @@ function TourCard({
       role="dialog"
       aria-modal="true"
       aria-labelledby="platform_tour_title"
-      className={`pointer-events-auto w-full max-w-md overflow-hidden rounded-[20px] border shadow-2xl ${
+      className={`pointer-events-auto w-full max-w-md overflow-hidden rounded-xl border shadow-2xl ${
         darkMode ? "border-gray-700 bg-dark-primary text-gray-100" : "border-gray-200 bg-white text-gray-900 shadow-theme-sm"
       }`}
       style={style}

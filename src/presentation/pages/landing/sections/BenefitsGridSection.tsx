@@ -17,7 +17,7 @@ export function BenefitsGridSection({ onGetStarted }: BenefitsGridSectionProps) 
         <div className="max-w-[1008px] mx-auto">
           <div className="grid lg:grid-cols-12 gap-8">
             <div className="lg:col-span-6">
-              <div className="relative flex flex-col justify-between bg-primary-500 rounded-[20px] p-9 md:p-13 min-h-[420px]">
+              <div className="relative flex flex-col justify-between bg-primary-500 rounded-xl p-9 md:p-13 min-h-[420px]">
                 <div className="max-w-sm mb-32 relative z-10">
                   <h3 className="font-bold text-white text-2xl md:text-3xl mb-4">
                     Reliable simulations for your business decisions
@@ -30,7 +30,7 @@ export function BenefitsGridSection({ onGetStarted }: BenefitsGridSectionProps) 
               </div>
             </div>
             <div className="lg:col-span-6">
-              <div className="benefits-bg rounded-[20px] p-12 overflow-hidden min-h-[420px] flex flex-col justify-between">
+              <div className="benefits-bg rounded-xl p-12 overflow-hidden min-h-[420px] flex flex-col justify-between">
                 <div>
                   <img src="/landing/benefits/bn-2.svg" alt="" width={306} height={279} />
                 </div>
@@ -45,7 +45,7 @@ export function BenefitsGridSection({ onGetStarted }: BenefitsGridSectionProps) 
               </div>
             </div>
             <div className="lg:col-span-12">
-              <div className="lg:px-12 p-8 bg-[#2D0B70] lg:pb-0 lg:p-12 relative rounded-[20px] h-full lg:flex lg:flex-row justify-between bg-cover flex-col gap-5 overflow-hidden">
+              <div className="lg:px-12 p-8 bg-[#2D0B70] lg:pb-0 lg:p-12 relative rounded-xl h-full lg:flex lg:flex-row justify-between bg-cover flex-col gap-5 overflow-hidden">
                 <div className="max-w-sm relative z-10">
                   <h3 className="font-bold text-white text-2xl md:text-3xl mb-4">
                     Scale with plans tailored to SMEs

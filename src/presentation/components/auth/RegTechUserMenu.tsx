@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useClerk, useUser } from "@clerk/react";
 import { LogOut, Settings, GraduationCap } from "lucide-react";
 import { RegTechAccountModal } from "@/presentation/components/auth/RegTechAccountModal";
+import { PlanBadge } from "@/presentation/features/billing/PlanBadge";
 import { useTheme } from "@/presentation/providers/ThemeProvider";
 import { platform } from "@/presentation/theme/platformStyles";
 
@@ -49,7 +50,13 @@ function UserAvatar({
   );
 }
 
-export function RegTechUserMenu({ onStartTour }: { onStartTour?: () => void } = {}) {
+export function RegTechUserMenu({
+  onStartTour,
+  onManagePlan,
+}: {
+  onStartTour?: () => void;
+  onManagePlan?: () => void;
+} = {}) {
   const { darkMode } = useTheme();
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -126,6 +133,11 @@ export function RegTechUserMenu({ onStartTour }: { onStartTour?: () => void } = 
                 </p>
                 {email ? (
                   <p className={`truncate text-xs mt-0.5 ${platform.textMuted(darkMode)}`}>{email}</p>
+                ) : null}
+                {onManagePlan ? (
+                  <div className="mt-2">
+                    <PlanBadge onClick={onManagePlan} darkMode={darkMode} />
+                  </div>
                 ) : null}
               </div>
             </div>

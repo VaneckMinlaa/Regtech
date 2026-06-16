@@ -69,7 +69,7 @@ export function HelpToggle({
         <div
           className={
             expandAsPanel
-              ? `mt-4 space-y-4 rounded-[20px] border p-4 sm:p-5 ${platform.border(darkMode)} ${
+              ? `mt-4 space-y-4 rounded-xl border p-4 sm:p-5 ${platform.border(darkMode)} ${
                   darkMode ? "bg-dark-primary" : "bg-white shadow-theme-sm"
                 }`
               : `${title ? "mt-4" : "mt-4"} space-y-3 text-sm leading-relaxed border-t pt-4 ${platform.borderSubtle(darkMode)} ${platform.textSecondary(darkMode)}`

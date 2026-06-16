@@ -54,7 +54,7 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
             return (
               <div key={plan.id} className="relative">
                 <div
-                  className={`bg-white dark:bg-dark-primary rounded-[20px] shadow-one relative z-10 h-full ${
+                  className={`bg-white dark:bg-dark-primary rounded-xl shadow-one relative z-10 h-full ${
                     plan.highlighted ? "border-2 border-primary-500" : ""
                   }`}
                 >

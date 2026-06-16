@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 
 import { PricingPage } from "@/presentation/features/billing/PricingPage";
-import { PlanBadge } from "@/presentation/features/billing/PlanBadge";
 import { CameroonChecklist } from "@/presentation/features/procedures/CameroonChecklist";
 import {
   AfcftaPage,
@@ -182,7 +181,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
         `}
         id="left_sidebar_panel"
       >
-        <div className={`flex items-center justify-between border-b px-5 py-4 ${platform.borderSubtle(darkMode)}`}>
+        <div className={`flex h-14 shrink-0 items-center justify-between border-b px-5 sm:px-7 ${platform.borderSubtle(darkMode)}`}>
           <a href="#" className="flex items-center gap-2.5" onClick={(e) => e.preventDefault()}>
             <DynamicLogo size="sm" darkMode={darkMode} />
             <span className={`font-bold text-base tracking-tight ${platform.textPrimary(darkMode)}`}>RegTech</span>
@@ -291,8 +290,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             >
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
-            <PlanBadge onClick={goToPricing} darkMode={darkMode} />
-            <ClerkAuthButton onStartTour={() => startTour(0)} />
+            <ClerkAuthButton onStartTour={() => startTour(0)} onManagePlan={goToPricing} />
           </div>
         </header>
 

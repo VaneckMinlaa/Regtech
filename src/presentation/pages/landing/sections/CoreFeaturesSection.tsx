@@ -17,7 +17,7 @@ export function CoreFeaturesSection() {
           {CORE_FEATURES.map((feature) => (
             <div
               key={feature.title}
-              className="bg-white p-9 border border-gray-200 dark:bg-white/5 dark:border-white/3 rounded-[20px] shadow-[0px_30px_50px_-32px_rgba(107,110,148,0.04)]"
+              className="bg-white p-9 border border-gray-200 dark:bg-white/5 dark:border-white/3 rounded-xl shadow-[0px_30px_50px_-32px_rgba(107,110,148,0.04)]"
             >
               <div className="core-feature-icon mb-9">
                 <img src={feature.iconUrl} alt="" width={40} height={40} />

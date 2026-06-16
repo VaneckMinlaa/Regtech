@@ -16,18 +16,18 @@ export const platform = {
       ? "bg-dark-primary/95 border-gray-800 text-gray-100 backdrop-blur"
       : "bg-white/95 border-gray-100 text-gray-800 backdrop-blur",
 
-  /** Primary content card — matches landing `rounded-[20px]` panels */
+  /** Primary content card — 12px corner radius (`rounded-xl`) */
   panel: (dark: boolean) =>
     dark
-      ? "rounded-[20px] border border-gray-800 bg-dark-primary text-white"
-      : "rounded-[20px] border border-gray-200 bg-white text-gray-800 shadow-theme-sm",
+      ? "rounded-xl border border-gray-800 bg-dark-primary text-white"
+      : "rounded-xl border border-gray-200 bg-white text-gray-800 shadow-theme-sm",
 
   panelPadding: "p-4 sm:p-5",
 
   card: (dark: boolean) =>
     dark
-      ? "rounded-[20px] border border-gray-800 bg-dark-primary text-white"
-      : "rounded-[20px] border border-gray-200 bg-white text-gray-800 shadow-theme-sm",
+      ? "rounded-xl border border-gray-800 bg-dark-primary text-white"
+      : "rounded-xl border border-gray-200 bg-white text-gray-800 shadow-theme-sm",
 
   cardNested: (dark: boolean) =>
     dark
@@ -58,13 +58,13 @@ export const platform = {
 
   navActive: (dark: boolean) =>
     dark
-      ? "bg-white/10 text-white font-medium border-l-[3px] border-l-primary-500 pl-[calc(0.75rem-3px)]"
-      : "bg-primary-50 text-primary-700 font-medium border border-primary-100 border-l-[3px] border-l-primary-500 pl-[calc(0.75rem-3px)]",
+      ? "bg-white/10 text-white font-medium"
+      : "bg-primary-50 text-primary-700 font-medium border border-primary-100",
 
   navInactive: (dark: boolean) =>
     dark
-      ? "text-gray-400 hover:bg-white/5 hover:text-gray-200 border-l-[3px] border-l-transparent pl-[calc(0.75rem-3px)]"
-      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900 border-l-[3px] border-l-transparent pl-[calc(0.75rem-3px)]",
+      ? "text-gray-400 hover:bg-white/5 hover:text-gray-200"
+      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
 
   navItem:
     "w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-xl transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40",
@@ -89,7 +89,7 @@ export const platform = {
     "inline-flex items-center justify-center rounded-full bg-gray-700 px-6 py-2.5 text-sm font-medium text-white hover:bg-gray-900 transition-colors disabled:opacity-40",
 
   pricingCard: (dark: boolean, highlighted: boolean) =>
-    `relative flex h-full flex-col rounded-[20px] shadow-theme-xs ${
+    `relative flex h-full flex-col rounded-xl shadow-theme-xs ${
       highlighted
         ? "border-2 border-primary-500"
         : dark
