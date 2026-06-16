@@ -1,9 +1,11 @@
 import type {
+  CompareResult,
   Country,
   HealthStatus,
   HSProduct,
   SimulationResult,
 } from "@/domain/reference/types";
+import { mapCompareResponse } from "@/infrastructure/http/compareMapper";
 import type {
   CheckoutRequest,
   CheckoutResponse,
@@ -25,6 +27,8 @@ import type {
   AfcftaValidateRequest,
   AfcftaValidateResponse,
   AnalyticsSummaryResponse,
+  BackendCompareResponse,
+  CompareRequest,
   CameroonFiscalRequest,
   CameroonFiscalResponse,
   CamcisRegimeRequest,
@@ -213,6 +217,11 @@ export const regtechApi = {
 
   simulate(payload: SimulatePayload): Promise<SimulationResult> {
     return apiPost<SimulationResult>("/api/v1/simulate", payload);
+  },
+
+  async compare(payload: CompareRequest, countries: Country[]): Promise<CompareResult> {
+    const response = await apiPost<BackendCompareResponse>("/api/v1/compare", payload, true);
+    return mapCompareResponse(response, countries);
   },
 
   classify(payload: ClassifyPayload): Promise<ClassifyResult> {

@@ -1,3 +1,4 @@
+import { HeroFloatingBadges } from "../components/HeroFloatingBadges";
 import { Stars } from "../components/Stars";
 import { ThemeImage } from "../components/ThemeImage";
 
@@ -89,12 +90,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
           </div>
         </div>
 
-        <div className="max-[1100px]:hidden pointer-events-none">
-          <img src="/landing/hero/shape-left-1.svg" className="absolute top-14 left-16 floating-1" alt="" />
-          <img src="/landing/hero/shape-left-2.svg" className="absolute left-[145px] top-[298px] floating-2 max-[1240px]:left-[80px]" alt="" />
-          <img src="/landing/hero/shape-right-1.svg" className="absolute right-16 top-[108px] floating-3" alt="" />
-          <img src="/landing/hero/shape-right-2.svg" className="absolute top-[316px] right-[200px] floating-4 max-[1240px]:right-[80px]" alt="" />
-        </div>
+        <HeroFloatingBadges />
       </div>
       <div className="hero-glow-bg pointer-events-none w-full h-167.5 absolute z-10 bottom-0" />
 

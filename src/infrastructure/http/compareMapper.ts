@@ -1,5 +1,8 @@
 import type { CompareResult, Country } from "@/domain/reference/types";
-import type { BackendCompareResponse } from "@/infrastructure/http/regtechApiTypes";
+import type {
+  BackendCompareResponse,
+  BackendCompareResultRow,
+} from "@/infrastructure/http/regtechApiTypes";
 
 function countryLabel(countries: Country[], code: string): string {
   return countries.find((c) => c.code === code)?.name ?? code;
@@ -21,7 +24,7 @@ export function mapCompareResponse(
       spreadUSD: response.summary.spreadUSD,
       spreadLocal: response.summary.spreadLocal,
     },
-    results: response.results.map((row) => ({
+    results: response.results.map((row: BackendCompareResultRow) => ({
       rank: row.rank,
       countryCode: row.destination,
       countryName: countryLabel(countries, row.destination),

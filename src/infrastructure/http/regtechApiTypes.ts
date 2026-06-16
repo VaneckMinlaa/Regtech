@@ -197,3 +197,47 @@ export interface ReferenceVersionsResponse {
   africaVatRates: string;
   engineVersion: string;
 }
+
+export interface CompareRequest {
+  origin: string;
+  destinations: string[];
+  hsCode: string;
+  declaredValueLocal: number;
+  quantity?: number;
+  costMatiereLocale?: number;
+  mainOeuvreLocale?: number;
+  fraisLocaux?: number;
+  prixVenteExport?: number;
+  year?: number;
+}
+
+export interface BackendCompareResultRow {
+  rank: number;
+  destination: string;
+  currency: string;
+  totalTaxLocal: number;
+  totalTaxUSD: number;
+  dutyPaidLocal: number;
+  vatPaidLocal: number;
+  isEligiblePrefAfCFTA: boolean;
+  appliedTariffRate: number;
+}
+
+export interface BackendCompareResponse {
+  origin: string;
+  hsCode: string;
+  year: number;
+  destinationsCount: number;
+  summary: {
+    cheapestDestination: string;
+    mostExpensiveDestination: string;
+    spreadUSD: number;
+    spreadLocal: number;
+  };
+  results: BackendCompareResultRow[];
+}
+
+export interface UsageDayPoint {
+  date: string;
+  simulations: number;
+}

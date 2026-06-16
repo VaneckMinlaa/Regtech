@@ -67,3 +67,25 @@ export interface CompareDestinationResult {
   totalTaxLocal: number;
   isEligiblePrefAfCFTA: boolean;
 }
+
+export interface CompareResultRow extends CompareDestinationResult {
+  rank: number;
+  totalTaxUSD: number;
+  dutyPaidLocal: number;
+  vatPaidLocal: number;
+  appliedTariffRate: number;
+}
+
+export interface CompareResult {
+  origin: string;
+  hsCode: string;
+  year: number;
+  destinationsCount: number;
+  summary: {
+    cheapestDestination: string;
+    mostExpensiveDestination: string;
+    spreadUSD: number;
+    spreadLocal: number;
+  };
+  results: CompareResultRow[];
+}
