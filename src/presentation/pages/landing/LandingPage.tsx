@@ -5,6 +5,7 @@ import { BenefitsGridSection } from "./sections/BenefitsGridSection";
 import { CoreFeaturesSection } from "./sections/CoreFeaturesSection";
 import { FaqSection } from "./sections/FaqSection";
 import { HeroSection } from "./sections/HeroSection";
+import { CustomsNewsSection } from "./sections/CustomsNewsSection";
 import { PricingSection } from "./sections/PricingSection";
 import { TestimonialsSection } from "./sections/TestimonialsSection";
 import { ToolsTabSection } from "./sections/ToolsTabSection";
@@ -40,6 +41,7 @@ export function LandingPage({
       <LandingHeader onSignIn={onSignIn} onGetStarted={onGetStarted} animate={entranceReady} />
       <div className="isolate flex-1 flex flex-col">
         <HeroSection onGetStarted={onGetStarted} animate={entranceReady} />
+        <CustomsNewsSection />
         <CoreFeaturesSection />
         <ToolsTabSection onGetStarted={onGetStarted} />
         <BenefitsGridSection onGetStarted={onGetStarted} />
