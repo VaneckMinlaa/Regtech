@@ -41,6 +41,7 @@ interface SubscriptionContextValue {
   quotaAlert: QuotaAlert | null;
   dismissQuotaAlert: () => void;
   startCheckout: (request: CheckoutRequest) => Promise<CheckoutResponse>;
+  confirmPaymentReturn: (depositId: string) => Promise<string>;
   activatePlanDemo: (plan: PlanId) => void;
 }
 
@@ -117,6 +118,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const refreshSubscription = useCallback(async () => {
     try {
+      await regtechApi.syncProfile();
       const snapshot = await regtechApi.getMonetizationSnapshot();
       persistSubscription(snapshot.subscription);
       setQuotas(snapshot.quotas);
@@ -141,6 +143,24 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     }
     void refreshSubscription();
   }, [isLoaded, isSignedIn, refreshSubscription]);
+
+  const confirmPaymentReturn = useCallback(
+    async (depositId: string): Promise<string> => {
+      for (let attempt = 0; attempt < 5; attempt += 1) {
+        try {
+          await regtechApi.syncProfile();
+          const tx = await regtechApi.getBillingTransactionStatus(depositId);
+          await refreshSubscription();
+          return tx.status.toUpperCase();
+        } catch {
+          if (attempt === 4) return "PENDING";
+          await new Promise((resolve) => window.setTimeout(resolve, 800));
+        }
+      }
+      return "PENDING";
+    },
+    [refreshSubscription],
+  );
 
   const canUse = useCallback(
     (field: keyof Omit<UsageCounters, "yearMonth">, amount = 1): boolean => {
@@ -225,6 +245,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       quotaAlert,
       dismissQuotaAlert,
       startCheckout,
+      confirmPaymentReturn,
       activatePlanDemo,
     }),
     [
@@ -242,6 +263,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
       quotaAlert,
       dismissQuotaAlert,
       startCheckout,
+      confirmPaymentReturn,
       activatePlanDemo,
     ],
   );

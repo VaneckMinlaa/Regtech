@@ -46,6 +46,12 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
           Paiement en cours de validation…
         </div>
       )}
+      {returnStatus === "failed" && (
+        <div className="mb-4 flex items-center gap-2 text-xs text-rose-300 bg-rose-950/40 border border-rose-500/30 rounded-lg px-3 py-2">
+          <AlertCircle className="w-4 h-4" />
+          Le paiement n&apos;a pas pu être confirmé. Réessayez ou contactez le support.
+        </div>
+      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

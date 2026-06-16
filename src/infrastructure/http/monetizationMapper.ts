@@ -16,6 +16,10 @@ export interface BackendSubscriptionResponse {
   plan: string;
   status: string;
   quotas: BackendPlanQuotas;
+  countryIso?: string | null;
+  currency?: string | null;
+  provider?: string | null;
+  periodEnd?: string | null;
 }
 
 export interface BackendUsageResponse {
@@ -54,10 +58,10 @@ export function mapBackendSubscription(response: BackendSubscriptionResponse): {
     subscription: {
       plan: response.plan as PlanId,
       status,
-      provider: null,
-      countryIso: "CMR",
-      currency: "XAF",
-      periodEnd: null,
+      provider: response.provider === "pawapay" ? "pawapay" : null,
+      countryIso: response.countryIso ?? "CMR",
+      currency: response.currency ?? "XAF",
+      periodEnd: response.periodEnd ?? null,
     },
     quotas: mapBackendQuotas(response.quotas),
   };

@@ -60,7 +60,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
   const [currentSelectedSimulation, setCurrentSelectedSimulation] =
     useState<SimulationResult | null>(null);
 
-  const { activatePlanDemo, quotaAlert, dismissQuotaAlert } = useSubscription();
+  const { confirmPaymentReturn, quotaAlert, dismissQuotaAlert } = useSubscription();
 
   const goToPricing = useCallback(() => {
     setActiveTab("PRICING");
@@ -81,21 +81,25 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
     if (billing === "return") {
       setActiveTab("PRICING");
-      if (status === "success" || status === "pending") {
-        setBillingReturnStatus(status);
-      }
-      if (status === "success" && depositId) {
-        const stored = localStorage.getItem("regtech_pending_plan");
-        if (stored) {
-          activatePlanDemo(stored as "starter" | "pro" | "business");
+      if (depositId) {
+        void confirmPaymentReturn(depositId).then((txStatus) => {
+          if (txStatus === "COMPLETED") {
+            setBillingReturnStatus("success");
+          } else if (txStatus === "FAILED") {
+            setBillingReturnStatus("failed");
+          } else {
+            setBillingReturnStatus("pending");
+          }
           localStorage.removeItem("regtech_pending_plan");
-        }
+        });
+      } else if (status === "success" || status === "pending" || status === "failed") {
+        setBillingReturnStatus(status);
       }
       window.history.replaceState({}, "", window.location.pathname);
     } else if (tab) {
       setActiveTab(tab.toUpperCase());
     }
-  }, [activatePlanDemo]);
+  }, [confirmPaymentReturn]);
 
   useEffect(() => {
     const tick = () => {

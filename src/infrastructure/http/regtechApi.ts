@@ -7,6 +7,7 @@ import type {
 } from "@/domain/reference/types";
 import { mapCompareResponse } from "@/infrastructure/http/compareMapper";
 import type {
+  BillingTransactionStatus,
   CheckoutRequest,
   CheckoutResponse,
   PlanQuotas,
@@ -248,9 +249,12 @@ export const regtechApi = {
     return mapBackendUsage(response);
   },
 
-  /** PawaPay — fallback démo côté front tant que le checkout API n'est pas exposé. */
   startCheckout(payload: CheckoutRequest): Promise<CheckoutResponse> {
     return apiPost<CheckoutResponse>("/api/v1/billing/checkout", payload, true);
+  },
+
+  getBillingTransactionStatus(depositId: string): Promise<BillingTransactionStatus> {
+    return apiGet<BillingTransactionStatus>(`/api/v1/billing/transactions/${depositId}`, true);
   },
 
   computeZlecafDuty(payload: ZlecafDutyRequest): Promise<ZlecafDutyResponse> {

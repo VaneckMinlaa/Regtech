@@ -56,6 +56,17 @@ export interface CheckoutResponse {
   correspondent?: string;
 }
 
+export interface BillingTransactionStatus {
+  depositId: string;
+  status: string;
+  plan: string;
+  amount: number;
+  currency: string;
+  subscriptionPlan: string | null;
+  subscriptionStatus: string | null;
+  periodEnd: string | null;
+}
+
 export interface PawapayCountry {
   code: string;
   name: string;
