@@ -13,7 +13,7 @@ export function SubscriptionOverviewSkeleton({
 }) {
   return (
     <div
-      className={`rounded-xl border p-5 ${
+      className={`min-w-0 space-y-5 rounded-xl border p-4 sm:p-5 ${
         darkMode ? "bg-dark-primary/80 border-gray-800" : "bg-white border-gray-200"
       }`}
       id="subscription_overview_skeleton"
@@ -23,19 +23,27 @@ export function SubscriptionOverviewSkeleton({
       <Skeleton darkMode={darkMode} className="mb-3 h-3 w-28" />
       <Skeleton darkMode={darkMode} className="mb-2 h-7 w-40" />
       <Skeleton darkMode={darkMode} className="mb-6 h-3 w-56" />
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <Skeleton darkMode={darkMode} className="h-4 w-full" />
-        <Skeleton darkMode={darkMode} className="h-4 w-full" />
-        <Skeleton darkMode={darkMode} className="h-4 w-full" />
+      <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 lg:grid-cols-3">
+        <Skeleton darkMode={darkMode} className="h-14 w-full rounded-xl" />
+        <Skeleton darkMode={darkMode} className="h-14 w-full rounded-xl" />
+        <Skeleton darkMode={darkMode} className="h-14 w-full rounded-xl" />
       </div>
       <div
-        className={`mt-4 grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-3 ${
+        className={`grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2 lg:grid-cols-3 ${
           darkMode ? "border-gray-800" : "border-gray-100"
         }`}
       >
-        <Skeleton darkMode={darkMode} className="h-10 w-full" />
-        <Skeleton darkMode={darkMode} className="h-10 w-full" />
-        <Skeleton darkMode={darkMode} className="h-10 w-full" />
+        <Skeleton darkMode={darkMode} className="h-16 w-full rounded-xl" />
+        <Skeleton darkMode={darkMode} className="h-16 w-full rounded-xl" />
+        <Skeleton darkMode={darkMode} className="h-16 w-full rounded-xl" />
+      </div>
+      <div
+        className={`grid grid-cols-1 gap-3 border-t pt-4 md:grid-cols-2 ${
+          darkMode ? "border-gray-800" : "border-gray-100"
+        }`}
+      >
+        <Skeleton darkMode={darkMode} className="h-24 w-full rounded-xl" />
+        <Skeleton darkMode={darkMode} className="h-24 w-full rounded-xl" />
       </div>
     </div>
   );

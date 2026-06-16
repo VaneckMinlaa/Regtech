@@ -50,15 +50,19 @@ export function UsageMeterCard({
         </div>
       )}
 
-      <p className={`text-[11px] mt-2.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-        {used.toLocaleString("en-US")} used
+      <p className={`mt-2.5 text-[11px] leading-relaxed ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+        <span className="block sm:inline">{used.toLocaleString("en-US")} used</span>
         {!unlimited && (
           <>
-            {" "}
-            · {remaining?.toLocaleString("en-US") ?? "0"} remaining · {formatLimit(limit)} included / month
+            <span className="hidden sm:inline"> · </span>
+            <span className="block sm:inline">
+              {remaining?.toLocaleString("en-US") ?? "0"} remaining
+            </span>
+            <span className="hidden sm:inline"> · </span>
+            <span className="block sm:inline">{formatLimit(limit)} included / month</span>
           </>
         )}
-        {unlimited && " · unlimited"}
+        {unlimited && <span className="block sm:inline"> · unlimited</span>}
       </p>
     </div>
   );

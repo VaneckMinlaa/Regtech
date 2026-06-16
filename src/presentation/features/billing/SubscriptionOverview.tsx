@@ -33,6 +33,66 @@ function renewalLabel(periodEnd: string | null): { label: string; detail: string
   };
 }
 
+function MetaChip({
+  icon,
+  children,
+  darkMode,
+}: {
+  icon: React.ReactNode;
+  children: React.ReactNode;
+  darkMode: boolean;
+}) {
+  return (
+    <div
+      className={`flex min-w-0 items-start gap-2.5 rounded-xl border p-3 text-[11px] ${
+        darkMode ? "border-gray-800 bg-dark-secondary/40 text-gray-300" : "border-gray-200 bg-gray-50 text-gray-700"
+      }`}
+    >
+      <span className="mt-0.5 shrink-0 text-primary-500">{icon}</span>
+      <div className="min-w-0 leading-snug">{children}</div>
+    </div>
+  );
+}
+
+function StatCard({
+  children,
+  darkMode,
+}: {
+  children: React.ReactNode;
+  darkMode: boolean;
+}) {
+  return (
+    <div
+      className={`min-w-0 rounded-xl border p-3.5 ${
+        darkMode ? "border-gray-800 bg-dark-secondary/40" : "border-gray-200 bg-gray-50"
+      }`}
+    >
+      {children}
+    </div>
+  );
+}
+
+function StatusBanner({
+  tone,
+  children,
+}: {
+  tone: "success" | "pending" | "failed";
+  children: React.ReactNode;
+}) {
+  const styles = {
+    success: "text-primary-400 bg-primary-950/40 border-primary-500/30",
+    pending: "text-amber-300 bg-amber-950/40 border-amber-500/30",
+    failed: "text-rose-300 bg-rose-950/40 border-rose-500/30",
+  }[tone];
+
+  return (
+    <div className={`flex items-start gap-2 rounded-lg border px-3 py-2 text-xs ${styles}`}>
+      <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+      <span className="min-w-0 leading-relaxed">{children}</span>
+    </div>
+  );
+}
+
 export function SubscriptionOverview({ darkMode = true, returnStatus }: SubscriptionOverviewProps) {
   const { subscription, usage, quotas, remaining, loading } = useSubscription();
   const plan = getPlanById(subscription.plan);
@@ -52,121 +112,115 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
 
   if (loading) {
     return (
-      <>
+      <div className="space-y-4">
         {returnStatus === "pending" && (
-          <div className="mb-4 flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2">
-            <AlertCircle className="w-4 h-4" />
-            Payment pending…
-          </div>
+          <StatusBanner tone="pending">Payment pending…</StatusBanner>
         )}
         <SubscriptionOverviewSkeleton darkMode={darkMode} />
-      </>
+      </div>
     );
   }
 
   return (
-    <div className="space-y-8" id="subscription_overview">
+    <div
+      className={`min-w-0 space-y-5 ${platform.panel(darkMode)} ${platform.panelPadding}`}
+      id="subscription_overview"
+    >
       {returnStatus === "success" && (
-        <div className="mb-4 flex items-center gap-2 text-xs text-primary-400 bg-primary-950/40 border border-primary-500/30 rounded-lg px-3 py-2">
-          <CheckCircle2 className="w-4 h-4" />
-          Payment confirmed — your plan is active.
+        <div className="flex items-start gap-2 rounded-lg border border-primary-500/30 bg-primary-950/40 px-3 py-2 text-xs text-primary-400">
+          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0" />
+          <span className="min-w-0 leading-relaxed">Payment confirmed — your plan is active.</span>
         </div>
       )}
-      {returnStatus === "pending" && (
-        <div className="mb-4 flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2">
-          <AlertCircle className="w-4 h-4" />
-          Payment pending…
-        </div>
-      )}
+      {returnStatus === "pending" && <StatusBanner tone="pending">Payment pending…</StatusBanner>}
       {returnStatus === "failed" && (
-        <div className="mb-4 flex items-center gap-2 text-xs text-rose-300 bg-rose-950/40 border border-rose-500/30 rounded-lg px-3 py-2">
-          <AlertCircle className="w-4 h-4" />
+        <StatusBanner tone="failed">
           Payment could not be confirmed. Please try again or contact support.
-        </div>
+        </StatusBanner>
       )}
 
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <p className={`text-[10px] uppercase font-bold tracking-wider ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-            Current subscription
-          </p>
-          <h2 className={`text-xl font-bold font-display mt-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
-            Plan {plan.name}
-          </h2>
-          <p className={`text-xs mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-            {plan.description}
-          </p>
-        </div>
+      <div className="min-w-0">
+        <p className={`text-[10px] font-bold uppercase tracking-wider ${platform.textMuted(darkMode)}`}>
+          Current subscription
+        </p>
+        <h2 className={`mt-1 font-display text-xl font-bold sm:text-2xl ${platform.textPrimary(darkMode)}`}>
+          Plan {plan.name}
+        </h2>
+        <p className={`mt-1 text-xs leading-relaxed sm:text-sm ${platform.textMuted(darkMode)}`}>
+          {plan.description}
+        </p>
+      </div>
 
-        <div className={`grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-          <div className="flex items-center gap-2">
-            <MapPin className="w-3.5 h-3.5 text-primary-500" />
-            <span>
-              {subscription.countryIso} · {subscription.currency}
-            </span>
-          </div>
-          {subscription.provider && (
-            <div className="flex items-center gap-2">
-              <CreditCard className="w-3.5 h-3.5 text-primary-500" />
-              <span>PawaPay</span>
-            </div>
-          )}
-          {renewal && (
-            <div className="flex items-center gap-2">
-              <Calendar className="w-3.5 h-3.5 text-primary-500" />
-              <span>
-                {renewal.label} · {renewal.detail}
-              </span>
-            </div>
-          )}
-        </div>
+      <div className="grid grid-cols-1 gap-3 min-[520px]:grid-cols-2 lg:grid-cols-3">
+        <MetaChip icon={<MapPin className="h-4 w-4" />} darkMode={darkMode}>
+          <p className="font-semibold">Billing country</p>
+          <p className={platform.textMuted(darkMode)}>
+            {subscription.countryIso} · {subscription.currency}
+          </p>
+        </MetaChip>
+
+        {subscription.provider && (
+          <MetaChip icon={<CreditCard className="h-4 w-4" />} darkMode={darkMode}>
+            <p className="font-semibold">Payment</p>
+            <p className={platform.textMuted(darkMode)}>PawaPay</p>
+          </MetaChip>
+        )}
+
+        {renewal && (
+          <MetaChip icon={<Calendar className="h-4 w-4" />} darkMode={darkMode}>
+            <p className="font-semibold">{renewal.label}</p>
+            <p className={`${platform.textMuted(darkMode)} break-words`}>{renewal.detail}</p>
+          </MetaChip>
+        )}
       </div>
 
       {analyticsLoading ? (
         <div
-          className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-3 ${
-            darkMode ? "border-gray-800" : "border-gray-100"
-          }`}
+          className={`grid grid-cols-1 gap-3 border-t pt-5 sm:grid-cols-2 lg:grid-cols-3 ${platform.borderSubtle(darkMode)}`}
         >
           {[0, 1, 2].map((key) => (
-            <Skeleton key={key} darkMode={darkMode} className="h-10 w-full" />
+            <Skeleton key={key} darkMode={darkMode} className="h-16 w-full rounded-xl" />
           ))}
         </div>
       ) : analytics ? (
         <div
-          className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] ${
-            darkMode ? "border-gray-800" : "border-gray-100"
-          }`}
+          className={`grid grid-cols-1 gap-3 border-t pt-5 sm:grid-cols-2 lg:grid-cols-3 ${platform.borderSubtle(darkMode)}`}
           id="subscription_analytics"
         >
-          <div className="flex items-start gap-2">
-            <BarChart3 className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="font-bold">{analytics.simulationsCount} simulations</p>
-              <p className={darkMode ? "text-gray-500" : "text-gray-500"}>this month</p>
+          <StatCard darkMode={darkMode}>
+            <div className="flex items-start gap-2.5">
+              <BarChart3 className="mt-0.5 h-4 w-4 shrink-0 text-primary-500" />
+              <div className="min-w-0">
+                <p className={`text-sm font-bold ${platform.textPrimary(darkMode)}`}>
+                  {analytics.simulationsCount} simulations
+                </p>
+                <p className={`text-[11px] ${platform.textMuted(darkMode)}`}>this month</p>
+              </div>
             </div>
-          </div>
-          <div>
-            <p className="font-bold text-primary-400">
+          </StatCard>
+
+          <StatCard darkMode={darkMode}>
+            <p className={`text-sm font-bold ${platform.totalAmount(darkMode)}`}>
               {analytics.afcftaSavingsEstimateLocal.toLocaleString("en-US")} XAF
             </p>
-            <p className={darkMode ? "text-gray-500" : "text-gray-500"}>estimated AfCFTA savings</p>
-          </div>
-          <div>
-            <p className="font-bold">
+            <p className={`mt-0.5 text-[11px] leading-relaxed ${platform.textMuted(darkMode)}`}>
+              estimated AfCFTA savings
+            </p>
+          </StatCard>
+
+          <StatCard darkMode={darkMode}>
+            <p className={`text-sm font-bold break-words ${platform.textPrimary(darkMode)}`}>
               {analytics.topCorridors[0]?.route ?? "—"}
             </p>
-            <p className={darkMode ? "text-gray-500" : "text-gray-500"}>
+            <p className={`mt-0.5 text-[11px] leading-relaxed ${platform.textMuted(darkMode)}`}>
               main corridor ({analytics.topCorridors[0]?.count ?? 0} sims.)
             </p>
-          </div>
+          </StatCard>
         </div>
       ) : null}
 
       <div
-        className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-3 ${
-          darkMode ? "border-gray-800" : "border-gray-100"
-        }`}
+        className={`grid grid-cols-1 gap-3 border-t pt-5 md:grid-cols-2 ${platform.borderSubtle(darkMode)}`}
         id="subscription_usage_meters"
       >
         <UsageMeterCard
