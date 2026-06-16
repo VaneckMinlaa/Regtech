@@ -1,11 +1,14 @@
 import { Menu, Moon, Sun, X } from "lucide-react";
+import { motion } from "motion/react";
 import { useState } from "react";
 import { DynamicLogo } from "@/presentation/components/brand/DynamicLogo";
 import { useTheme } from "@/presentation/providers/ThemeProvider";
+import { fadeDown, landingTransition } from "@/presentation/pages/landing/motion/landingMotion";
 
 interface LandingHeaderProps {
   onSignIn: () => void;
   onGetStarted: () => void;
+  animate?: boolean;
 }
 
 const NAV_LINKS = [
@@ -15,12 +18,18 @@ const NAV_LINKS = [
   { href: "#faq", label: "FAQ" },
 ];
 
-export function LandingHeader({ onSignIn, onGetStarted }: LandingHeaderProps) {
+export function LandingHeader({ onSignIn, onGetStarted, animate = true }: LandingHeaderProps) {
   const { darkMode, toggleDarkMode } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="bg-white dark:bg-dark-primary border-b dark:border-gray-800 border-gray-100 sticky top-0 z-50 py-2 lg:py-4">
+    <motion.header
+      className="bg-white dark:bg-dark-primary border-b dark:border-gray-800 border-gray-100 sticky top-0 z-50 py-2 lg:py-4"
+      initial="hidden"
+      animate={animate ? "visible" : "hidden"}
+      variants={fadeDown}
+      transition={landingTransition(0.5, 0.05)}
+    >
       <div className="px-4 sm:px-6 lg:px-7">
         <div className="grid grid-cols-2 items-center lg:grid-cols-[1fr_auto_1fr]">
           <div className="flex items-center">
@@ -108,6 +117,6 @@ export function LandingHeader({ onSignIn, onGetStarted }: LandingHeaderProps) {
           </button>
         </div>
       )}
-    </header>
+    </motion.header>
   );
 }

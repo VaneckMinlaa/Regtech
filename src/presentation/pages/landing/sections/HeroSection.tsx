@@ -1,8 +1,18 @@
+import { motion } from "motion/react";
 import { Stars } from "../components/Stars";
 import { ThemeImage } from "../components/ThemeImage";
+import { LandingStagger, LandingStaggerItem } from "../components/LandingReveal";
+import {
+  fadeUp,
+  heroImage,
+  landingTransition,
+  scaleIn,
+  staggerContainer,
+} from "../motion/landingMotion";
 
 interface HeroSectionProps {
   onGetStarted: () => void;
+  animate?: boolean;
 }
 
 function Subheading({ text }: { text: string }) {
@@ -16,24 +26,44 @@ function Subheading({ text }: { text: string }) {
   );
 }
 
-export function HeroSection({ onGetStarted }: HeroSectionProps) {
+export function HeroSection({ onGetStarted, animate = true }: HeroSectionProps) {
   return (
     <section className="pt-16 relative overflow-hidden bg-gradient-to-b from-[#F0F4FF] via-white to-white dark:from-[#171F2E] dark:via-[#171F2E] dark:to-[#171F2E]">
       <div className="max-w-[120rem] mx-auto relative">
         <div className="wrapper">
           <div className="max-w-[800px] mx-auto">
-            <div className="text-center pb-16">
-              <Subheading text="AfCFTA customs assistant for African SMEs" />
+            <motion.div
+              className="text-center pb-16"
+              initial="hidden"
+              animate={animate ? "visible" : "hidden"}
+              variants={staggerContainer}
+            >
+              <motion.div variants={fadeUp} transition={landingTransition(0.55, 0)}>
+                <Subheading text="AfCFTA customs assistant for African SMEs" />
+              </motion.div>
 
-              <h1 className="text-gray-800 mx-auto font-bold mb-4 text-4xl sm:text-[50px] dark:text-white/90 sm:leading-[64px] max-w-[700px]">
+              <motion.h1
+                variants={fadeUp}
+                transition={landingTransition(0.6, 0.05)}
+                className="text-gray-800 mx-auto font-bold mb-4 text-4xl sm:text-[50px] dark:text-white/90 sm:leading-[64px] max-w-[700px]"
+              >
                 Simplify your customs operations with AfCFTA intelligence
-              </h1>
-              <p className="max-w-[537px] text-center mx-auto text-gray-600 dark:text-gray-400 text-base">
+              </motion.h1>
+
+              <motion.p
+                variants={fadeUp}
+                transition={landingTransition(0.6, 0.1)}
+                className="max-w-[537px] text-center mx-auto text-gray-600 dark:text-gray-400 text-base"
+              >
                 Simulate duties and taxes, verify AfCFTA eligibility, classify your products, and compare multiple
                 destinations — pay your subscription with Mobile Money via PawaPay.
-              </p>
+              </motion.p>
 
-              <dl className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3 text-center sm:gap-6">
+              <motion.dl
+                variants={fadeUp}
+                transition={landingTransition(0.6, 0.15)}
+                className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3 text-center sm:gap-6"
+              >
                 {[
                   { value: "5", label: "Pilot countries" },
                   { value: "1", label: "PawaPay checkout" },
@@ -49,9 +79,13 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                     <dd className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">{stat.label}</dd>
                   </div>
                 ))}
-              </dl>
+              </motion.dl>
 
-              <div className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center">
+              <motion.div
+                variants={scaleIn}
+                transition={landingTransition(0.5, 0.22)}
+                className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center"
+              >
                 <button
                   type="button"
                   onClick={onGetStarted}
@@ -74,10 +108,18 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                   </span>
                   View the demo
                 </a>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </div>
-          <div className="max-w-[1000px] mx-auto relative">
+
+          <motion.div
+            className="max-w-[1000px] mx-auto relative"
+            initial="hidden"
+            animate={animate ? "visible" : "hidden"}
+            variants={heroImage}
+            transition={{ duration: 0.85, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            style={{ perspective: 1200 }}
+          >
             <div className="p-3 sm:p-[18px] relative z-30 rounded-[32px] border border-gray-200/80 dark:border-white/10 bg-white/70 dark:bg-white/10 shadow-theme-sm">
               <ThemeImage
                 lightSrc="/landing/hero/hero-img.jpg"
@@ -104,7 +146,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                 </defs>
               </svg>
             </div>
-          </div>
+          </motion.div>
         </div>
 
         <div className="max-[1100px]:hidden pointer-events-none">
@@ -117,25 +159,29 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
       <div className="hero-glow-bg pointer-events-none w-full h-167.5 absolute z-10 bottom-0" />
 
       <div className="wrapper">
-        <div className="max-w-[1016px] relative z-30 mx-auto pt-14 pb-16">
-          <p className="text-center text-gray-500 dark:text-white/50 text-lg font-medium">
-            Built for economic operators across Africa
-          </p>
-          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4 mt-10">
-            {["CEMAC", "UEMOA", "AfCFTA", "HS Code", "Mobile Money", "PawaPay"].map((label) => (
-              <span
-                key={label}
-                className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase transition ${
-                  label === "PawaPay"
-                    ? "bg-primary-500/10 text-primary-600 ring-1 ring-primary-500/30 dark:text-primary-300"
-                    : "bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-white/50"
-                }`}
-              >
-                {label}
-              </span>
-            ))}
-          </div>
-        </div>
+        <LandingStagger className="max-w-[1016px] relative z-30 mx-auto pt-14 pb-16" fast immediate>
+          <LandingStaggerItem>
+            <p className="text-center text-gray-500 dark:text-white/50 text-lg font-medium">
+              Built for economic operators across Africa
+            </p>
+          </LandingStaggerItem>
+          <LandingStaggerItem>
+            <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4 mt-10">
+              {["CEMAC", "UEMOA", "AfCFTA", "HS Code", "Mobile Money", "PawaPay"].map((label) => (
+                <span
+                  key={label}
+                  className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase transition ${
+                    label === "PawaPay"
+                      ? "bg-primary-500/10 text-primary-600 ring-1 ring-primary-500/30 dark:text-primary-300"
+                      : "bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-white/50"
+                  }`}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+          </LandingStaggerItem>
+        </LandingStagger>
       </div>
     </section>
   );
