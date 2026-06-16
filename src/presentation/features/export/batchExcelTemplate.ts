@@ -70,7 +70,7 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
   sheet.columns = [{ width: 78 }];
 
   const title = sheet.getCell("A1");
-  title.value = "RegTech — Guide d'utilisation (simulation par lot)";
+  title.value = "RegTech — User guide (batch simulation)";
   title.font = { name: "Calibri", size: 18, bold: true, color: { argb: "FFFFFFFF" } };
   title.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_PRIMARY } };
   title.alignment = { vertical: "middle", horizontal: "left", indent: 1 };
@@ -78,50 +78,50 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
 
   const subtitle = sheet.getCell("A2");
   subtitle.value =
-    "Ce fichier est fourni avec le modèle « 01_Modele_Simulations_RegTech.xlsx ». Importez uniquement le modèle dans RegTech.";
+    "This file comes with the \"01_Modele_Simulations_RegTech.xlsx\" Excel template. Import only the Excel template in RegTech.";
   subtitle.font = { name: "Calibri", size: 11, color: { argb: TEXT_MUTED } };
   subtitle.alignment = { wrapText: true, vertical: "top" };
   sheet.getRow(2).height = 28;
 
   const blocks: [string, string][] = [
     [
-      "Étape 1 — Ouvrir le modèle",
+      "Step 1 — Open the template",
       [
-        "1. Décompressez le fichier ZIP téléchargé.",
-        "2. Ouvrez « 01_Modele_Simulations_RegTech.xlsx » (pas ce guide).",
-        "3. Vous verrez directement le tableau à remplir avec des exemples.",
+        "1. Unzip the downloaded ZIP file.",
+        "2. Open \"01_Modele_Simulations_RegTech.xlsx\" (not this guide).",
+        "3. You’ll see the table to fill in, with examples already included.",
       ].join("\n"),
     ],
     [
-      "Étape 2 — Remplir vos simulations",
+      "Step 2 — Fill your simulations",
       [
-        "• Une ligne = une simulation douanière.",
-        "• Ligne 4 : formats attendus (ex. CMR, ex. 851712…) — ne pas importer telle quelle.",
-        "• Lignes bleues : exemples concrets que vous pouvez garder, modifier ou supprimer.",
-        "• Lignes jaunes : vos lignes à compléter.",
-        "• Montants en devise locale du pays d'origine.",
+        "• One row = one customs simulation.",
+        "• Row 4: expected formats (e.g. CMR, e.g. 851712…) — do not import as-is.",
+        "• Blue rows: concrete examples you can keep, edit, or delete.",
+        "• Yellow rows: your rows to complete.",
+        "• Amounts in the local currency of the origin country.",
       ].join("\n"),
     ],
     [
-      "Étape 3 — Importer dans RegTech",
+      "Step 3 — Import into RegTech",
       [
-        "1. Enregistrez le modèle rempli.",
-        "2. RegTech → Traitement par lot → Importer CSV ou Excel.",
-        "3. Sélectionnez « 01_Modele_Simulations_RegTech.xlsx ».",
-        "4. Le calcul des taxes et l'éligibilité AfCFTA démarrent automatiquement.",
+        "1. Save the filled template.",
+        "2. RegTech → Batch processing → Import CSV or Excel.",
+        "3. Select \"01_Modele_Simulations_RegTech.xlsx\".",
+        "4. Tax calculation and AfCFTA eligibility start automatically.",
       ].join("\n"),
     ],
     [
-      "Colonnes du modèle",
+      "Template columns",
       BATCH_COLUMNS.map((c) => `• ${c.label} — ${c.hint}`).join("\n"),
     ],
     [
-      "Codes pays (ISO 3 lettres)",
-      "CMR Cameroun · NGA Nigeria · GHA Ghana · CIV Côte d'Ivoire · KEN Kenya · SEN Sénégal · ZAF Afrique du Sud",
+      "Country codes (3-letter ISO)",
+      "CMR Cameroon · NGA Nigeria · GHA Ghana · CIV Côte d'Ivoire · KEN Kenya · SEN Senegal · ZAF South Africa",
     ],
     [
-      "Années de simulation AfCFTA",
-      "2025 : tarif plein · 2026 : −75 % · 2027 : −80 % · 2028 : −85 % · 2029 : −90 % · 2030 : exemption totale",
+      "AfCFTA simulation years",
+      "2025: full tariff · 2026: −75% · 2027: −80% · 2028: −85% · 2029: −90% · 2030: total exemption",
     ],
   ];
 
@@ -159,7 +159,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
 
   sheet.mergeCells(`A1:${lastCol}1`);
   const banner = sheet.getCell("A1");
-  banner.value = "RegTech — Modèle à remplir (importez CE fichier dans l'application)";
+  banner.value = "RegTech — Template to fill (import this file in the app)";
   banner.font = { name: "Calibri", size: 13, bold: true, color: { argb: "FFFFFFFF" } };
   banner.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_DARK } };
   banner.alignment = { vertical: "middle", horizontal: "center" };
@@ -168,7 +168,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
   sheet.mergeCells(`A2:${lastCol}2`);
   const hint = sheet.getCell("A2");
   hint.value =
-    "Complétez les lignes jaunes. Les lignes bleues sont des exemples. Le guide détaillé est dans le fichier « 02_Guide_Utilisation_RegTech.xlsx ».";
+    "Fill the yellow rows. Blue rows are examples. The detailed guide is in the \"02_Guide_Utilisation_RegTech.xlsx\" file.";
   hint.font = { name: "Calibri", size: 10, italic: true, color: { argb: TEXT_MUTED } };
   hint.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_SURFACE } };
   hint.alignment = { vertical: "middle", horizontal: "center", wrapText: true };
@@ -198,7 +198,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
     cell.border = thinBorder();
   });
 
-  addSectionRow(sheet, 5, lastCol, "▼ EXEMPLES — vous pouvez modifier ou supprimer ces lignes");
+  addSectionRow(sheet, 5, lastCol, "▼ EXAMPLES — you can edit or delete these rows");
 
   BATCH_SAMPLE_ROWS.forEach((sample, rowIdx) => {
     const row = sheet.getRow(6 + rowIdx);
@@ -210,7 +210,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
   });
 
   const fillStart = 6 + BATCH_SAMPLE_ROWS.length;
-  addSectionRow(sheet, fillStart, lastCol, "▼ VOS SIMULATIONS — à remplir ci-dessous");
+  addSectionRow(sheet, fillStart, lastCol, "▼ YOUR SIMULATIONS — fill in below");
 
   for (let r = 0; r < 12; r++) {
     const row = sheet.getRow(fillStart + 1 + r);

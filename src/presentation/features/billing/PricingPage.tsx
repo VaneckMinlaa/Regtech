@@ -56,7 +56,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
             const local = PAWAPAY_COUNTRIES.find((c) => c.code === item.code);
             return {
               code: item.code,
-              name: item.name,
+              name: local?.name ?? item.name,
               currency: item.currency,
               pawapaySupported: true,
               checkoutEnabled: item.checkoutEnabled,
@@ -277,7 +277,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   </span>
                 </p>
                 <p className={`text-[10px] font-mono mt-1 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
-                  ≈ {priceXaf.toLocaleString("fr-FR")} FCFA
+                  ≈ {priceXaf.toLocaleString("en-US")} FCFA
                 </p>
 
                 <ul className={`mt-4 space-y-2 text-[11px] flex-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>

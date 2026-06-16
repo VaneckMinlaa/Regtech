@@ -43,15 +43,15 @@ export function SearchableSelect({
   value,
   onChange,
   options,
-  placeholder = "Rechercher…",
+  placeholder = "Search…",
   disabled = false,
   darkMode = true,
   alwaysSearchable = true,
   searchableThreshold = 1,
-  emptyMessage = "Aucun resultat",
+  emptyMessage = "No results",
   loading = false,
-  loadingPlaceholder = "Chargement…",
-  noDataPlaceholder = "Donnees indisponibles",
+  loadingPlaceholder = "Loading…",
+  noDataPlaceholder = "Data unavailable",
   className = "",
   dense = false,
 }: SearchableSelectProps) {
@@ -118,6 +118,7 @@ export function SearchableSelect({
         value={value}
         disabled={disabled || loading}
         onChange={(e) => onChange(e.target.value)}
+        aria-label={placeholder}
         className={`${inputClass} pl-3.5 appearance-none cursor-pointer ${className}`}
       >
         {options.map((o) => (
@@ -145,11 +146,11 @@ export function SearchableSelect({
         id={id}
         type="text"
         role="combobox"
-        aria-expanded={open}
+        aria-expanded={open ? "true" : "false"}
         aria-controls={listId}
         aria-autocomplete="list"
         disabled={isInputDisabled}
-        placeholder={displayValue ? undefined : idlePlaceholder}
+        placeholder={idlePlaceholder}
         value={displayValue}
         onChange={(e) => {
           setQuery(e.target.value);
@@ -180,7 +181,7 @@ export function SearchableSelect({
       <button
         type="button"
         tabIndex={-1}
-        aria-hidden
+        aria-label="Toggle options"
         disabled={isInputDisabled}
         onClick={() => {
           if (isInputDisabled) return;
@@ -218,9 +219,11 @@ export function SearchableSelect({
             </li>
           ) : (
             filtered.map((o, i) => (
-              <li key={o.value} role="option" aria-selected={o.value === value}>
+              <li key={o.value}>
                 <button
                   type="button"
+                  role="option"
+                  aria-selected={o.value === value ? "true" : "false"}
                   onMouseEnter={() => setHighlight(i)}
                   onClick={() => pick(o.value)}
                   className={`w-full text-left px-3 py-2 transition-colors ${

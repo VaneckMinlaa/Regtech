@@ -51,7 +51,7 @@ function parseCompareError(err: unknown): { message: string; status?: number } {
   if (err instanceof Error) {
     return { message: err.message };
   }
-  return { message: "Impossible de comparer les destinations." };
+  return { message: "Unable to compare destinations." };
 }
 
 /** Comparaison multi-destinations via `POST /api/v1/compare`. */
@@ -208,10 +208,10 @@ export function AfcftaComparePanel({
         <TrendingUp className="w-5 h-5 text-primary-500 shrink-0" aria-hidden />
         <div>
           <h3 className={`text-sm uppercase font-bold font-mono ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-            Comparaison multi-destinations
+            Multi-destination comparison
           </h3>
           <p className={`text-xs mt-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-            Jusqu&apos;à {maxDestinations} pays · 1 requête API · classement par coût fiscal (USD)
+            Up to {maxDestinations} countries · 1 API request · sorted by fiscal cost (USD)
           </p>
         </div>
       </div>
@@ -219,7 +219,7 @@ export function AfcftaComparePanel({
       <div className="space-y-4">
         <div>
           <label htmlFor="compare_origin" className="text-xs font-semibold text-gray-500 block mb-2">
-            Pays d&apos;origine
+            Origin country
           </label>
           <SearchableSelect
             id="compare_origin"
@@ -228,14 +228,14 @@ export function AfcftaComparePanel({
             loading={refLoading}
             darkMode={darkMode}
             options={countryToOptions(countries)}
-            placeholder="Sélectionner un pays…"
-            noDataPlaceholder="API requise"
+            placeholder="Select a country…"
+            noDataPlaceholder="API required"
           />
         </div>
 
         <div>
           <label htmlFor="compare_hs" className="text-xs font-semibold text-gray-500 block mb-2">
-            Produit (code HS)
+            Product (HS code)
           </label>
           <SearchableSelect
             id="compare_hs"
@@ -244,14 +244,14 @@ export function AfcftaComparePanel({
             loading={refLoading}
             darkMode={darkMode}
             options={productToOptions(products)}
-            placeholder="Code ou description…"
-            noDataPlaceholder="API requise"
+            placeholder="Code or description…"
+            noDataPlaceholder="API required"
           />
         </div>
 
         <div>
           <label htmlFor="compare_value" className="text-xs font-semibold text-gray-500 block mb-2">
-            Valeur comparable (devise origine)
+            Comparable value (origin currency)
           </label>
           <input
             id="compare_value"
@@ -266,7 +266,7 @@ export function AfcftaComparePanel({
 
       <div className="space-y-3">
         <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-          Destinations à comparer
+          Destinations to compare
         </p>
         {[0, 1, 2].map((index) => {
           const disabled = index >= maxDestinations;
@@ -277,7 +277,7 @@ export function AfcftaComparePanel({
                 className="text-[10px] font-bold text-gray-500 block mb-1.5"
               >
                 Destination {index + 1}
-                {disabled ? " (plan supérieur)" : ""}
+                {disabled ? " (higher plan)" : ""}
               </label>
               <SearchableSelect
                 id={`compare_dest_${index}`}
@@ -286,7 +286,7 @@ export function AfcftaComparePanel({
                 loading={refLoading}
                 darkMode={darkMode}
                 options={countryToOptions(countries)}
-                placeholder="Choisir un pays…"
+                placeholder="Select a country…"
                 noDataPlaceholder="—"
               />
             </div>
@@ -310,12 +310,12 @@ export function AfcftaComparePanel({
         {loading ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" aria-hidden />
-            Calcul en cours…
+            Calculating…
           </>
         ) : (
           <>
             <ArrowRightLeft className="w-4 h-4" aria-hidden />
-            Comparer {activeDestinations.length || ""} destination
+            Compare {activeDestinations.length || ""} destination
             {activeDestinations.length > 1 ? "s" : ""}
           </>
         )}
@@ -335,7 +335,7 @@ export function AfcftaComparePanel({
               onClick={onUpgrade}
               className="mt-2 text-xs font-semibold underline underline-offset-2 hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-rose-400 rounded"
             >
-              Voir les offres
+              View plans
             </button>
           )}
         </div>
@@ -349,17 +349,17 @@ export function AfcftaComparePanel({
             }`}
           >
             <p>
-              Moins cher :{" "}
+              Cheapest:{" "}
               <strong className={darkMode ? "text-primary-300" : "text-primary-700"}>
                 {compareResult.summary.cheapestDestination}
               </strong>
               {" · "}
-              Écart :{" "}
-              <strong>{compareResult.summary.spreadUSD.toLocaleString("fr-FR")} USD</strong>
+              Spread:{" "}
+              <strong>{compareResult.summary.spreadUSD.toLocaleString("en-US")} USD</strong>
             </p>
           </div>
 
-          <ul className="space-y-3" aria-label="Résultats de comparaison">
+          <ul className="space-y-3" aria-label="Comparison results">
             {compareResult.results.map((row) => {
               const isCheapest = row.countryCode === cheapestCode;
               const barWidth = maxTaxUsd > 0 ? Math.round((row.totalTaxUSD / maxTaxUsd) * 100) : 0;
@@ -401,15 +401,15 @@ export function AfcftaComparePanel({
                             : "bg-gray-100 text-gray-600 border-gray-200"
                       }`}
                     >
-                      {row.isEligiblePrefAfCFTA ? "Préférentiel" : "Standard"}
+                      {row.isEligiblePrefAfCFTA ? "Preferential" : "Standard"}
                     </span>
                   </div>
 
                   <p className={`font-mono text-sm font-bold mb-2 ${darkMode ? "text-primary-400" : "text-primary-700"}`}>
-                    {row.totalTaxLocal.toLocaleString("fr-FR", { maximumFractionDigits: 0 })}{" "}
+                    {row.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })}{" "}
                     {row.currency}
                     <span className="text-gray-500 font-normal text-xs ml-2">
-                      ({row.totalTaxUSD.toLocaleString("fr-FR")} USD)
+                      ({row.totalTaxUSD.toLocaleString("en-US")} USD)
                     </span>
                   </p>
 
@@ -426,7 +426,7 @@ export function AfcftaComparePanel({
                   </div>
 
                   <p className={`text-[10px] mt-2 font-mono ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                    Droits {(row.appliedTariffRate * 100).toFixed(1)}% · TVA+droits locaux
+                    Duties {(row.appliedTariffRate * 100).toFixed(1)}% · Local VAT + duties
                   </p>
                 </li>
               );
@@ -437,7 +437,7 @@ export function AfcftaComparePanel({
 
       {!loading && !error && !compareResult && (
         <p className="text-xs text-gray-500">
-          Sélectionnez origine, produit et destinations puis lancez la comparaison.
+          Select origin, product, and destinations, then run the comparison.
         </p>
       )}
     </div>

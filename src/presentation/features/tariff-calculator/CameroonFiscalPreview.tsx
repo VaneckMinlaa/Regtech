@@ -129,7 +129,7 @@ export function CameroonFiscalPreview({
                     {(row.rate * 100).toFixed(row.rate < 0.1 ? 1 : 0)}%
                   </td>
                   <td className="py-1.5 text-right font-mono">
-                    {row.amount.toLocaleString("fr-FR")} XAF
+                    {row.amount.toLocaleString("en-US")} XAF
                   </td>
                 </tr>
               ))}
@@ -138,7 +138,7 @@ export function CameroonFiscalPreview({
                   Total taxes estimé
                 </td>
                 <td className="py-2 text-right font-mono text-primary-400">
-                  {data.totalTaxes.toLocaleString("fr-FR")} XAF
+                  {data.totalTaxes.toLocaleString("en-US")} XAF
                 </td>
               </tr>
             </tbody>

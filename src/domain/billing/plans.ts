@@ -37,26 +37,26 @@ export const XAF_TO_LOCAL: Record<string, number> = {
 
 /** 20 pays PawaPay — checkoutEnabled est mis à jour via GET /billing/countries */
 export const PAWAPAY_COUNTRIES: PawapayCountry[] = [
-  { code: "CMR", name: "Cameroun", currency: "XAF", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN MoMo", "Orange Money"] },
+  { code: "CMR", name: "Cameroon", currency: "XAF", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN MoMo", "Orange Money"] },
   { code: "CIV", name: "Côte d'Ivoire", currency: "XOF", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN", "Orange", "Wave"] },
-  { code: "SEN", name: "Sénégal", currency: "XOF", pawapaySupported: true, checkoutEnabled: true, operators: ["Free", "Orange", "Wave"] },
+  { code: "SEN", name: "Senegal", currency: "XOF", pawapaySupported: true, checkoutEnabled: true, operators: ["Free", "Orange", "Wave"] },
   { code: "NGA", name: "Nigeria", currency: "NGN", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN MoMo", "Airtel"] },
   { code: "GHA", name: "Ghana", currency: "GHS", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN", "Vodafone", "AirtelTigo"] },
   { code: "KEN", name: "Kenya", currency: "KES", pawapaySupported: true, checkoutEnabled: true, operators: ["M-Pesa"] },
-  { code: "BEN", name: "Bénin", currency: "XOF", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN MoMo", "Moov"] },
+  { code: "BEN", name: "Benin", currency: "XOF", pawapaySupported: true, checkoutEnabled: true, operators: ["MTN MoMo", "Moov"] },
   { code: "BFA", name: "Burkina Faso", currency: "XOF", pawapaySupported: true, checkoutEnabled: true, operators: ["Moov", "Orange"] },
-  { code: "COD", name: "RD Congo", currency: "CDF", pawapaySupported: true, checkoutEnabled: true, operators: ["Vodacom", "Airtel", "Orange"] },
-  { code: "COG", name: "Congo", currency: "XAF", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN MoMo"] },
-  { code: "ETH", name: "Éthiopie", currency: "ETB", pawapaySupported: true, checkoutEnabled: true, operators: ["M-Pesa"] },
+  { code: "COD", name: "DR Congo", currency: "CDF", pawapaySupported: true, checkoutEnabled: true, operators: ["Vodacom", "Airtel", "Orange"] },
+  { code: "COG", name: "Republic of the Congo", currency: "XAF", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN MoMo"] },
+  { code: "ETH", name: "Ethiopia", currency: "ETB", pawapaySupported: true, checkoutEnabled: true, operators: ["M-Pesa"] },
   { code: "GAB", name: "Gabon", currency: "XAF", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel"] },
   { code: "LSO", name: "Lesotho", currency: "LSL", pawapaySupported: true, checkoutEnabled: true, operators: ["M-Pesa"] },
   { code: "MWI", name: "Malawi", currency: "MWK", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "TNM"] },
   { code: "MOZ", name: "Mozambique", currency: "MZN", pawapaySupported: true, checkoutEnabled: true, operators: ["Movitel", "Vodacom"] },
   { code: "RWA", name: "Rwanda", currency: "RWF", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN MoMo"] },
   { code: "SLE", name: "Sierra Leone", currency: "SLE", pawapaySupported: true, checkoutEnabled: true, operators: ["Orange"] },
-  { code: "TZA", name: "Tanzanie", currency: "TZS", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "Vodacom", "Tigo"] },
-  { code: "UGA", name: "Ouganda", currency: "UGX", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN MoMo"] },
-  { code: "ZMB", name: "Zambie", currency: "ZMW", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN", "Zamtel"] },
+  { code: "TZA", name: "Tanzania", currency: "TZS", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "Vodacom", "Tigo"] },
+  { code: "UGA", name: "Uganda", currency: "UGX", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN MoMo"] },
+  { code: "ZMB", name: "Zambia", currency: "ZMW", pawapaySupported: true, checkoutEnabled: true, operators: ["Airtel", "MTN", "Zamtel"] },
 ];
 
 const FREE_QUOTAS: PlanQuotas = {
@@ -144,7 +144,7 @@ export function getPlanById(id: string): PricingPlan {
 export function formatLocalPrice(priceXaf: number, currency: string): string {
   const factor = XAF_TO_LOCAL[currency] ?? 1;
   const amount = Math.round(priceXaf * factor);
-  return new Intl.NumberFormat("fr-FR", {
+  return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency,
     maximumFractionDigits: 0,

@@ -24,14 +24,14 @@ export function CustomSignUpForm() {
 
     const { error } = await signUp.password({ emailAddress: email, password });
     if (error) {
-      setFormError(error.message ?? "Impossible de créer le compte.");
+      setFormError(error.message ?? "Unable to create the account.");
       return;
     }
 
     if (!error) {
       const sendResult = await signUp.verifications.sendEmailCode();
       if (sendResult.error) {
-        setFormError(sendResult.error.message ?? "Impossible d'envoyer le code de vérification.");
+        setFormError(sendResult.error.message ?? "Unable to send the verification code.");
       }
     }
   };
@@ -47,7 +47,7 @@ export function CustomSignUpForm() {
       return;
     }
 
-    setFormError("Code invalide ou expiré.");
+    setFormError("Invalid or expired code.");
   };
 
   const handleResendCode = async () => {
@@ -60,16 +60,16 @@ export function CustomSignUpForm() {
       <form onSubmit={handleVerifyEmail} className="grid gap-5">
         <div>
           <h4 className="text-gray-800 dark:text-white/90 font-semibold text-lg mb-1">
-            Vérifiez votre e-mail
+            Verify your email
           </h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Saisissez le code envoyé à <span className="font-medium">{email}</span>.
+            Enter the code sent to <span className="font-medium">{email}</span>.
           </p>
         </div>
 
         <div>
           <label htmlFor="sign-up-code" className={authLabelClass}>
-            Code de vérification
+            Verification code
           </label>
           <input
             id="sign-up-code"
@@ -90,7 +90,7 @@ export function CustomSignUpForm() {
         {formError ? <p className="text-red-500 text-sm">{formError}</p> : null}
 
         <button type="submit" disabled={isLoading || !code} className={authPrimaryButtonClass}>
-          {isLoading ? "Vérification…" : "Valider mon compte"}
+          {isLoading ? "Verifying…" : "Verify my account"}
         </button>
 
         <button
@@ -99,7 +99,7 @@ export function CustomSignUpForm() {
           disabled={isLoading}
           className="text-sm text-primary-500 font-medium hover:opacity-80 text-left"
         >
-          Renvoyer le code
+          Resend code
         </button>
       </form>
     );
@@ -109,7 +109,7 @@ export function CustomSignUpForm() {
     <form onSubmit={handleCreateAccount} className="grid gap-5">
       <div>
         <label htmlFor="sign-up-email" className={authLabelClass}>
-          Adresse e-mail
+          Email address
         </label>
         <input
           id="sign-up-email"
@@ -118,7 +118,7 @@ export function CustomSignUpForm() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className={authInputClass}
-          placeholder="votre@email.com"
+          placeholder="your@email.com"
           disabled={isLoading}
           required
         />
@@ -129,7 +129,7 @@ export function CustomSignUpForm() {
 
       <div>
         <label htmlFor="sign-up-password" className={authLabelClass}>
-          Mot de passe
+          Password
         </label>
         <div className="relative">
           <input
@@ -139,7 +139,7 @@ export function CustomSignUpForm() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className={authInputClass}
-            placeholder="Choisissez un mot de passe"
+            placeholder="Choose a password"
             disabled={isLoading}
             required
           />
@@ -147,7 +147,7 @@ export function CustomSignUpForm() {
             type="button"
             onClick={() => setShowPassword((value) => !value)}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -160,7 +160,7 @@ export function CustomSignUpForm() {
       {formError ? <p className="text-red-500 text-sm">{formError}</p> : null}
 
       <button type="submit" disabled={isLoading || !email || !password} className={authPrimaryButtonClass}>
-        {isLoading ? "Création…" : "Créer mon compte"}
+        {isLoading ? "Creating…" : "Create my account"}
       </button>
 
       <div id="clerk-captcha" />

@@ -19,7 +19,7 @@ interface AfcftaToolsPanelProps {
   darkMode?: boolean;
 }
 
-/** Validation origine AfCFTA + brouillon certificat (API authentifiée). */
+/** AfCFTA origin validation + certificate draft (authenticated API). */
 export function AfcftaToolsPanel({
   origin,
   destination = "CMR",
@@ -59,7 +59,7 @@ export function AfcftaToolsPanel({
       setValidateResult(result);
       setCertificate(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur validation");
+      setError(err instanceof Error ? err.message : "Validation error");
     } finally {
       setLoadingValidate(false);
     }
@@ -71,20 +71,20 @@ export function AfcftaToolsPanel({
     setLoadingCert(true);
     try {
       const draft = await regtechApi.createCertificateDraft({
-        exporterName: "Exportateur AfCFTA",
-        exporterAddress: `${origin} — adresse à compléter`,
-        importerName: "Importateur CMR",
-        importerAddress: "Douala, Cameroun",
+        exporterName: "AfCFTA exporter",
+        exporterAddress: `${origin} — address to complete`,
+        importerName: "CMR importer",
+        importerAddress: "Douala, Cameroon",
         origin,
         destination,
         hsCode,
-        productDescription: `Produit HS ${hsCode}`,
+        productDescription: `HS product ${hsCode}`,
         originPercentage: validateResult.originPercentage,
         quantity: 1,
       });
       setCertificate(draft);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur certificat");
+      setError(err instanceof Error ? err.message : "Certificate error");
     } finally {
       setLoadingCert(false);
     }
@@ -101,20 +101,20 @@ export function AfcftaToolsPanel({
         <ShieldCheck className="w-5 h-5 text-primary-500" />
         <div>
           <h3 className={`text-sm font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
-            Validation origine &amp; certificat
+            AfCFTA origin validation & certificate
           </h3>
           <p className={`text-xs mt-0.5 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-            Coûts de production pour le calcul de la valeur ajoutée locale
+            Production inputs used to calculate local value addition
           </p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
-          { id: "cost_matiere", label: "Coût matière (XAF)", value: costMatiere, set: setCostMatiere },
-          { id: "main_oeuvre", label: "Main-d'œuvre (XAF)", value: mainOeuvre, set: setMainOeuvre },
-          { id: "frais_locaux", label: "Frais locaux (XAF)", value: fraisLocaux, set: setFraisLocaux },
-          { id: "prix_vente", label: "Prix vente export (XAF)", value: prixVente, set: setPrixVente },
+          { id: "cost_matiere", label: "Material cost (XAF)", value: costMatiere, set: setCostMatiere },
+          { id: "main_oeuvre", label: "Labor cost (XAF)", value: mainOeuvre, set: setMainOeuvre },
+          { id: "frais_locaux", label: "Local fees (XAF)", value: fraisLocaux, set: setFraisLocaux },
+          { id: "prix_vente", label: "Export sale price (XAF)", value: prixVente, set: setPrixVente },
         ].map(({ id, label, value, set }) => (
           <div key={id}>
             <label htmlFor={id} className="text-[11px] font-bold text-gray-500 block mb-2">
@@ -140,7 +140,7 @@ export function AfcftaToolsPanel({
         className="w-full py-3 rounded-lg text-sm font-bold bg-primary-500 hover:bg-primary-600 text-white flex items-center justify-center gap-2"
       >
         {loadingValidate ? <Loader2 className="w-4 h-4 animate-spin" /> : <BadgeCheck className="w-4 h-4" />}
-        Valider éligibilité AfCFTA
+        Validate AfCFTA eligibility
       </button>
 
       {validateResult && (
@@ -156,25 +156,25 @@ export function AfcftaToolsPanel({
           }`}
         >
           <p className={`font-bold text-sm ${darkMode ? "text-white" : "text-gray-900"}`}>
-            {validateResult.eligible ? "Éligible au traitement préférentiel" : "Non éligible"}
+            {validateResult.eligible ? "Eligible for preferential treatment" : "Not eligible"}
           </p>
           <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
             <div>
-              <span className="text-gray-500 text-xs block">Origine calculée</span>
+              <span className="text-gray-500 text-xs block">Calculated origin</span>
               <span className="font-mono font-bold">{validateResult.originPercentage.toFixed(1)}%</span>
             </div>
             <div>
-              <span className="text-gray-500 text-xs block">Seuil requis</span>
+              <span className="text-gray-500 text-xs block">Required threshold</span>
               <span className="font-mono">{validateResult.thresholdRequired}%</span>
             </div>
             <div>
-              <span className="text-gray-500 text-xs block">Catégorie / groupe</span>
+              <span className="text-gray-500 text-xs block">Category / group</span>
               <span>{validateResult.productCategory} · {validateResult.countryGroup}</span>
             </div>
             <div>
-              <span className="text-gray-500 text-xs block">Économie estimée</span>
+              <span className="text-gray-500 text-xs block">Estimated savings</span>
               <span className="font-mono text-primary-500">
-                {validateResult.savingsLocalCurrency.toLocaleString("fr-FR")} XAF
+                {validateResult.savingsLocalCurrency.toLocaleString("en-US")} XAF
               </span>
             </div>
           </div>
@@ -192,7 +192,7 @@ export function AfcftaToolsPanel({
             className="w-full py-2.5 rounded-lg text-sm font-bold border-2 border-primary-500/50 text-primary-400 hover:bg-primary-500/10 flex items-center justify-center gap-2"
           >
             {loadingCert ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
-            Générer brouillon certificat
+            Generate certificate draft
           </button>
         </div>
       )}
@@ -208,13 +208,13 @@ export function AfcftaToolsPanel({
             <p className={`font-bold text-base mt-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
               {certificate.title}
             </p>
-            <p className="font-mono text-xs text-gray-500 mt-2">Réf. {certificate.draftId}</p>
+            <p className="font-mono text-xs text-gray-500 mt-2">Ref. {certificate.draftId}</p>
           </div>
           <p className={`text-sm italic leading-relaxed ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
             {certificate.disclaimer}
           </p>
           <div>
-            <p className="text-[11px] font-bold uppercase text-gray-500 mb-2">Documents requis</p>
+            <p className="text-[11px] font-bold uppercase text-gray-500 mb-2">Required documents</p>
             <ul className={`space-y-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
               {certificate.requiredDocuments.map((d) => (
                 <li key={d} className="flex gap-2">

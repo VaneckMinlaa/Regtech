@@ -21,7 +21,7 @@ interface CameroonApiToolsProps {
   darkMode?: boolean;
 }
 
-/** Outils Cameroun branchés sur `/cameroon/*` (port, CAMCIS, téléphones, landed cost). */
+/** Cameroon tools wired on `/cameroon/*` (port fees, CAMCIS, phones, landed cost). */
 export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
   const [tab, setTab] = useState<ToolTab>("port");
   const [loading, setLoading] = useState(false);
@@ -61,7 +61,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
     try {
       await fn();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Erreur API");
+      setError(err instanceof Error ? err.message : "API error");
     } finally {
       setLoading(false);
     }
@@ -70,7 +70,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
   const tabs: { id: ToolTab; label: string; icon: React.ReactNode }[] = [
     { id: "port", label: "Port", icon: <Anchor className="w-3 h-3" /> },
     { id: "camcis", label: "CAMCIS", icon: <Warehouse className="w-3 h-3" /> },
-    { id: "phones", label: "Téléphones", icon: <Smartphone className="w-3 h-3" /> },
+    { id: "phones", label: "Phones", icon: <Smartphone className="w-3 h-3" /> },
     { id: "landed", label: "Landed cost", icon: <Scale className="w-3 h-3" /> },
   ];
 
@@ -79,7 +79,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
       <div className="flex items-center gap-2 mb-4">
         <Package className="w-5 h-5 text-primary-500" />
         <h3 className={`text-sm font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
-          Outils fiscalité & logistique CM
+          Cameroon tax & logistics tools
         </h3>
       </div>
 
@@ -106,10 +106,10 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
               </select>
             </div>
             <div>
-              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">CONTENEUR</label>
+              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">CONTAINER</label>
               <select value={containerType} onChange={(e) => setContainerType(e.target.value)} className={inputClass}>
-                <option value="20ft">20 pieds</option>
-                <option value="40ft">40 pieds</option>
+                <option value="20ft">20 ft</option>
+                <option value="40ft">40 ft</option>
                 <option value="lcl">LCL</option>
               </select>
             </div>
@@ -124,17 +124,17 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
             }
             className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
           >
-            {loading ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Estimer frais portuaires"}
+            {loading ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Estimate port fees"}
           </button>
           {portResult && (
             <div className={`text-[11px] space-y-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
               {portResult.lines.map((l) => (
                 <p key={l.code}>
-                  {l.label}: {l.amountMin.toLocaleString("fr-FR")} – {l.amountMax.toLocaleString("fr-FR")} {portResult.currency}
+                  {l.label}: {l.amountMin.toLocaleString("en-US")} – {l.amountMax.toLocaleString("en-US")} {portResult.currency}
                 </p>
               ))}
               <p className="font-bold text-primary-400">
-                Total {portResult.totalMin.toLocaleString("fr-FR")} – {portResult.totalMax.toLocaleString("fr-FR")} {portResult.currency}
+                Total {portResult.totalMin.toLocaleString("en-US")} – {portResult.totalMax.toLocaleString("en-US")} {portResult.currency}
               </p>
             </div>
           )}
@@ -147,14 +147,14 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
             <div>
               <label className="text-[9px] font-bold text-gray-500 block mb-0.5">NATURE</label>
               <select value={nature} onChange={(e) => setNature(e.target.value)} className={inputClass}>
-                <option value="import_definitif">Import définitif</option>
+                <option value="import_definitif">Definitive import</option>
                 <option value="transit">Transit</option>
-                <option value="entrepot">Entrepôt</option>
-                <option value="admission_temporaire">Admission temporaire</option>
+                <option value="entrepot">Warehouse (entrepot)</option>
+                <option value="admission_temporaire">Temporary admission</option>
               </select>
             </div>
             <div>
-              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">VALEUR (XAF)</label>
+              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">VALUE (XAF)</label>
               <input type="number" value={valueLocal} onChange={(e) => setValueLocal(Number(e.target.value))} className={inputClass} />
             </div>
           </div>
@@ -168,7 +168,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
             }
             className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
           >
-            Suggérer régime CAMCIS
+            Suggest CAMCIS regime
           </button>
           {camcisResult && (
             <div className={`text-[11px] ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
@@ -188,11 +188,11 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
         <div className="space-y-3">
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">CIF UNITAIRE</label>
+              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">UNIT CIF</label>
               <input type="number" value={phoneValue} onChange={(e) => setPhoneValue(Number(e.target.value))} className={inputClass} />
             </div>
             <div>
-              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">QUANTITÉ</label>
+              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">QUANTITY</label>
               <input type="number" value={phoneQty} onChange={(e) => setPhoneQty(Number(e.target.value))} className={inputClass} />
             </div>
           </div>
@@ -210,7 +210,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
             }
             className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
           >
-            Pack import téléphones 2026
+            Phone import pack 2026
           </button>
           {phoneResult && (
             <div className={`text-[11px] ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
@@ -235,11 +235,11 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
               <input type="number" value={cifValue} onChange={(e) => setCifValue(Number(e.target.value))} className={inputClass} />
             </div>
             <div>
-              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">CODE HS</label>
+              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">HS CODE</label>
               <input value={hsCode} onChange={(e) => setHsCode(e.target.value)} className={inputClass} />
             </div>
             <div>
-              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">ORIGINE</label>
+              <label className="text-[9px] font-bold text-gray-500 block mb-0.5">ORIGIN</label>
               <input value={origin} onChange={(e) => setOrigin(e.target.value.toUpperCase())} className={inputClass} maxLength={3} />
             </div>
           </div>
@@ -264,10 +264,10 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
           </button>
           {landedResult && (
             <div className={`text-[11px] ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-              <p>Taxes douanières : {landedResult.customsTaxes.totalTaxes.toLocaleString("fr-FR")} XAF</p>
-              <p>Port : {landedResult.portFees.totalMin.toLocaleString("fr-FR")} – {landedResult.portFees.totalMax.toLocaleString("fr-FR")} XAF</p>
+              <p>Customs duties: {landedResult.customsTaxes.totalTaxes.toLocaleString("en-US")} XAF</p>
+              <p>Port: {landedResult.portFees.totalMin.toLocaleString("en-US")} – {landedResult.portFees.totalMax.toLocaleString("en-US")} XAF</p>
               <p className="font-bold text-primary-400 mt-2">
-                Total {landedResult.grandTotalMin.toLocaleString("fr-FR")} – {landedResult.grandTotalMax.toLocaleString("fr-FR")} {landedResult.currency}
+                Total {landedResult.grandTotalMin.toLocaleString("en-US")} – {landedResult.grandTotalMax.toLocaleString("en-US")} {landedResult.currency}
               </p>
             </div>
           )}

@@ -15,9 +15,9 @@ export function AuthRequiredPanel({ darkMode, feature }: AuthRequiredPanelProps)
       }`}
     >
       <Lock className="w-8 h-8 mx-auto mb-3 text-gray-500" />
-      <p className="text-sm font-semibold mb-1">Connexion requise</p>
+      <p className="text-sm font-semibold mb-1">Authentication required</p>
       <p className="text-xs text-gray-500">
-        Connectez-vous avec Clerk pour utiliser {feature}.
+        Sign in with Clerk to use {feature}.
       </p>
     </div>
   );

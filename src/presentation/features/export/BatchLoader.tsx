@@ -59,7 +59,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
       await downloadBatchExcelTemplate();
     } catch (err) {
       setErrorMsg(
-        err instanceof Error ? err.message : "Impossible de générer le modèle Excel.",
+        err instanceof Error ? err.message : "Unable to generate the Excel template.",
       );
     } finally {
       setIsDownloadingTemplate(false);
@@ -76,12 +76,12 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
       validateBatchCsvContent(content);
       const rowsToProcess = parseBatchCsvContent(content);
       if (rowsToProcess.length === 0) {
-        throw new Error("Aucune ligne valide (valeur declaree et prix export requis).");
+        throw new Error("No valid rows (declared value and export price are required).");
       }
 
       if (!canUse("batchRows", rowsToProcess.length)) {
         throw new Error(
-          `Quota lot dépassé (${rowsToProcess.length} lignes). Réduisez le fichier ou passez à un plan supérieur.`,
+          `Batch quota exceeded (${rowsToProcess.length} rows). Reduce the file or upgrade to a higher plan.`,
         );
       }
 
@@ -93,11 +93,11 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
       const msg =
         err instanceof ApiError
           ? err.status === 402
-            ? "Quota atteint — consultez l'onglet Offres."
+            ? "Quota reached — see the Offers tab."
             : err.message
           : err instanceof Error
             ? err.message
-            : "Erreur de decodage des lignes CSV.";
+            : "CSV line decoding error.";
       setErrorMsg(msg);
       if (err instanceof ApiError && err.status === 402) onUpgrade?.();
       if (err instanceof Error && err.message.includes("Quota lot")) onUpgrade?.();
@@ -116,7 +116,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
       await runBatch(text);
     } catch (err) {
       setErrorMsg(
-        err instanceof Error ? err.message : "Impossible de lire le fichier.",
+        err instanceof Error ? err.message : "Unable to read the file.",
       );
     } finally {
       setIsImporting(false);
@@ -150,10 +150,10 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
           <Table className="w-5 h-5 text-purple-500 animate-pulse" />
           <div>
             <h2 className={`text-base font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Simulation de Lot (CSV / Excel)
+              Batch simulation (CSV / Excel)
             </h2>
             <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-              ZIP : modèle à remplir + guide · Import = calcul automatique de toutes les lignes
+              ZIP: template to fill + guide · Import = automatic calculation of all rows
             </p>
           </div>
         </div>
@@ -169,7 +169,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
           ) : (
             <Download className="w-3.5 h-3.5" />
           )}
-          <span>{isDownloadingTemplate ? "Génération…" : "Télécharger modèle + guide (ZIP)"}</span>
+          <span>{isDownloadingTemplate ? "Generating…" : "Download template + guide (ZIP)"}</span>
         </button>
       </div>
 
@@ -212,14 +212,14 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
               }`}
             />
             <p className={`text-sm font-semibold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-              Importer CSV ou Excel
+              Import CSV or Excel
             </p>
             <p className={`text-[11px] mt-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-              Calcul lance automatiquement apres import
+              Calculation starts automatically after import
             </p>
             {importedFileName && (
               <p className={`text-[10px] mt-2 font-mono ${darkMode ? "text-primary-400" : "text-primary-700"}`}>
-                Fichier : {importedFileName}
+                File: {importedFileName}
               </p>
             )}
           </div>
@@ -230,7 +230,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
             }`}>
               <span>Apercu / collage manuel</span>
               <span className={`text-[10px] font-semibold ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
-                Separateur virgule
+                Comma separator
               </span>
             </label>
             <textarea
@@ -256,7 +256,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
             ) : (
               <Play className="w-3.5 h-3.5" />
             )}
-            <span>{isProcessing ? "Calcul en cours..." : "Recalculer le lot"}</span>
+            <span>{isProcessing ? "Processing..." : "Recalculate batch"}</span>
           </button>
 
           {errorMsg && (
@@ -275,7 +275,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
               <div className="flex-1 flex flex-col items-center justify-center py-16 space-y-2">
                 <RefreshCw className="w-6 h-6 text-purple-500 animate-spin" />
                 <span className={`text-xs font-mono ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  Calcul taxes + conversion devises (Frankfurter) pour chaque ligne...
+                  Calculating taxes + currency conversions (Frankfurter) for each row...
                 </span>
               </div>
             ) : results.length > 0 && summary ? (
@@ -284,7 +284,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                   <span className={`text-[10px] font-bold uppercase tracking-widest font-mono ${
                     darkMode ? "text-gray-500" : "text-gray-500"
                   }`}>
-                    Rapport de lot • {summary.processedCount} lignes
+                    Batch report • {summary.processedCount} rows
                   </span>
                   <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
                     darkMode ? "border-gray-700 text-gray-400" : "border-gray-200 text-gray-600"
@@ -297,11 +297,11 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                   darkMode ? "text-gray-300" : "text-gray-700"
                 }`}>
                   <div className={`rounded-lg border p-2 ${darkMode ? "border-gray-800 bg-dark-primary" : "border-gray-200 bg-white"}`}>
-                    <div className="text-gray-500">Succes</div>
+                    <div className="text-gray-500">Success</div>
                     <div className="text-lg font-bold text-primary-500">{summary.successCount}</div>
                   </div>
                   <div className={`rounded-lg border p-2 ${darkMode ? "border-gray-800 bg-dark-primary" : "border-gray-200 bg-white"}`}>
-                    <div className="text-gray-500">Erreurs</div>
+                    <div className="text-gray-500">Errors</div>
                     <div className="text-lg font-bold text-rose-500">{summary.errorCount}</div>
                   </div>
                   <div className={`rounded-lg border p-2 col-span-2 ${darkMode ? "border-gray-800 bg-dark-primary" : "border-gray-200 bg-white"}`}>
@@ -319,11 +319,11 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                     }`}>
                       <tr>
                         <th className="px-2 py-2">#</th>
-                        <th className="px-2 py-2">Trajet</th>
-                        <th className="px-2 py-2">Produit</th>
+                        <th className="px-2 py-2">Route</th>
+                        <th className="px-2 py-2">Product</th>
                         <th className="px-2 py-2 text-center">ZLECAf</th>
-                        <th className="px-2 py-2 text-right">Douane</th>
-                        <th className="px-2 py-2 text-right">TVA</th>
+                        <th className="px-2 py-2 text-right">Duties</th>
+                        <th className="px-2 py-2 text-right">VAT</th>
                         <th className="px-2 py-2 text-right">Total</th>
                         <th className="px-2 py-2 text-right">USD</th>
                         <th className="px-2 py-2">FX</th>
@@ -396,8 +396,8 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                 }`}>
                   <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
                   <div>
-                    <strong>Lot calcule :</strong> {summary.successCount} simulation(s) avec droits, TVA et conversion
-                    via {fxSourceLabel(summary.exchangeRateSource)}. Total consolidé :{" "}
+                    <strong>Batch calculated:</strong> {summary.successCount} simulation(s) with duties, VAT and conversion
+                    via {fxSourceLabel(summary.exchangeRateSource)}. Consolidated total:{" "}
                     <strong>{summary.totalTaxUSD.toLocaleString()} USD</strong>.
                   </div>
                 </div>
@@ -405,9 +405,9 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
             ) : (
               <div className="flex-1 flex flex-col items-center justify-center py-16 text-gray-500 text-center">
                 <FileText className="w-8 h-8 text-gray-405 mb-2" />
-                <p className="text-xs font-semibold">Aucune simulation de lot.</p>
+                <p className="text-xs font-semibold">No batch simulations.</p>
                 <p className="text-[10px] text-gray-500 mt-0.5">
-                  Importez un CSV — le calcul demarre automatiquement.
+                  Import a CSV — calculation starts automatically.
                 </p>
               </div>
             )}

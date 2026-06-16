@@ -23,14 +23,14 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
         <div className="wrapper">
           <div className="max-w-[800px] mx-auto">
             <div className="text-center pb-16">
-              <Subheading text="L'assistant douanier AfCFTA pour les PME africaines" />
+              <Subheading text="AfCFTA customs assistant for African SMEs" />
 
               <h1 className="text-gray-800 mx-auto font-bold mb-4 text-4xl sm:text-[50px] dark:text-white/90 sm:leading-[64px] max-w-[700px]">
-                Simplifiez vos opérations douanières avec l&apos;intelligence AfCFTA
+                Simplify your customs operations with AfCFTA intelligence
               </h1>
               <p className="max-w-[537px] text-center mx-auto text-gray-600 dark:text-gray-400 text-base">
-                Simulez droits et taxes, vérifiez l&apos;éligibilité ZLECAf, classifiez vos produits et comparez
-                plusieurs destinations — le tout dans un espace de travail unifié.
+                Simulate duties and taxes, verify ZLECAf eligibility, classify your products, and compare multiple
+                destinations — all in a unified workspace.
               </p>
 
               <div className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center">
@@ -39,7 +39,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                   onClick={onGetStarted}
                   className="bg-primary-500 transition h-12 inline-flex items-center justify-center hover:bg-primary-600 px-6 py-3 rounded-full text-white text-sm"
                 >
-                  Accéder à l&apos;application
+                  Access the application
                 </button>
 
                 <a
@@ -54,7 +54,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                       />
                     </svg>
                   </span>
-                  Voir la démo
+                  View the demo
                 </a>
               </div>
             </div>
@@ -101,7 +101,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
       <div className="wrapper">
         <div className="max-w-[1016px] relative z-30 mx-auto pt-14 pb-16">
           <p className="text-center text-gray-500 dark:text-white/50 text-lg font-medium">
-            Pensé pour les opérateurs économiques du continent africain
+            Built for economic operators across Africa
           </p>
           <div className="flex flex-wrap justify-center items-center gap-7 md:gap-14 mt-10">
             {["CEMAC", "UEMOA", "AfCFTA", "ZLECAf", "HS Code", "Mobile Money", "PawaPay"].map((label) => (

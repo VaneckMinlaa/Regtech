@@ -14,11 +14,11 @@ interface AfcftaDutyProjectionProps {
 const CURRENT_YEAR = new Date().getFullYear();
 
 function formatReduction(p: ZlecafDutyResponse): string {
-  if (p.excluded) return "Exclusion (tarif plein)";
+  if (p.excluded) return "Exclusion (full tariff)";
   const pct = Math.round(p.reductionFraction * 100);
-  if (pct >= 100) return "Exemption totale (-100%)";
-  if (pct === 0) return "Tarif plein (0% abattement)";
-  return `Abattement de -${pct}%`;
+  if (pct >= 100) return "Total exemption (-100%)";
+  if (pct === 0) return "Full tariff (0% reduction)";
+  return `Reduction of -${pct}%`;
 }
 
 /** Projection ZLECAf 2025–2030 via `GET /afcfta/duty/projection`. */
@@ -50,7 +50,7 @@ export function AfcftaDutyProjection({
       })
       .catch((err) => {
         if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Erreur projection");
+          setError(err instanceof Error ? err.message : "Projection error");
           setProjections([]);
         }
       })
@@ -66,7 +66,7 @@ export function AfcftaDutyProjection({
   if (!originCountryIso || !hsCode) {
     return (
       <p className={`text-xs ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-        Sélectionnez un pays d&apos;origine et un code HS pour charger la projection API.
+        Select an origin country and an HS code to load the API projection.
       </p>
     );
   }
@@ -76,13 +76,13 @@ export function AfcftaDutyProjection({
       <span className={`text-[11px] font-bold uppercase tracking-widest block font-mono ${
         darkMode ? "text-gray-500" : "text-gray-500"
       }`}>
-        Abattements progressifs (API ZLECAf)
+        Progressive reductions (ZLECAf API)
       </span>
 
       {loading && (
         <p className="text-[10px] text-gray-500 flex items-center gap-2">
           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-          Calcul projection…
+          Calculating projection…
         </p>
       )}
       {error && <p className="text-[10px] text-rose-400">{error}</p>}
@@ -109,13 +109,13 @@ export function AfcftaDutyProjection({
                   : darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
                 {p.calculationYear}
-                {isActive ? " (Année active)" : ""}
+                {isActive ? " (Active year)" : ""}
               </span>
               <strong className={`text-xs block py-0.5 ${darkMode && !isActive ? "text-white" : ""}`}>
                 {formatReduction(p)}
               </strong>
               <span className={`text-[9px] font-mono block ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                Taux appliqué : {(p.appliedDutyRate * 100).toFixed(1)}%
+                Applied rate: {(p.appliedDutyRate * 100).toFixed(1)}%
               </span>
             </div>
           );

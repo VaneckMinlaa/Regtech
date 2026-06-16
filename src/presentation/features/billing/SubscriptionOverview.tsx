@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, MapPin, CreditCard, CheckCircle2, AlertCircle, BarChart3 } from "lucide-react";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { SubscriptionOverviewSkeleton } from "./SubscriptionPageSkeleton";
+import { UsageMeterCard } from "./UsageMeterCard";
 import { getPlanById } from "@/domain/billing/plans";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { AnalyticsSummaryResponse } from "@/infrastructure/http/regtechApiTypes";
@@ -11,8 +12,27 @@ interface SubscriptionOverviewProps {
   returnStatus?: string | null;
 }
 
+function renewalLabel(periodEnd: string | null): { label: string; detail: string } | null {
+  if (!periodEnd) return null;
+  const end = new Date(periodEnd);
+  if (Number.isNaN(end.getTime())) return null;
+
+  const daysUntil = Math.ceil((end.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+  const formatted = end.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const cycle = daysUntil > 180 ? "Annual" : "Monthly";
+
+  return {
+    label: `${cycle} renewal`,
+    detail: formatted,
+  };
+}
+
 export function SubscriptionOverview({ darkMode = true, returnStatus }: SubscriptionOverviewProps) {
-  const { subscription, loading } = useSubscription();
+  const { subscription, usage, quotas, remaining, loading } = useSubscription();
   const plan = getPlanById(subscription.plan);
   const [analytics, setAnalytics] = useState<AnalyticsSummaryResponse | null>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(true);
@@ -26,13 +46,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
       .finally(() => setAnalyticsLoading(false));
   }, [subscription.plan]);
 
-  const periodEndLabel = subscription.periodEnd
-    ? new Date(subscription.periodEnd).toLocaleDateString("en-US", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : null;
+  const renewal = renewalLabel(subscription.periodEnd);
 
   if (loading) {
     return (
@@ -100,10 +114,12 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
               <span>PawaPay</span>
             </div>
           )}
-          {periodEndLabel && (
+          {renewal && (
             <div className="flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5 text-primary-500" />
-              <span>Renewal {periodEndLabel}</span>
+              <span>
+                {renewal.label} · {renewal.detail}
+              </span>
             </div>
           )}
         </div>
@@ -138,7 +154,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
           </div>
           <div>
             <p className="font-bold text-primary-400">
-              {analytics.afcftaSavingsEstimateLocal.toLocaleString("fr-FR")} XAF
+              {analytics.afcftaSavingsEstimateLocal.toLocaleString("en-US")} XAF
             </p>
             <p className={darkMode ? "text-gray-500" : "text-gray-500"}>estimated AfCFTA savings</p>
           </div>
@@ -152,6 +168,28 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
           </div>
         </div>
       ) : null}
+
+      <div
+        className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-2 gap-3 ${
+          darkMode ? "border-gray-800" : "border-gray-100"
+        }`}
+        id="subscription_usage_meters"
+      >
+        <UsageMeterCard
+          label="Tariff simulations"
+          used={usage.simulations}
+          limit={quotas.simulationsPerMonth}
+          remaining={remaining("simulations")}
+          darkMode={darkMode}
+        />
+        <UsageMeterCard
+          label="HS classifications"
+          used={usage.classifications}
+          limit={quotas.classificationsPerMonth}
+          remaining={remaining("classifications")}
+          darkMode={darkMode}
+        />
+      </div>
     </div>
   );
 }

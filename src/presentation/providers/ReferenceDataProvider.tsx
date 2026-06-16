@@ -54,7 +54,7 @@ export function ReferenceDataProvider({ children }: { children: React.ReactNode 
         const message =
           err instanceof ApiError
             ? err.message
-            : "Impossible de charger les pays depuis l'API. Verifiez que le Back-End est demarre (port 8000).";
+            : "Unable to load countries from the API. Please verify that the Back-End is running (port 8000).";
         setError(message);
       } finally {
         if (!cancelled) setIsLoading(false);
@@ -102,7 +102,7 @@ export function ReferenceDataProvider({ children }: { children: React.ReactNode 
 export function useReferenceData(): ReferenceDataState {
   const ctx = useContext(ReferenceDataContext);
   if (!ctx) {
-    throw new Error("useReferenceData doit etre utilise dans ReferenceDataProvider");
+    throw new Error("useReferenceData must be used inside ReferenceDataProvider");
   }
   return ctx;
 }

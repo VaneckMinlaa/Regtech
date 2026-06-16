@@ -19,7 +19,7 @@ export function CustomSignInForm() {
 
     const { error } = await signIn.password({ emailAddress: email, password });
     if (error) {
-      setFormError(error.message ?? "Identifiants incorrects.");
+      setFormError(error.message ?? "Incorrect credentials.");
       return;
     }
 
@@ -39,7 +39,7 @@ export function CustomSignInForm() {
     }
 
     if (signIn.status === "needs_second_factor") {
-      setFormError("Une vérification supplémentaire est requise sur votre compte.");
+      setFormError("An additional verification is required on your account.");
     }
   };
 
@@ -54,7 +54,7 @@ export function CustomSignInForm() {
       return;
     }
 
-    setFormError("Code invalide ou expiré.");
+    setFormError("Invalid or expired code.");
   };
 
   const handleResendCode = async () => {
@@ -73,16 +73,16 @@ export function CustomSignInForm() {
       <form onSubmit={handleVerifyCode} className="grid gap-5">
         <div>
           <h4 className="text-gray-800 dark:text-white/90 font-semibold text-lg mb-1">
-            Vérifiez votre compte
+            Verify your account
           </h4>
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            Un code de vérification a été envoyé à votre adresse e-mail.
+            A verification code has been sent to your email address.
           </p>
         </div>
 
         <div>
           <label htmlFor="sign-in-code" className={authLabelClass}>
-            Code de vérification
+            Verification code
           </label>
           <input
             id="sign-in-code"
@@ -103,7 +103,7 @@ export function CustomSignInForm() {
         {formError ? <p className="text-red-500 text-sm">{formError}</p> : null}
 
         <button type="submit" disabled={isLoading || !code} className={authPrimaryButtonClass}>
-          {isLoading ? "Vérification…" : "Vérifier"}
+          {isLoading ? "Verifying…" : "Verify"}
         </button>
 
         <div className="flex flex-wrap gap-4 text-sm">
@@ -113,7 +113,7 @@ export function CustomSignInForm() {
             disabled={isLoading}
             className="text-primary-500 font-medium hover:opacity-80"
           >
-            Renvoyer le code
+            Resend code
           </button>
           <button
             type="button"
@@ -121,7 +121,7 @@ export function CustomSignInForm() {
             disabled={isLoading}
             className="text-gray-500 dark:text-gray-400 hover:text-primary-500"
           >
-            Recommencer
+            Start over
           </button>
         </div>
       </form>
@@ -132,7 +132,7 @@ export function CustomSignInForm() {
     <form onSubmit={handleCredentials} className="grid gap-5">
       <div>
         <label htmlFor="sign-in-email" className={authLabelClass}>
-          Adresse e-mail
+          Email address
         </label>
         <input
           id="sign-in-email"
@@ -152,7 +152,7 @@ export function CustomSignInForm() {
 
       <div>
         <label htmlFor="sign-in-password" className={authLabelClass}>
-          Mot de passe
+          Password
         </label>
         <div className="relative">
           <input
@@ -162,7 +162,7 @@ export function CustomSignInForm() {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className={authInputClass}
-            placeholder="Votre mot de passe"
+            placeholder="Your password"
             disabled={isLoading}
             required
           />
@@ -170,7 +170,7 @@ export function CustomSignInForm() {
             type="button"
             onClick={() => setShowPassword((value) => !value)}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500"
-            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            aria-label={showPassword ? "Hide password" : "Show password"}
           >
             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
           </button>
@@ -183,7 +183,7 @@ export function CustomSignInForm() {
       {formError ? <p className="text-red-500 text-sm">{formError}</p> : null}
 
       <button type="submit" disabled={isLoading || !email || !password} className={authPrimaryButtonClass}>
-        {isLoading ? "Connexion…" : "Se connecter"}
+        {isLoading ? "Signing in…" : "Sign in"}
       </button>
     </form>
   );

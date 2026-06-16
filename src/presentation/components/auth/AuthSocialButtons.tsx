@@ -33,12 +33,12 @@ export function AuthSocialButtons({ mode, onError }: AuthSocialButtonsProps) {
       mode === "sign-in" ? await signIn.sso(params) : await signUp.sso(params);
 
     if (error) {
-      onError?.(error.message ?? "Connexion impossible avec ce fournisseur.");
+      onError?.(error.message ?? "Unable to sign in with this provider.");
       setLoading(null);
     }
   };
 
-  const prefix = mode === "sign-in" ? "Se connecter avec" : "S'inscrire avec";
+  const prefix = mode === "sign-in" ? "Sign in with" : "Sign up with";
 
   return (
     <div className="flex flex-col sm:flex-row justify-center gap-y-3.5 gap-x-5">
@@ -51,7 +51,7 @@ export function AuthSocialButtons({ mode, onError }: AuthSocialButtonsProps) {
           className={authSocialButtonClass}
         >
           {icon === "google" ? <GoogleIcon className="shrink-0" /> : <LinkedInIcon className="size-5 shrink-0" />}
-          <span>{loading === strategy ? "Redirection…" : `${prefix} ${label}`}</span>
+          <span>{loading === strategy ? "Redirecting…" : `${prefix} ${label}`}</span>
         </button>
       ))}
     </div>

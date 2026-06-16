@@ -37,10 +37,10 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
           <Landmark className="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
           <div>
             <h2 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Fiscalité & logistique Cameroun
+              Cameroon fiscality & logistics
             </h2>
             <p className={`text-xs mt-1 max-w-2xl ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Moteur fiscal CEMAC (DDI, TVA, accises), frais portuaires PAD/Kribi, régimes CAMCIS et landed cost.
+              CEMAC tax engine (customs duties, VAT, excise), PAD/Kribi port fees, CAMCIS regimes, and landed cost.
             </p>
           </div>
         </div>
@@ -51,12 +51,12 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
           darkMode ? "bg-dark-primary border-gray-800" : "bg-white border-gray-200 shadow-sm"
         }`}
       >
-        <h3 className={`text-sm font-bold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
-          Simulateur fiscal Cameroun
-        </h3>
+          <h3 className={`text-sm font-bold mb-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
+            Cameroon tax simulator
+          </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">VALEUR CIF (XAF)</label>
+            <label className="text-[9px] font-bold text-gray-500 block mb-1">CIF VALUE (XAF)</label>
             <input
               type="number"
               value={cifValue}
@@ -65,7 +65,7 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             />
           </div>
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">CODE HS</label>
+            <label className="text-[9px] font-bold text-gray-500 block mb-1">HS CODE</label>
             <SearchableSelect
               value={hsCode}
               onChange={setHsCode}
@@ -73,12 +73,12 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
               darkMode={darkMode}
               dense
               options={productToOptions(products)}
-              placeholder="Produit HS…"
-              noDataPlaceholder="API requise"
+              placeholder="HS product…"
+              noDataPlaceholder="API required"
             />
           </div>
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">ORIGINE</label>
+            <label className="text-[9px] font-bold text-gray-500 block mb-1">ORIGIN</label>
             <SearchableSelect
               value={origin}
               onChange={setOrigin}
@@ -86,12 +86,12 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
               darkMode={darkMode}
               dense
               options={countryToOptions(countries)}
-              placeholder="Pays origine…"
-              noDataPlaceholder="API requise"
+              placeholder="Origin country…"
+              noDataPlaceholder="API required"
             />
           </div>
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">ANNÉE</label>
+            <label className="text-[9px] font-bold text-gray-500 block mb-1">YEAR</label>
             <input
               type="number"
               value={year}
@@ -107,7 +107,7 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             onChange={(e) => setApplyZlecaf(e.target.checked)}
             className="rounded border-gray-600 text-primary-600"
           />
-          <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Appliquer abattement ZLECAf si éligible</span>
+          <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Apply AfCFTA concessions if eligible</span>
         </label>
 
         {hsCode && cifValue > 0 && (

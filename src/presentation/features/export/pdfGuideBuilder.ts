@@ -58,7 +58,7 @@ export async function buildRegTechGuidePdf(options: {
   doc.setFontSize(8);
   doc.setTextColor(156, 163, 175);
   y = ensureSpace(doc, y, LINE_HEIGHT * 2);
-  doc.text("RegTech — Assistant douanier AfCFTA · regtech", MARGIN, y);
+  doc.text("RegTech — AfCFTA customs assistant · regtech", MARGIN, y);
 
   return doc.output("arraybuffer");
 }

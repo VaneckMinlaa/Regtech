@@ -3,12 +3,25 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useId, useState } from "react";
+import { useState } from "react";
 
 interface DynamicLogoProps {
   className?: string;
   size?: "sm" | "md" | "lg";
   darkMode?: boolean;
+}
+
+const SIZE_CLASSES = {
+  sm: "w-8 h-8",
+  md: "w-10 h-10",
+  lg: "w-16 h-16",
+} as const;
+
+/** Primary palette fills for the stacked mark (matches public/logo.svg). */
+function logoFills(darkMode: boolean) {
+  return darkMode
+    ? { back: "#6938ef", mid: "#7a5af8", front: "#bdb4fe" }
+    : { back: "#5925dc", mid: "#7a5af8", front: "#9b8afb" };
 }
 
 export function DynamicLogo({
@@ -17,161 +30,45 @@ export function DynamicLogo({
   darkMode = true,
 }: DynamicLogoProps) {
   const [isHovered, setIsHovered] = useState(false);
-  const uid = useId().replace(/:/g, "");
-  const emeraldIndigoGrad = `emeraldIndigoGrad-${uid}`;
-  const eagleGrad = `eagleGrad-${uid}`;
-
-  const sizeClasses = {
-    sm: "w-8 h-8",
-    md: "w-10 h-10",
-    lg: "w-16 h-16",
-  };
-
-  const spinDuration = isHovered ? "4s" : "12s";
-  const spinReverseDuration = isHovered ? "3s" : "8s";
+  const fills = logoFills(darkMode);
 
   return (
     <div
-      className={`relative flex items-center justify-center shrink-0 select-none rounded-lg focus-within:ring-2 focus-within:ring-primary-500/40 focus-within:ring-offset-2 focus-within:ring-offset-transparent ${sizeClasses[size]} ${className}`}
+      className={`relative flex items-center justify-center shrink-0 select-none rounded-lg focus-within:ring-2 focus-within:ring-primary-500/40 focus-within:ring-offset-2 focus-within:ring-offset-transparent ${SIZE_CLASSES[size]} ${className}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onFocus={() => setIsHovered(true)}
       onBlur={() => setIsHovered(false)}
       tabIndex={0}
       role="img"
-      aria-label="RegTech AfCFTA"
-
+      aria-label="RegTech"
     >
       <div
-        className={`absolute inset-0 rounded-full blur-md opacity-40 transition-all duration-300 motion-safe:scale-125 motion-safe:duration-700 ${
-          isHovered ? "motion-safe:scale-[1.4] opacity-60" : ""
-        } ${
-          darkMode
-            ? "bg-gradient-to-tr from-primary-500/30 to-primary-400/30"
-            : "bg-gradient-to-tr from-primary-400/20 to-primary-400/20"
-        }`}
+        className={`absolute inset-0 rounded-lg blur-md opacity-30 transition-all duration-300 motion-safe:duration-500 ${
+          isHovered ? "motion-safe:scale-110 opacity-50" : ""
+        } bg-linear-to-tr from-primary-600/40 to-primary-400/30`}
         aria-hidden
       />
 
       <svg
-        viewBox="0 0 100 100"
-        className="w-full h-full relative z-10"
+        viewBox="0 0 24 24"
+        className={`w-full h-full relative z-10 transition-transform duration-300 motion-safe:duration-500 ${
+          isHovered ? "motion-safe:scale-105" : ""
+        }`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle
-          cx="50"
-          cy="50"
-          r="45"
-          fill="none"
-          stroke={darkMode ? "#334155" : "#cbd5e1"}
-          strokeWidth="1.5"
-          strokeDasharray="6 20 12 10"
-          className="logo-spin origin-center transition-all duration-300"
-          style={{
-            transformBox: "fill-box",
-            transformOrigin: "center",
-            animationDuration: spinDuration,
-          }}
+        <polygon
+          points="20.39 18.24 20.39 8 11.52 2.89 11.52 7.55 16.37 10.32 16.35 15.91 20.39 18.24"
+          fill={fills.back}
         />
-
-        <circle
-          cx="50"
-          cy="50"
-          r="38"
-          fill="none"
-          stroke={`url(#${emeraldIndigoGrad})`}
-          strokeWidth="2"
-          strokeDasharray="40 15 10 15"
-          className="logo-spin-reverse origin-center"
-          style={{
-            transformBox: "fill-box",
-            transformOrigin: "center",
-            animationDuration: spinReverseDuration,
-          }}
+        <polygon
+          points="14.79 19.86 14.79 11.23 7.33 6.92 7.33 10.94 11.34 13.23 11.32 17.85 14.79 19.86"
+          fill={fills.mid}
         />
-
-        <g
-          className="transition-opacity duration-300"
-          style={{ opacity: isHovered ? 0.95 : 0.6 }}
-        >
-          <path
-            d="M 50,22 A 28,28 0 0,1 68,68"
-            fill="none"
-            stroke={darkMode ? "#10b981" : "#059669"}
-            strokeWidth="1"
-            strokeDasharray="4 4"
-            className="motion-safe:animate-pulse"
-          />
-          <path
-            d="M 22,50 A 28,28 0 0,0 78,50"
-            fill="none"
-            stroke={darkMode ? "#6366f1" : "#4f46e5"}
-            strokeWidth="1"
-            strokeDasharray="3 3"
-          />
-          <circle cx="50" cy="22" r="2.5" fill="#10b981" className="motion-safe:animate-ping" />
-          <circle cx="68" cy="68" r="2.5" fill="#6366f1" />
-          <circle cx="22" cy="50" r="2.5" fill="#10b981" />
-          <circle cx="78" cy="50" r="2.5" fill="#6366f1" className="motion-safe:animate-ping" />
-        </g>
-
-        <g
-          className="origin-center transition-transform duration-300 motion-safe:duration-500"
-          style={{
-            transformBox: "fill-box",
-            transformOrigin: "center",
-            transform: isHovered ? "scale(1.1)" : "scale(1)",
-          }}
-        >
-          <circle
-            cx="50"
-            cy="50"
-            r="18"
-            fill={darkMode ? "rgba(15, 23, 42, 0.9)" : "rgba(255, 255, 255, 0.95)"}
-            stroke={`url(#${emeraldIndigoGrad})`}
-            strokeWidth="1.5"
-          />
-
-          <path
-            d="M 38,52 C 34,44 42,44 47,47 C 49,48 50,49 50,49"
-            fill="none"
-            stroke={`url(#${eagleGrad})`}
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path
-            d="M 62,52 C 66,44 58,44 53,47 C 51,48 50,49 50,49"
-            fill="none"
-            stroke={`url(#${eagleGrad})`}
-            strokeWidth="2"
-            strokeLinecap="round"
-          />
-          <path d="M 50,41 L 52,46 L 50,49 L 48,46 Z" fill={`url(#${eagleGrad})`} />
-          <path
-            d="M 33,50 Q 50,38 67,50"
-            fill="none"
-            stroke={darkMode ? "rgba(16, 185, 129, 0.3)" : "rgba(5, 150, 105, 0.25)"}
-            strokeWidth="1"
-          />
-          <path
-            d="M 33,50 Q 50,62 67,50"
-            fill="none"
-            stroke={darkMode ? "rgba(99, 102, 241, 0.3)" : "rgba(79, 70, 229, 0.25)"}
-            strokeWidth="1"
-          />
-        </g>
-
-        <defs>
-          <linearGradient id={emeraldIndigoGrad} x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="#6366f1" />
-          </linearGradient>
-          <linearGradient id={eagleGrad} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor="#059669" />
-            <stop offset="50%" stopColor="#10b981" />
-            <stop offset="100%" stopColor="#6366f1" />
-          </linearGradient>
-        </defs>
+        <polygon
+          points="9.76 21.15 9.76 14.14 3.69 10.64 3.69 14 6.86 15.81 6.84 19.47 9.76 21.15"
+          fill={fills.front}
+        />
       </svg>
     </div>
   );

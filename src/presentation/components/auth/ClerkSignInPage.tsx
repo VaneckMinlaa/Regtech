@@ -36,7 +36,7 @@ function AuthBackgroundGlow() {
   );
 }
 
-/** Connexion avec l'UI du template et la logique Clerk (hooks headless). */
+/** Sign-in UI using the template and Clerk logic (headless hooks). */
 export function ClerkSignInPage({ onBack, initialMode = "sign-in" }: ClerkSignInPageProps) {
   const { darkMode, toggleDarkMode } = useTheme();
   const [mode, setMode] = useState<"sign-in" | "sign-up">(initialMode);
@@ -60,7 +60,7 @@ export function ClerkSignInPage({ onBack, initialMode = "sign-in" }: ClerkSignIn
                 className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-primary-500"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Accueil
+                Home
               </button>
             ) : (
               <>
@@ -73,7 +73,7 @@ export function ClerkSignInPage({ onBack, initialMode = "sign-in" }: ClerkSignIn
             type="button"
             onClick={toggleDarkMode}
             className="p-2 rounded-full border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-primary-500"
-            aria-label="Changer de thème"
+            aria-label="Change theme"
           >
             {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
@@ -86,12 +86,12 @@ export function ClerkSignInPage({ onBack, initialMode = "sign-in" }: ClerkSignIn
             <div className="contact-wrapper border p-8 sm:p-14 relative z-30 bg-white dark:bg-dark-primary dark:border-dark-primary border-gray-100">
               <div className="text-center mb-8">
                 <h3 className="text-gray-800 dark:text-white/90 font-bold text-3xl mb-2">
-                  {isSignIn ? "Connexion" : "Créer un compte"}
+                  {isSignIn ? "Sign in" : "Create an account"}
                 </h3>
                 <p className="text-gray-500 dark:text-gray-400">
                   {isSignIn
-                    ? "Connectez-vous pour accéder à votre espace RegTech."
-                    : "Renseignez vos informations pour rejoindre RegTech."}
+                    ? "Sign in to access your RegTech workspace."
+                    : "Enter your details to join RegTech."}
                 </p>
               </div>
 
@@ -104,7 +104,7 @@ export function ClerkSignInPage({ onBack, initialMode = "sign-in" }: ClerkSignIn
 
               <div className="mt-5">
                 <p className="text-gray-700 dark:text-gray-400 text-sm text-center">
-                  {isSignIn ? "Pas encore de compte ?" : "Déjà un compte ?"}{" "}
+                  {isSignIn ? "Don't have an account?" : "Already have an account?"}{" "}
                   <button
                     type="button"
                     onClick={() => {
@@ -113,7 +113,7 @@ export function ClerkSignInPage({ onBack, initialMode = "sign-in" }: ClerkSignIn
                     }}
                     className="text-sm font-semibold text-primary-500 hover:opacity-80"
                   >
-                    {isSignIn ? "Créer un compte" : "Se connecter"}
+                    {isSignIn ? "Create an account" : "Sign in"}
                   </button>
                 </p>
               </div>

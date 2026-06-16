@@ -14,56 +14,56 @@ export interface BatchColumnDef {
 export const BATCH_COLUMNS: BatchColumnDef[] = [
   {
     key: "origin",
-    label: "Pays origine (code ISO)",
-    hint: "Code pays ISO 3 lettres — ex. CMR, NGA, GHA",
+    label: "Origin country (ISO code)",
+    hint: "3-letter ISO country code — e.g. CMR, NGA, GHA",
     width: 22,
   },
   {
     key: "destination",
-    label: "Pays destination (code ISO)",
-    hint: "Code pays ISO 3 lettres — ex. NGA, CIV, KEN",
+    label: "Destination country (ISO code)",
+    hint: "3-letter ISO country code — e.g. NGA, CIV, KEN",
     width: 26,
   },
   {
     key: "hsCode",
-    label: "Code HS",
-    hint: "Code douanier harmonisé — ex. 851712, 180100",
+    label: "HS code",
+    hint: "Harmonized customs code — e.g. 851712, 180100",
     width: 14,
   },
   {
     key: "declaredValueLocal",
-    label: "Valeur déclarée (devise locale)",
-    hint: "Montant en devise du pays d'origine — > 0",
+    label: "Declared value (local currency)",
+    hint: "Amount in the origin country’s local currency — > 0",
     width: 28,
   },
   {
     key: "costMatiereLocale",
-    label: "Coût matière locale",
-    hint: "Coût des matières premières locales",
+    label: "Local raw material cost",
+    hint: "Cost of local raw materials",
     width: 22,
   },
   {
     key: "mainOeuvreLocale",
-    label: "Main-d'œuvre locale",
-    hint: "Coût de la main-d'œuvre locale",
+    label: "Local labor cost",
+    hint: "Cost of local labor",
     width: 20,
   },
   {
     key: "fraisLocaux",
-    label: "Frais locaux",
-    hint: "Frais de production / logistique locaux",
+    label: "Local fees/expenses",
+    hint: "Local production/logistics fees",
     width: 16,
   },
   {
     key: "prixVenteExport",
-    label: "Prix de vente export",
-    hint: "Prix de vente à l'export (si vide = valeur déclarée)",
+    label: "Export sale price",
+    hint: "Export sale price (if empty = declared value)",
     width: 22,
   },
   {
     key: "year",
-    label: "Année de simulation",
-    hint: "Année fiscale — ex. 2025 à 2030",
+    label: "Simulation year",
+    hint: "Fiscal year — e.g. 2025 to 2030",
     width: 18,
   },
 ];
@@ -124,7 +124,7 @@ export function findBatchHeaderRowIndex(rows: (string | number)[][]): number {
 /** Convertit une grille brute en lignes CSV normalisées (clés techniques). */
 export function gridToNormalizedCsv(rows: (string | number)[][]): string {
   if (rows.length === 0) {
-    throw new Error("La feuille est vide.");
+    throw new Error("The sheet is empty.");
   }
 
   const headerRowIndex = findBatchHeaderRowIndex(rows);
@@ -136,7 +136,7 @@ export function gridToNormalizedCsv(rows: (string | number)[][]): string {
   const resolvedCount = keyIndexes.filter(Boolean).length;
   if (resolvedCount < 5) {
     throw new Error(
-      "En-têtes non reconnus. Utilisez le modèle Excel RegTech ou les colonnes techniques (origin, destination, hsCode…).",
+      "Unrecognized headers. Use the RegTech Excel template or the technical columns (origin, destination, hsCode…).",
     );
   }
 
@@ -168,7 +168,7 @@ export function gridToNormalizedCsv(rows: (string | number)[][]): string {
   }
 
   if (lines.length < 2) {
-    throw new Error("Aucune ligne de données trouvée sous les en-têtes.");
+    throw new Error("No data rows found under the headers.");
   }
 
   return lines.join("\n");
@@ -186,7 +186,7 @@ function normalizeGridCell(key: string, cell: unknown): string {
 
 function isNonDataRow(values: string[]): boolean {
   const first = values[0]?.toLowerCase().trim() ?? "";
-  if (first.includes("▼") || first.includes("vos simulation") || first.includes("exemple")) {
+  if (first.includes("▼") || first.includes("your simulations") || first.includes("example")) {
     return true;
   }
   if (values.some((v) => /^ex\.\s/i.test(v.trim()) || /^ex\s/i.test(v.trim()))) {

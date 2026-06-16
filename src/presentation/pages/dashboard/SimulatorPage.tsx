@@ -54,7 +54,7 @@ export function SimulatorPage({
           onClick={onOpenHistory}
           className={`text-xs font-bold text-primary-500 hover:underline`}
         >
-          Voir l&apos;historique complet →
+          View full history →
         </button>
       </div>
     </div>

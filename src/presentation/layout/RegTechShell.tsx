@@ -169,7 +169,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
                 </span>
               </div>
               <h1 className={`text-xs sm:text-xs font-bold tracking-tight font-display ${platform.textPrimary(darkMode)}`}>
-                Assistant ZLECAf
+                ZLECAf customs assistant
               </h1>
             </div>
           </div>
@@ -331,7 +331,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
                 : "text-rose-700 bg-rose-50 border-rose-200"
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${apiOnline ? "bg-primary-500" : "bg-rose-500"}`} />
-            <span>{apiOnline ? "API connectee" : "API indisponible"}</span>
+            <span>{apiOnline ? "API connected" : "API unavailable"}</span>
           </div>
         </div>
       </aside>
@@ -358,7 +358,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             <div className="flex items-center gap-2">
               <DynamicLogo size="sm" darkMode={darkMode} className="hidden sm:flex" />
               <span className={`font-bold text-sm sm:text-base tracking-tight font-display transition-colors ${platform.textPrimary(darkMode)}`}>
-                Assistant Douanier ZLECAf
+                ZLECAf customs assistant
               </span>
             </div>
           </div>
@@ -375,10 +375,10 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
         <main className="flex-1 overflow-y-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6">
           <div className={`border rounded-lg p-6 relative overflow-hidden transition-all ${platform.hero(darkMode)}`}>
             <h2 className={`text-xl font-bold tracking-tight font-display mb-1.5 ${platform.heroTitle(darkMode)}`}>
-              Assistant douanier AfCFTA
+              AfCFTA customs assistant
             </h2>
             <p className={`text-xs leading-relaxed max-w-4xl ${platform.heroSubtitle(darkMode)}`}>
-              Estimez droits et taxes, vérifiez l&apos;éligibilité AfCFTA, classifiez vos produits et comparez plusieurs destinations — en un seul espace de travail.
+              Estimate duties and taxes, check AfCFTA eligibility, classify your products, and compare multiple destinations — in a single workspace.
             </p>
           </div>
 
@@ -441,7 +441,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
       <footer className={`border-t py-3 shrink-0 leading-relaxed text-[10px] ${platform.footer(darkMode)}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-sans">
-          &copy; 2026 RegTech — Assistant douanier AfCFTA. Tous droits réservés.
+          &copy; 2026 RegTech — AfCFTA customs assistant. All rights reserved.
         </div>
       </footer>
 

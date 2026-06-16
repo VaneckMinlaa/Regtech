@@ -6,11 +6,10 @@ export function CoreFeaturesSection() {
       <div className="max-w-[72rem] mx-auto">
         <div className="mb-12 text-center">
           <h2 className="mb-3 font-bold text-gray-800 text-3xl dark:text-white/90 md:text-title-lg max-w-xl mx-auto">
-            Fonctionnalités clés de RegTech
+            Key RegTech features
           </h2>
           <p className="max-w-xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
-            Tout ce dont votre PME a besoin pour anticiper les coûts douaniers, sécuriser ses classifications
-            et accélérer ses flux commerciaux intra-africains.
+            Everything your SME needs to anticipate customs costs, secure HS classifications, and accelerate intra-African trade flows.
           </p>
         </div>
 

@@ -29,7 +29,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
         return data[0] ?? null;
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Impossible de charger l'historique");
+      setError(err instanceof Error ? err.message : "Unable to load simulation history");
       setItems([]);
       setSelected(null);
     } finally {
@@ -63,10 +63,10 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
           <History className="w-5 h-5 text-primary-500" />
           <div>
             <h2 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Historique des simulations
+              Simulation history
             </h2>
             <p className={`text-xs mt-0.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Toutes vos simulations enregistrées — fiches ZLECAf et exports PDF.
+              All your saved simulations — ZLECAf sheets and PDF exports.
             </p>
           </div>
         </div>
@@ -79,7 +79,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
           }`}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-          Actualiser
+          Refresh
         </button>
       </div>
 
@@ -89,11 +89,11 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
 
       {loading && items.length === 0 ? (
         <p className={`text-xs text-center py-12 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
-          Chargement de l&apos;historique…
+          Loading history…
         </p>
       ) : items.length === 0 ? (
         <p className={`text-xs text-center py-12 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
-          Aucune simulation enregistrée. Lancez une simulation dans l&apos;onglet Simulateur.
+          No saved simulations. Run one in the Simulator tab.
         </p>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -119,7 +119,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
                     {originName} → {destName}
                   </p>
                   <p className="text-[10px] text-primary-500 font-mono mt-1">
-                    {sim.totalTaxLocal.toLocaleString("fr-FR")} · HS {sim.hsCode}
+                    {sim.totalTaxLocal.toLocaleString("en-US")} · HS {sim.hsCode}
                   </p>
                 </button>
               );

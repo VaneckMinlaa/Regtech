@@ -9,9 +9,9 @@ interface LandingHeaderProps {
 }
 
 const NAV_LINKS = [
-  { href: "#features", label: "Fonctionnalités" },
-  { href: "#tools", label: "Outils" },
-  { href: "#pricing", label: "Tarifs" },
+  { href: "#features", label: "Features" },
+  { href: "#tools", label: "Tools" },
+  { href: "#pricing", label: "Pricing" },
   { href: "#faq", label: "FAQ" },
 ];
 
@@ -52,7 +52,7 @@ export function LandingHeader({ onSignIn, onGetStarted }: LandingHeaderProps) {
               type="button"
               onClick={toggleDarkMode}
               className="p-2 rounded-full border border-gray-200 dark:border-gray-700 text-gray-500 dark:text-gray-400 hover:text-primary-500"
-              aria-label="Changer de thème"
+              aria-label="Change theme"
             >
               {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
@@ -70,7 +70,7 @@ export function LandingHeader({ onSignIn, onGetStarted }: LandingHeaderProps) {
               onClick={onSignIn}
               className="text-sm hidden lg:block font-medium text-gray-700 dark:text-gray-400 hover:text-primary-500"
             >
-              Se connecter
+              Sign in
             </button>
 
             <button
@@ -78,7 +78,7 @@ export function LandingHeader({ onSignIn, onGetStarted }: LandingHeaderProps) {
               onClick={onGetStarted}
               className="lg:inline-flex items-center px-5 py-3 gradient-btn hidden text-sm text-white rounded-full h-11"
             >
-              Commencer gratuitement
+              Start free
             </button>
           </div>
         </div>
@@ -97,14 +97,14 @@ export function LandingHeader({ onSignIn, onGetStarted }: LandingHeaderProps) {
             </a>
           ))}
           <button type="button" onClick={onSignIn} className="block text-sm text-gray-600 dark:text-gray-300">
-            Se connecter
+            Sign in
           </button>
           <button
             type="button"
             onClick={onGetStarted}
             className="w-full px-5 py-3 gradient-btn text-sm text-white rounded-full"
           >
-            Commencer gratuitement
+            Start free
           </button>
         </div>
       )}

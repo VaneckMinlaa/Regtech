@@ -18,7 +18,7 @@ export function ApiStatusBanner({ darkMode }: ApiStatusBannerProps) {
         }`}
       >
         <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-        Chargement des pays depuis l&apos;API...
+        Loading countries from the API...
       </div>
     );
   }
@@ -33,7 +33,7 @@ export function ApiStatusBanner({ darkMode }: ApiStatusBannerProps) {
         }`}
       >
         <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-        Chargement du catalogue produits HS...
+        Loading HS product catalog...
       </div>
     );
   }
@@ -62,7 +62,7 @@ export function ApiStatusBanner({ darkMode }: ApiStatusBannerProps) {
             : "border-rose-300 hover:bg-rose-100"
         }`}
       >
-        Reessayer
+        Try again
       </button>
     </div>
   );

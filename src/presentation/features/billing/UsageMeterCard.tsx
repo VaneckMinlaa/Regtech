@@ -9,7 +9,7 @@ interface UsageMeterCardProps {
 }
 
 function formatLimit(limit: number | null): string {
-  return limit === null ? "∞" : limit.toLocaleString("fr-FR");
+  return limit === null ? "∞" : limit.toLocaleString("en-US");
 }
 
 export function UsageMeterCard({
@@ -19,9 +19,9 @@ export function UsageMeterCard({
   remaining,
   darkMode = true,
 }: UsageMeterCardProps) {
+  const unlimited = limit === null;
   const pct =
     limit !== null && limit > 0 ? Math.min(100, Math.round((used / limit) * 100)) : used > 0 ? 100 : 0;
-  const unlimited = limit === null;
 
   return (
     <div
@@ -29,30 +29,38 @@ export function UsageMeterCard({
         darkMode ? "bg-[#101828]/80 border-gray-800" : "bg-white border-gray-200 shadow-sm"
       }`}
     >
-      <p className={`text-[10px] uppercase font-bold tracking-wider ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-        {label}
-      </p>
-      <p className={`text-2xl font-extrabold font-display mt-2 ${darkMode ? "text-white" : "text-gray-900"}`}>
-        {unlimited ? used.toLocaleString("fr-FR") : remaining?.toLocaleString("fr-FR") ?? "0"}
+      <div className="flex items-center justify-between gap-2">
+        <p className={`text-[10px] uppercase font-bold tracking-wider ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
+          {label}
+        </p>
         {!unlimited && (
-          <span className={`text-sm font-normal ml-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-            remaining{remaining !== 1 ? "s" : ""}
+          <span className={`text-[10px] font-mono font-bold ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+            {pct}%
           </span>
         )}
-      </p>
-      <p className={`text-[11px] mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-        {used.toLocaleString("fr-FR")} used{used > 1 ? "" : ""}
-        {!unlimited && ` · ${formatLimit(limit)} included / month`}
-        {unlimited && " · unlimited"}
-      </p>
+      </div>
+
       {!unlimited && (
-        <div className={`mt-3 h-1.5 rounded-full overflow-hidden ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}>
+        <div className={`mt-3 h-2.5 rounded-full overflow-hidden ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}>
           <div
-            className="h-full rounded-full bg-primary-500 transition-all"
+            className={`h-full rounded-full transition-all duration-300 ${
+              pct >= 90 ? "bg-rose-500" : pct >= 75 ? "bg-amber-500" : "bg-primary-500"
+            }`}
             style={{ width: `${pct}%` }}
           />
         </div>
       )}
+
+      <p className={`text-[11px] mt-2.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+        {used.toLocaleString("en-US")} used
+        {!unlimited && (
+          <>
+            {" "}
+            · {remaining?.toLocaleString("en-US") ?? "0"} remaining · {formatLimit(limit)} included / month
+          </>
+        )}
+        {unlimited && " · unlimited"}
+      </p>
     </div>
   );
 }

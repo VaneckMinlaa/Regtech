@@ -26,12 +26,12 @@ export function ReferenceVersionsFooter({ darkMode = true }: ReferenceVersionsFo
     >
       <p className="flex items-center gap-1 font-bold uppercase tracking-wider">
         <Database className="w-3 h-3" />
-        Référentiels (F-24)
+        Reference versions (F-24)
       </p>
       <p>TEC CEMAC : {versions.tecCemac}</p>
       <p>Moteur ZLECAf : {versions.zlecafTariffEngine}</p>
       <p>Catalogue HS : {versions.hsCatalogue}</p>
-      <p>TVA Afrique : {versions.africaVatRates} · Engine {versions.engineVersion}</p>
+      <p>VAT Africa : {versions.africaVatRates} · Engine {versions.engineVersion}</p>
     </div>
   );
 }

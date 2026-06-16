@@ -96,7 +96,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   // Quick calculate helpers in under 100ms
   const handleSimulate = async () => {
     if (!canUse("simulations")) {
-      setErrorMsg("Quota de simulations atteint pour ce mois. Passez à un plan supérieur.");
+      setErrorMsg("Simulation quota reached for this month. Upgrade to a higher plan.");
       onUpgrade?.();
       return;
     }
@@ -120,13 +120,13 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
       onSimulationRun(data);
     } catch (err) {
       if (err instanceof ApiError && err.status === 402) {
-        setErrorMsg("Quota atteint — choisissez un plan sur l'onglet Offres.");
+        setErrorMsg("Quota reached — choose a plan on the Offers tab.");
         onUpgrade?.();
       } else {
         setErrorMsg(
           err instanceof ApiError
             ? err.message
-            : "Impossible de joindre le service de simulation.",
+            : "Unable to reach the simulation service.",
         );
       }
     } finally {
@@ -153,7 +153,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   if (refLoading) {
     return (
       <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-        Chargement des pays depuis l&apos;API...
+        Loading countries from the API...
       </p>
     );
   }
@@ -169,7 +169,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             <Calculator className="w-5 h-5 text-primary-500" />
             <h2 className={`text-base font-bold font-display ${
               darkMode ? "text-white" : "text-gray-900"
-            }`}>Simulateur de droits de douane</h2>
+            }`}>Customs duties simulator</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -178,7 +178,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                Pays de provenance
+                Country of origin
               </label>
               <SearchableSelect
                 id="select_origin_country"
@@ -186,8 +186,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 darkMode={darkMode}
                 loading={refLoading}
                 options={countryToOptions(countries)}
-                placeholder="Tapez pour filtrer un pays d'origine…"
-                noDataPlaceholder="Pays indisponibles (demarrer l'API)"
+                placeholder="Type to filter an origin country…"
+                noDataPlaceholder="Countries unavailable (start the API)"
                 onChange={(code) => {
                   setOrigin(code);
                   if (code === destination) {
@@ -202,7 +202,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                Pays de destination
+                Destination country
               </label>
               <SearchableSelect
                 id="select_destination_country"
@@ -210,8 +210,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 darkMode={darkMode}
                 loading={refLoading}
                 options={countryToOptions(countries)}
-                placeholder="Tapez pour filtrer un pays de destination…"
-                noDataPlaceholder="Pays indisponibles (demarrer l'API)"
+                placeholder="Type to filter a destination country…"
+                noDataPlaceholder="Countries unavailable (start the API)"
                 onChange={(code) => {
                   setDestination(code);
                   if (code === origin) {
@@ -226,7 +226,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 flex justify-between items-center ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                <span>Sélection du Produit (HS Code Répertoire)</span>
+                <span>Product selection (HS code directory)</span>
                 {products.length > 0 && (
                   <span className="text-[10px] font-normal opacity-70">
                     {products.length} codes HS
@@ -234,7 +234,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 )}
                 {initialHSCode && (
                   <span className="text-[10px] text-primary-600 bg-primary-500/10 px-2 py-0.5 border border-primary-500/20 rounded-full font-bold">
-                    Assigné par classification IA: {initialHSCode}
+                    Assigned by AI classification: {initialHSCode}
                   </span>
                 )}
               </label>
@@ -244,8 +244,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 darkMode={darkMode}
                 loading={refLoading}
                 options={productToOptions(products)}
-                placeholder="Tapez code HS ou description…"
-                noDataPlaceholder="Produits indisponibles (demarrer l'API)"
+                placeholder="Type HS code or description…"
+                noDataPlaceholder="Products unavailable (start the API)"
                 onChange={setHSCode}
               />
             </div>
@@ -255,7 +255,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                Valeur declaree ({originCountry?.currency ?? "—"})
+                Declared value ({originCountry?.currency ?? "—"})
               </label>
               <div className="relative">
                 <input
@@ -284,12 +284,12 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                   darkMode ? "text-gray-500" : "text-gray-500"
                 }`}>
                   ≈ {declaredValueInDest.toLocaleString(undefined, { maximumFractionDigits: 0 })}{" "}
-                  {destCountry.currency} à destination
+                  {destCountry.currency} at destination
                   {declaredValueUsd > 0 && (
                     <> · {declaredValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} USD</>
                   )}
                   {!currentResult && (
-                    <span className="opacity-70"> (taux de change)</span>
+                    <span className="opacity-70"> (exchange rate)</span>
                   )}
                 </p>
               )}
@@ -300,7 +300,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                Quantité d'articles
+                Quantity of items
               </label>
               <input
                 type="number"
@@ -320,12 +320,14 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <label className={`text-[11px] font-bold uppercase tracking-wider ${
                   darkMode ? "text-gray-400" : "text-gray-500"
                 }`}>
-                  Année Calendaire de l'Accord AfCFTA
+                  AfCFTA agreement calendar year
                 </label>
                 <span className={`text-xs font-extrabold font-mono ${
                   darkMode ? "text-primary-400" : "text-primary-700"
                 }`}>
-                  {year === 2025 ? "2025 (Hors Traité)" : `${year} (${year === 2030 ? "Exemption totale" : `Réduction -${(0.75 + (year - 2026) * 0.05) * 100}%`})`}
+                  {year === 2025
+                    ? "2025 (Outside treaty)"
+                    : `${year} (${year === 2030 ? "Total exemption" : `Reduction -${(0.75 + (year - 2026) * 0.05) * 100}%`})`}
                 </span>
               </div>
               <input
@@ -346,7 +348,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <span>2027</span>
                 <span>2028</span>
                 <span>2029</span>
-                <span>2030 (Libre)</span>
+                <span>2030 (Free)</span>
               </div>
             </div>
           </div>
@@ -362,7 +364,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             onClick={() => void handleSimulate()}
             className="mt-4 w-full bg-primary-500 hover:bg-primary-500 disabled:opacity-40 disabled:pointer-events-none text-white font-semibold py-2.5 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
           >
-            Calculer les droits et taxes
+            Calculate duties and taxes
           </button>
         </div>
 
@@ -375,17 +377,19 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <Scale className="w-5 h-5 text-primary-500" />
               <h3 className={`text-sm font-bold font-display ${
                 darkMode ? "text-gray-100" : "text-gray-900"
-              }`}>Calcul d'Éligibilité Règle d'Origine (AFT)</h3>
+              }`}>Rule of Origin eligibility calculation (AFT)</h3>
             </div>
             <span className={`text-xs px-2.5 py-0.5 font-bold rounded-full border ${originValueRatio >= originThreshold ? "bg-primary-500/10 text-primary-600 border-primary-500/20" : "bg-rose-500/10 text-rose-600 border-rose-550/20"}`}>
-              {originValueRatio >= originThreshold ? `Éligible (≥${originThreshold}%)` : `Non-Conforme (<${originThreshold}%)`}
+              {originValueRatio >= originThreshold
+                ? `Eligible (≥${originThreshold}%)`
+                : `Non-compliant (<${originThreshold}%)`}
             </span>
           </div>
 
           <div className={`p-3 rounded-lg text-xs leading-5 font-mono border mb-4 ${
             darkMode ? "bg-[#101828] border-gray-800 text-gray-300" : "bg-gray-50 border-gray-200 text-gray-700"
           }`}>
-            <span className={`font-bold block mb-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Formule mathématique officielle (ZLECAf) :</span>
+              <span className={`font-bold block mb-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Official mathematical formula (AfCFTA):</span>
             <div className={`text-center font-bold text-xs my-2 tracking-wide font-display ${
               darkMode ? "text-white" : "text-gray-900"
             }`}>
@@ -401,7 +405,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[10px] font-bold uppercase tracking-wide block mb-1 ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                Cout matieres locales ({originCountry?.currency ?? "—"})
+                Local material costs ({originCountry?.currency ?? "—"})
               </label>
               <input
                 type="number"
@@ -417,7 +421,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <label className={`text-[10px] font-bold uppercase tracking-wide block mb-1 ${
                 darkMode ? "text-gray-400" : "text-gray-500"
               }`}>
-                Main d&apos;oeuvre locale ({originCountry?.currency ?? "—"})
+                Local labor costs ({originCountry?.currency ?? "—"})
               </label>
               <input
                 type="number"
@@ -475,8 +479,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             <div>
               <h3 className={`text-sm font-bold font-display ${
                 darkMode ? "text-gray-100" : "text-gray-800"
-              }`}>Calcul des taxes simulées</h3>
-              <p className={`text-[10px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Rendu instantané à base d'abattements réels</p>
+              }`}>Simulated taxes calculation</h3>
+              <p className={`text-[10px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Instant result based on real concessions</p>
             </div>
             {isLoading && <RefreshCw className="w-4 h-4 text-primary-500 animate-spin" />}
           </div>
@@ -490,7 +494,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
                   darkMode ? "bg-dark-secondary text-gray-400" : "bg-gray-200 text-gray-600"
                 }`}>
-                  Total Taxes Évaluées
+                  Total Estimated Taxes
                 </span>
                 <div className="text-2xl font-black text-primary-600 dark:text-primary-400 font-mono mt-2 mb-1">
                   {currentResult.totalTaxLocal.toLocaleString()} {destCountry?.currency ?? ""}
@@ -507,9 +511,9 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 }`}>
                   <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
                   <div>
-                    <strong>Exclusion/Sensibilité (AFT-04) :</strong>
+                    <strong>Exclusion/Sensitivity (AFT-04):</strong>
                     <p className={`text-[11px] mt-0.5 ${darkMode ? "text-rose-400/95" : "text-rose-700/95"}`}>
-                      &quot;{selectedProduct?.description}&quot; est liste comme produit sensible. Les droits de douane de base ({Math.round((selectedProduct?.baseTariffRate ?? 0) * 100)}%) s&apos;appliquent sans abattement.
+                      &quot;{selectedProduct?.description}&quot; is listed as a sensitive product. The base customs duty ({Math.round((selectedProduct?.baseTariffRate ?? 0) * 100)}%) applies without concessions.
                     </p>
                   </div>
                 </div>
@@ -522,9 +526,10 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 }`}>
                   <BadgeCheck className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" />
                   <div>
-                    <strong>Préférence Accordée ZLECAf :</strong>
+                    <strong>AfCFTA preference granted:</strong>
                     <p className={`text-[11px] mt-0.5 ${darkMode ? "text-primary-400/95" : "text-primary-800"}`}>
-                      Traitement préférentiel certifié d'abattement de {((1 - currentResult.appliedTariffRate/currentResult.baseTariffRate)*100).toFixed(0)}%. Taux final : <span className="underline font-bold">{(currentResult.appliedTariffRate * 100).toFixed(1)}%</span> au lieu de {(currentResult.baseTariffRate * 100).toFixed(1)}%.
+                      A certified preferential treatment with a concession of {((1 - currentResult.appliedTariffRate/currentResult.baseTariffRate)*100).toFixed(0)}%. Final rate:{" "}
+                      <span className="underline font-bold">{(currentResult.appliedTariffRate * 100).toFixed(1)}%</span> instead of {(currentResult.baseTariffRate * 100).toFixed(1)}%.
                     </p>
                   </div>
                 </div>
@@ -535,13 +540,13 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <div className={`flex items-center justify-between text-xs py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Classification Code HS:</span>
+                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>HS classification code:</span>
                   <span className={`font-mono font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>{currentResult.hsCode}</span>
                 </div>
                 <div className={`flex items-center justify-between text-xs py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Désignation Produit:</span>
+                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Product description:</span>
                   <span className={`font-semibold truncate max-w-[200px] ${darkMode ? "text-gray-300" : "text-gray-800"}`} title={currentResult.productDescription}>
                     {currentResult.productDescription}
                   </span>
@@ -549,7 +554,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <div className={`flex items-center justify-between text-xs py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Droit de Douane de base:</span>
+                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Base customs duty:</span>
                   <span className={`font-mono ${darkMode ? "text-gray-300" : "text-gray-700"}`}>{(currentResult.baseTariffRate * 100).toFixed(1)}%</span>
                 </div>
                 {currentResult.isEligiblePrefAfCFTA && (
@@ -563,7 +568,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <div className={`flex items-center justify-between text-xs py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Montant d'impôt douanier:</span>
+                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Customs duty amount:</span>
                   <span className={`font-mono font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
                     {currentResult.dutyPaidLocal.toLocaleString()} {destCountry?.currency ?? ""}
                   </span>
@@ -572,7 +577,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
                   <span className={darkMode ? "text-gray-400" : "text-gray-500"}>
-                    TVA locale de destination ({Math.round((destCountry?.vatRate ?? 0) * 100)}%) :
+                    Destination VAT ({Math.round((destCountry?.vatRate ?? 0) * 100)}%):
                   </span>
                   <span className={`font-mono font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
                     {currentResult.vatPaidLocal.toLocaleString()} {destCountry?.currency ?? ""}
@@ -588,20 +593,20 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                   <>
                     <div className="flex items-center justify-between">
                       <span>
-                        Prov: 1 USD = {currentResult.originExchangeRateToUSD ?? originCountry.exchangeRateToUSD}{" "}
+                        Origin: 1 USD = {currentResult.originExchangeRateToUSD ?? originCountry.exchangeRateToUSD}{" "}
                         {originCountry.currency}
                       </span>
                       <span>
-                        Dest: 1 USD = {currentResult.destinationExchangeRateToUSD ?? destCountry.exchangeRateToUSD}{" "}
+                        Destination: 1 USD = {currentResult.destinationExchangeRateToUSD ?? destCountry.exchangeRateToUSD}{" "}
                         {destCountry.currency}
                       </span>
                     </div>
                     <span className={`text-[9px] ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                      Source taux: {currentResult.exchangeRateSource === "frankfurter"
-                        ? "Frankfurter (BCE, gratuit)"
+                      Rate source: {currentResult.exchangeRateSource === "frankfurter"
+                        ? "Frankfurter (ECB, free)"
                         : currentResult.exchangeRateSource === "pilot"
-                          ? "Référentiel pilote AfCFTA"
-                          : "Référentiel pays"}
+                          ? "AfCFTA pilot reference"
+                          : "Country reference"}
                     </span>
                   </>
                 )}
@@ -621,7 +626,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             <div className={`flex-1 flex items-center justify-center text-xs ${
               darkMode ? "text-gray-500" : "text-gray-400"
             }`}>
-              Prêt à calculer les taxes...
+              Ready to calculate taxes...
             </div>
           )}
         </div>

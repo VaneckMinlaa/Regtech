@@ -123,11 +123,11 @@ export function AfcftaPage({
     <div className="space-y-8 animate-fadeIn" id="afcfta_page">
       <div className={panelClass(darkMode)}>
         <h3 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-          Annuaire des Règles ZLECAf &amp; Traitement Préférentiel (AFT)
+          AfCFTA rules directory & preferential treatment (AFT)
         </h3>
         <p className={`text-sm leading-relaxed mt-2 max-w-3xl ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-          Marchandises originaires d&apos;Afrique : traitement fiscal préférentiel selon la valeur ajoutée locale
-          minimum de 40&nbsp;% (Manuel ZLECAf).
+          African-origin goods: preferential tax treatment based on local value addition, with a minimum of 40%
+          (AfCFTA manual).
         </p>
       </div>
 
@@ -141,17 +141,17 @@ export function AfcftaPage({
               }`}
             >
               <BookMarked className="w-4 h-4 text-primary-500" />
-              Niveau de valeur ajoutée locale
+              Local value addition level
             </h4>
             <p className={`text-sm leading-relaxed ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Critère d&apos;éligibilité au traitement préférentiel continental.
+              Eligibility criterion for continental preferential treatment.
             </p>
             <div
               className={`px-5 py-4 rounded-lg border text-center font-bold text-sm font-display ${
                 darkMode ? "bg-[#101828] border-gray-800 text-primary-400" : "bg-primary-50 border-primary-200 text-primary-800"
               }`}
             >
-              Critère de conformité économique : R_origine ≥ 40%
+              Economic compliance criterion: R_origin ≥ 40%
             </div>
           </div>
 
@@ -180,11 +180,11 @@ export function AfcftaPage({
           >
             <h4 className="font-bold font-display flex items-center gap-2 text-base mb-3">
               <ShieldAlert className="w-5 h-5 text-rose-500" />
-              Biens sensibles — Liste noire (AFT-04)
+              Sensitive goods — blacklist (AFT-04)
             </h4>
             <p>
-              Automobiles, textiles précieux, code <strong>98010000</strong> : exclusion des abattements,
-              taxe pleine appliquée automatiquement.
+              Automobiles, valuable textiles, code <strong>98010000</strong>: excluded from concessions,
+              full-rate tax applied automatically.
             </p>
           </div>
 
@@ -192,37 +192,37 @@ export function AfcftaPage({
             <div className={`flex items-center gap-2 border-b pb-4 ${darkMode ? "border-gray-800" : "border-gray-100"}`}>
               <TrendingUp className="w-5 h-5 text-primary-500" />
               <h3 className={`text-sm uppercase font-bold font-mono ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-                Comparaison multi-destinations
+                Multi-destination comparison
               </h3>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="text-[11px] font-bold text-gray-500 block mb-2">Pays d&apos;origine</label>
+                <label className="text-[11px] font-bold text-gray-500 block mb-2">Origin country</label>
                 <SearchableSelect
                   value={compOrigin}
                   onChange={setCompOrigin}
                   loading={refLoading}
                   darkMode={darkMode}
                   options={countryToOptions(countries)}
-                  placeholder="Sélectionner un pays…"
-                  noDataPlaceholder="API requise"
+                  placeholder="Select a country…"
+                  noDataPlaceholder="API required"
                 />
               </div>
               <div>
-                <label className="text-[11px] font-bold text-gray-500 block mb-2">Produit (code HS)</label>
+                <label className="text-[11px] font-bold text-gray-500 block mb-2">Product (HS code)</label>
                 <SearchableSelect
                   value={compProduct}
                   onChange={setCompProduct}
                   loading={refLoading}
                   darkMode={darkMode}
                   options={productToOptions(products)}
-                  placeholder="Code ou description…"
-                  noDataPlaceholder="API requise"
+                  placeholder="Code or description…"
+                  noDataPlaceholder="API required"
                 />
               </div>
               <div>
-                <label className="text-[11px] font-bold text-gray-500 block mb-2">Valeur comparable (FCFA)</label>
+                <label className="text-[11px] font-bold text-gray-500 block mb-2">Comparable value (FCFA)</label>
                 <input
                   type="number"
                   value={compVal}
@@ -233,7 +233,7 @@ export function AfcftaPage({
             </div>
 
             <div className="space-y-3">
-              <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Destinations à comparer</p>
+              <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Destinations to compare</p>
               {[
                 { label: "Destination 1", value: dest1, set: setDest1 },
                 { label: "Destination 2", value: dest2, set: setDest2 },
@@ -247,7 +247,7 @@ export function AfcftaPage({
                     loading={refLoading}
                     darkMode={darkMode}
                     options={countryToOptions(countries)}
-                    placeholder="Choisir un pays…"
+                    placeholder="Select a country…"
                     noDataPlaceholder="—"
                   />
                 </div>
@@ -255,9 +255,9 @@ export function AfcftaPage({
             </div>
 
             <div className={`space-y-3 pt-5 border-t ${darkMode ? "border-gray-800" : "border-gray-100"}`}>
-              {compLoading && <p className="text-xs text-gray-500 font-mono">Calcul en cours…</p>}
+              {compLoading && <p className="text-xs text-gray-500 font-mono">Calculating…</p>}
               {!compLoading && compTariffs.length === 0 && (
-                <p className="text-xs text-gray-500">Renseignez origine, produit et valeur pour comparer.</p>
+                <p className="text-xs text-gray-500">Select origin, product, and value to compare.</p>
               )}
               {compTariffs.map((c, i) => (
                 <div
@@ -282,11 +282,11 @@ export function AfcftaPage({
                             : "bg-gray-100 text-gray-600 border-gray-200"
                       }`}
                     >
-                      {c.isEligiblePrefAfCFTA ? "Préférentiel" : "Standard"}
+                      {c.isEligiblePrefAfCFTA ? "Preferential" : "Standard"}
                     </span>
                   </div>
                   <p className={`font-mono text-sm font-bold ${darkMode ? "text-primary-400" : "text-primary-700"}`}>
-                    {c.totalTaxLocal.toLocaleString("fr-FR", { maximumFractionDigits: 0 })} {c.currency}
+                    {c.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} {c.currency}
                   </p>
                 </div>
               ))}

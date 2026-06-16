@@ -14,7 +14,7 @@ export function AuthGate({ children }: { children: ReactNode }) {
       <div className="min-h-screen flex items-center justify-center bg-[#101828]">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs text-gray-400 font-sans">Chargement…</p>
+          <p className="text-xs text-gray-400 font-sans">Loading…</p>
         </div>
       </div>
     );

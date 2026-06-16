@@ -49,7 +49,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
   const handleClassify = async () => {
     if (!description.trim()) return;
     if (!canUse("classifications")) {
-      setErr("Quota de classifications atteint. Passez à un plan supérieur.");
+      setErr("Classification quota reached. Upgrade to a higher plan.");
       onUpgrade?.();
       return;
     }
@@ -65,13 +65,13 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
       recordUsage("classifications");
     } catch (error) {
       if (error instanceof ApiError && error.status === 402) {
-        setErr("Quota atteint — consultez l'onglet Offres.");
+        setErr("Quota reached — see the Offers tab.");
         onUpgrade?.();
       } else {
         setErr(
           error instanceof ApiError
             ? error.message
-            : "Impossible de joindre le service de classification.",
+            : "Unable to reach the classification service.",
         );
       }
     } finally {
@@ -102,7 +102,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
       ...result,
       hs_code: correctedCode,
       confidence: 100,
-      reasoning: ` [Corrigé par l'Utilisateur] ${result.reasoning}`
+      reasoning: ` [Corrected by the user] ${result.reasoning}`
     });
   };
 
@@ -118,8 +118,8 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
           <div>
             <h2 className={`text-base font-bold font-display ${
               darkMode ? "text-white" : "text-gray-900"
-            }`}>Classification HS intelligente</h2>
-            <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Classificateur de descriptions textuelles vers tarif d'éligibilité</p>
+            }`}>Smart HS classification</h2>
+            <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Classifier for text descriptions into eligibility tariff</p>
           </div>
         </div>
 
@@ -127,10 +127,10 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
         <div className={`flex items-center gap-1.5 text-xs font-semibold ${
           darkMode ? "text-gray-400" : "text-gray-600"
         }`}>
-          <span title="Le code HS est une nomenclature internationale standard de 8 chiffres désignant de façon unique chaque produit exporté.">
+          <span title="HS code is a standard international 8-digit nomenclature that uniquely identifies each exported product.">
             <HelpCircle className="w-4 h-4 text-gray-400 cursor-pointer hover:text-primary-500" aria-hidden />
           </span>
-          <span className="hidden sm:inline">Qu'est-ce que le HS Code ?</span>
+          <span className="hidden sm:inline">What is the HS code?</span>
         </div>
       </div>
 
@@ -141,7 +141,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
             <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
               darkMode ? "text-gray-400" : "text-gray-500"
             }`}>
-              Description de la marchandise en douane
+              Customs description of goods
             </label>
             <textarea
               id="txt_product_description"
@@ -151,7 +151,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
               className={`w-full rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-primary-500 transition-colors ${
                 darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-200 text-gray-900"
               }`}
-              placeholder="Ex: importation de 50 ordinateurs portables core i7 avec accessoires pour revente..."
+              placeholder="Ex: import of 50 i7 core laptop computers with accessories for resale..."
             />
           </div>
 
@@ -164,12 +164,12 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
             {isLoading ? (
               <>
                 <RefreshCw className="w-4 h-4 animate-spin" />
-                <span>Analyse IA en cours...</span>
+                <span>AI analysis in progress...</span>
               </>
             ) : (
               <>
                 <Sparkles className="w-4 h-4" />
-                <span>Classifier la marchandise</span>
+                <span>Classify the goods</span>
               </>
             )}
           </button>
@@ -194,8 +194,8 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                   <Sparkles className="w-4 h-4 text-primary-500 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 animate-pulse" />
                 </div>
                 <div className="text-center font-bold">
-                  <p className={`text-xs font-semibold font-display ${darkMode ? "text-gray-300" : "text-primary-900"}`}>Interrogation du modèle d'Intelligence d'Affaires...</p>
-                  <p className={`text-[10px] font-mono mt-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>Analyse en cours…</p>
+                  <p className={`text-xs font-semibold font-display ${darkMode ? "text-gray-300" : "text-primary-900"}`}>Querying the business intelligence model...</p>
+                  <p className={`text-[10px] font-mono mt-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>Analysis in progress…</p>
                 </div>
               </div>
             ) : result ? (
@@ -205,7 +205,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                     <span className={`text-[10px] font-bold uppercase tracking-wider font-mono block mb-0.5 ${
                       darkMode ? "text-gray-500" : "text-gray-500"
                     }`}>
-                      Code HS Identifié
+                      Identified HS code
                     </span>
                     <h3 className="text-xl font-black tracking-tight font-display flex items-center gap-2">
                       <span className="text-primary-600 dark:text-primary-400 font-mono">{result.hs_code}</span>
@@ -223,7 +223,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                       ? "bg-purple-500/10 text-purple-650 dark:text-purple-300 border-purple-500/20" 
                       : "bg-gray-200 text-gray-700 border-gray-300 dark:bg-dark-secondary dark:text-gray-400 dark:border-gray-700"
                   }`}>
-                    {result.mode === "cloud" ? "Classification cloud" : "Classification locale"}
+                    {result.mode === "cloud" ? "Cloud classification" : "Local classification"}
                   </span>
                 </div>
 
@@ -251,14 +251,14 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                 <div className={`p-3.5 rounded-lg border text-xs leading-relaxed font-sans ${
                   darkMode ? "bg-dark-primary border-gray-800 text-gray-300" : "bg-white border-gray-200 text-gray-700 shadow-sm"
                 }`}>
-                  <strong className={`text-[11px] uppercase tracking-wider block mb-1 ${darkMode ? "text-white" : "text-gray-800"}`}>Raisonnement douanier</strong>
+                <strong className={`text-[11px] uppercase tracking-wider block mb-1 ${darkMode ? "text-white" : "text-gray-800"}`}>Customs reasoning</strong>
                   {result.reasoning}
                 </div>
 
                 {/* Alternative suggestions */}
                 {result.suggestions && result.suggestions.length > 0 && (
                   <div className="text-xs">
-                    <span className={`font-semibold block mb-1.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>Suggestions Alternatives (IA-03) :</span>
+                    <span className={`font-semibold block mb-1.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>Alternative suggestions (AI-03):</span>
                     <div className="flex flex-wrap gap-2">
                       {result.suggestions.map((code) => {
                         const product = products.find((p) => p.code === code);
@@ -295,7 +295,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                     className="flex-1 bg-primary-500 hover:bg-primary-555 text-white py-2 rounded-lg text-xs font-semibold shadow transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    <span>Charger dans le simulateur</span>
+                    <span>Load into simulator</span>
                   </button>
 
                   <button
@@ -304,7 +304,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                       darkMode ? "bg-dark-primary hover:bg-dark-secondary border-gray-800 text-gray-400 hover:text-gray-200" : "bg-white hover:bg-gray-100 border-gray-200 text-gray-600 hover:text-gray-800"
                     }`}
                   >
-                    Corriger le Code
+                    Correct the code
                   </button>
                 </div>
 
@@ -313,7 +313,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                   <div className={`p-3.5 border rounded-lg text-xs space-y-3.5 mt-2 animate-fadeIn ${
                     darkMode ? "bg-dark-primary/60 border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
                   }`}>
-                    <strong className={darkMode ? "text-white" : "text-gray-905"}>Ajuster manuellement le code HS de la marchandise</strong>
+                    <strong className={darkMode ? "text-white" : "text-gray-905"}>Manually adjust the HS code of the goods</strong>
                     
                     <div className="flex gap-2">
                       <SearchableSelect
@@ -324,8 +324,8 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                         loading={refLoading}
                         className="flex-1"
                         options={productToOptions(products)}
-                        placeholder="Tapez code HS ou description…"
-                        noDataPlaceholder="Produits indisponibles"
+                        placeholder="Type HS code or description…"
+                        noDataPlaceholder="Products unavailable"
                       />
  
                       <button
@@ -333,14 +333,14 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                         className="bg-primary-600 hover:bg-primary-600 text-white font-medium px-4 py-1.5 rounded transition-colors flex items-center gap-1 shrink-0 cursor-pointer"
                       >
                         <Save className="w-3.5 h-3.5" />
-                        <span>Enregistrer</span>
+                        <span>Save</span>
                       </button>
                     </div>
 
                     {correctionSaved && (
                       <div className="text-[11px] text-primary-600 font-semibold flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5 text-primary-500" />
-                        <span>Correction enregistrée localement dans l'historique !</span>
+                        <span>Correction saved locally in history!</span>
                       </div>
                     )}
                   </div>
@@ -348,7 +348,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
               </div>
             ) : (
               <div className="flex-1 flex items-center justify-center text-xs text-gray-500 py-12">
-                Aucune simulation active...
+                No active simulation...
               </div>
             )}
           </div>

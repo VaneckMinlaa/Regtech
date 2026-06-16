@@ -45,8 +45,8 @@ function parseApiError(body: unknown, status: number): string {
     if (typeof payload.error === "string") return payload.error;
   }
   return status === 401
-    ? "Session expirée ou non authentifiée."
-    : "Erreur lors de l'appel API.";
+    ? "Session expired or not authenticated."
+    : "API call error.";
 }
 
 async function fetchWithAuth<T>(
@@ -77,7 +77,7 @@ async function fetchWithAuth<T>(
     return await attempt(true);
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
-      throw new ApiError("Delai depasse lors de l'appel API.", 408);
+      throw new ApiError("Request timed out during the API call.", 408);
     }
     throw err;
   } finally {
