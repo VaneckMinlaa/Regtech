@@ -30,8 +30,26 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
               </h1>
               <p className="max-w-[537px] text-center mx-auto text-gray-600 dark:text-gray-400 text-base">
                 Simulate duties and taxes, verify AfCFTA eligibility, classify your products, and compare multiple
-                destinations — all in a unified workspace.
+                destinations — pay your subscription with Mobile Money via PawaPay.
               </p>
+
+              <dl className="mx-auto mt-10 grid max-w-lg grid-cols-3 gap-3 text-center sm:gap-6">
+                {[
+                  { value: "5", label: "Pilot countries" },
+                  { value: "1", label: "PawaPay checkout" },
+                  { value: "30s", label: "MoMo upgrade" },
+                ].map((stat) => (
+                  <div
+                    key={stat.label}
+                    className="rounded-2xl border border-gray-200/80 bg-white/80 px-3 py-4 dark:border-white/10 dark:bg-white/5"
+                  >
+                    <dt className="text-2xl font-bold font-display text-primary-600 dark:text-primary-400">
+                      {stat.value}
+                    </dt>
+                    <dd className="mt-1 text-xs font-medium text-gray-500 dark:text-gray-400">{stat.label}</dd>
+                  </div>
+                ))}
+              </dl>
 
               <div className="mt-9 flex sm:flex-row flex-col gap-3 relative z-30 items-center justify-center">
                 <button
@@ -103,11 +121,15 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
           <p className="text-center text-gray-500 dark:text-white/50 text-lg font-medium">
             Built for economic operators across Africa
           </p>
-          <div className="flex flex-wrap justify-center items-center gap-7 md:gap-14 mt-10">
+          <div className="flex flex-wrap justify-center items-center gap-3 md:gap-4 mt-10">
             {["CEMAC", "UEMOA", "AfCFTA", "HS Code", "Mobile Money", "PawaPay"].map((label) => (
               <span
                 key={label}
-                className="text-gray-400 dark:text-white/40 text-sm font-semibold tracking-wide uppercase opacity-80 hover:opacity-100 transition"
+                className={`rounded-full px-4 py-2 text-xs font-semibold tracking-wide uppercase transition ${
+                  label === "PawaPay"
+                    ? "bg-primary-500/10 text-primary-600 ring-1 ring-primary-500/30 dark:text-primary-300"
+                    : "bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-white/50"
+                }`}
               >
                 {label}
               </span>

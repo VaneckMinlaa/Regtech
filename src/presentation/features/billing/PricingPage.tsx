@@ -32,10 +32,14 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     setBillingCountryIso,
     startCheckout,
     loading,
+    activatePlanDemo,
   } = useSubscription();
   const [yearly, setYearly] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [checkoutError, setCheckoutError] = useState("");
+  const juryDemoMode =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("jury") === "1";
   const [paidPlans, setPaidPlans] = useState<PricingPlan[]>(() =>
     PRICING_PLANS.filter((p) => p.id !== "free" && p.id !== "enterprise"),
   );
@@ -137,6 +141,29 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
   return (
     <div className="space-y-8 animate-fadeIn" id="pricing_page">
       <SubscriptionOverview darkMode={darkMode} returnStatus={returnStatus} />
+
+      {juryDemoMode && subscription.plan === "free" && (
+        <div
+          className={`flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between ${
+            darkMode ? "border-primary-500/30 bg-primary-500/10" : "border-primary-200 bg-primary-50/80"
+          }`}
+          id="jury_demo_panel"
+        >
+          <div>
+            <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Jury demo mode</p>
+            <p className={`mt-1 text-xs ${platform.textMuted(darkMode)}`}>
+              Skip PawaPay sandbox if the network fails — activates Pro locally to show post-payment state.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => activatePlanDemo("pro")}
+            className={`shrink-0 rounded-full px-4 py-2 text-sm font-medium ${platform.buttonPrimary}`}
+          >
+            Activate demo plan
+          </button>
+        </div>
+      )}
 
       <div className="space-y-8 border-t pt-8">
         <div className="mb-6 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">

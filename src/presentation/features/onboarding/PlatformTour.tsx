@@ -74,22 +74,27 @@ function TourCard({
 }) {
   const isFirst = stepIndex === 0;
   const isLast = stepIndex === total - 1;
+  const stepLabel = String(stepIndex + 1).padStart(2, "0");
+  const totalLabel = String(total).padStart(2, "0");
 
   return (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="platform_tour_title"
-      className={`pointer-events-auto w-full max-w-md rounded-[20px] border p-5 shadow-2xl ${
-        darkMode ? "border-gray-700 bg-dark-primary text-gray-100" : "border-gray-200 bg-white text-gray-900 shadow-theme-lg"
+      className={`pointer-events-auto w-full max-w-md overflow-hidden rounded-[20px] border shadow-2xl ${
+        darkMode ? "border-gray-700 bg-dark-primary text-gray-100" : "border-gray-200 bg-white text-gray-900 shadow-theme-sm"
       }`}
       style={style}
       id="platform_tour_card"
     >
+      <div className="h-1 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-400" aria-hidden />
+
+      <div className="p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
-            Step {stepIndex + 1} of {total}
+          <p className={`text-xs font-semibold uppercase tracking-widest ${platform.textMuted(darkMode)}`}>
+            Step {stepLabel} / {totalLabel}
           </p>
           <h2 id="platform_tour_title" className={`mt-1 text-lg font-bold font-display ${platform.textPrimary(darkMode)}`}>
             {step.title}
@@ -162,6 +167,7 @@ function TourCard({
             aria-hidden
           />
         ))}
+      </div>
       </div>
     </div>
   );

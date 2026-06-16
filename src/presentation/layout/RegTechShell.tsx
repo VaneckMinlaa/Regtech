@@ -238,6 +238,13 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             onClick={() => navigateToTab("PRICING")}
           />
         </nav>
+
+        <div className={`shrink-0 border-t px-4 py-3 ${platform.borderSubtle(darkMode)}`}>
+          <p className={`text-[10px] font-semibold uppercase tracking-wider ${platform.textMuted(darkMode)}`}>
+            PawaPay Builders
+          </p>
+          <p className={`mt-0.5 text-xs ${platform.textSecondary(darkMode)}`}>PROMOTE 2026 · Cameroon</p>
+        </div>
       </aside>
 
       <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
