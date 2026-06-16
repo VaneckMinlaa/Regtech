@@ -45,6 +45,8 @@ import {
   writeDashboardTabToUrl,
   type DashboardTab,
 } from "@/presentation/layout/dashboardTabs";
+import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
+import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
 
 interface RegTechShellProps {
   initialTab?: string;
@@ -266,6 +268,12 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
           <main className={platform.main}>
             <div className={platform.content} id="active_workspace_canvas">
+              <PlatformPageIntro
+                title={PAGE_INTROS[activeTab].title}
+                description={PAGE_INTROS[activeTab].description}
+                darkMode={darkMode}
+              />
+
               {activeTab === "SIM" && (
                 <SimulatorPage
                   darkMode={darkMode}

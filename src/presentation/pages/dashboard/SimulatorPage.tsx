@@ -1,7 +1,6 @@
 import React from "react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { SimulateurTaxes } from "@/presentation/features/tariff-calculator/SimulateurTaxes";
-import { MetricsChart } from "@/presentation/features/export/MetricsChart";
 import { DeclarationSummary } from "@/presentation/features/export/DeclarationSummary";
 
 interface SimulatorPageProps {
@@ -24,7 +23,7 @@ export function SimulatorPage({
   onOpenHistory,
 }: SimulatorPageProps) {
   return (
-    <div className="space-y-6 animate-fadeIn font-sans" id="simulator_page">
+    <div className="animate-fadeIn space-y-8 font-sans" id="simulator_page">
       <SimulateurTaxes
         onSimulationRun={onSimulationRun}
         initialHSCode={initialHSCode}
@@ -34,16 +33,7 @@ export function SimulatorPage({
       />
 
       {selectedSimulation && (
-        <div
-          className={`space-y-8 pt-8 border-t ${darkMode ? "border-gray-800" : "border-gray-200"}`}
-          id="simulation_results_panel"
-        >
-          <MetricsChart
-            baseTax={selectedSimulation.baseTariffRate}
-            projection={selectedSimulation.tariffProjection ?? []}
-            isEligible={selectedSimulation.isEligiblePrefAfCFTA}
-            darkMode={darkMode}
-          />
+        <div className="space-y-8" id="simulation_results_panel">
           <DeclarationSummary simulation={selectedSimulation} darkMode={darkMode} />
         </div>
       )}
@@ -52,7 +42,7 @@ export function SimulatorPage({
         <button
           type="button"
           onClick={onOpenHistory}
-          className={`text-xs font-bold text-primary-500 hover:underline`}
+          className="text-xs font-semibold text-primary-500 hover:underline"
         >
           View full history →
         </button>

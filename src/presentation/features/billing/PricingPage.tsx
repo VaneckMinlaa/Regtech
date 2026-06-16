@@ -138,15 +138,8 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     <div className="space-y-8 animate-fadeIn" id="pricing_page">
       <SubscriptionOverview darkMode={darkMode} returnStatus={returnStatus} />
 
-      <div className={`${platform.panel(darkMode)} ${platform.panelPadding}`}>
+      <div className="space-y-8 border-t pt-8">
         <div className="mb-6 flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
-          <div>
-            <h2 className={platform.pageTitle(darkMode)}>Plans & billing</h2>
-            <p className={platform.pageSubtitle(darkMode)}>
-              Mobile Money checkout via PawaPay across 20 African countries.
-            </p>
-          </div>
-
           <div className="flex flex-wrap items-center gap-4">
             <select
               value={billingCountry.code}

@@ -139,7 +139,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
 
   return (
     <div
-      className={`${platform.panel(darkMode)} ${platform.panelPadding} font-sans transition-colors duration-300`}
+      className="space-y-8 font-sans transition-colors duration-300"
       id="bulk_customs_panel"
     >
       <div className={`flex items-center justify-between mb-6 pb-4 border-b ${

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Landmark } from "lucide-react";
 import { CameroonFiscalPreview } from "@/presentation/features/tariff-calculator/CameroonFiscalPreview";
 import { CameroonApiTools } from "@/presentation/features/procedures/CameroonApiTools";
 import {
@@ -24,23 +23,10 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
   const [applyZlecaf, setApplyZlecaf] = useState(true);
 
   const inputClass = platform.input(darkMode);
-  const panel = `${platform.panel(darkMode)} ${platform.panelPadding}`;
-
   return (
     <div className="animate-fadeIn space-y-8 font-sans" id="cameroon_page">
-      <div className={panel}>
-        <div className="mb-6 flex items-start gap-3">
-          <Landmark className="mt-0.5 h-5 w-5 shrink-0 text-primary-500" />
-          <div>
-            <h2 className={platform.pageTitle(darkMode)}>Cameroon fiscality</h2>
-            <p className={platform.pageSubtitle(darkMode)}>
-              CEMAC duties, VAT, excise, and landed cost for Cameroon imports.
-            </p>
-          </div>
-        </div>
-
-        <h3 className={`mb-4 text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Tax simulator</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <section className="space-y-6">
+        <div className="flex flex-col gap-4">
           <div>
             <label className="text-[9px] font-bold text-gray-500 block mb-1">CIF VALUE (XAF)</label>
             <input
@@ -106,7 +92,7 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             darkMode={darkMode}
           />
         )}
-      </div>
+      </section>
 
       <CameroonApiTools darkMode={darkMode} />
     </div>

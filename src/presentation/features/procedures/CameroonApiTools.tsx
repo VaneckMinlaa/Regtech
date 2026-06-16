@@ -45,7 +45,6 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
   const [origin, setOrigin] = useState("CHN");
   const [landedResult, setLandedResult] = useState<LandedCostResponse | null>(null);
 
-  const cardClass = `${platform.panel(darkMode)} ${platform.panelPadding}`;
   const inputClass = platform.input(darkMode);
   const tabClass = (active: boolean) =>
     `rounded-full px-4 py-2 text-xs font-medium transition-colors ${
@@ -72,7 +71,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
   ];
 
   return (
-    <div className={cardClass} id="cameroon_api_tools">
+    <div className="space-y-8 animate-fadeIn border-t pt-8" id="cameroon_api_tools">
       <div className="flex items-center gap-2 mb-4">
         <Package className="w-5 h-5 text-primary-500" />
         <h3 className={`text-sm font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>

@@ -64,10 +64,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
   }
 
   return (
-    <div
-      className={`${platform.panel(darkMode)} ${platform.panelPadding}`}
-      id="subscription_overview"
-    >
+    <div className="space-y-8" id="subscription_overview">
       {returnStatus === "success" && (
         <div className="mb-4 flex items-center gap-2 text-xs text-primary-400 bg-primary-950/40 border border-primary-500/30 rounded-lg px-3 py-2">
           <CheckCircle2 className="w-4 h-4" />

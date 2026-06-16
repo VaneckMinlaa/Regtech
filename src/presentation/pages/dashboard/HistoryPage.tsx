@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { History, Loader2, RefreshCw } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
-import { MetricsChart } from "@/presentation/features/export/MetricsChart";
 import { DeclarationSummary } from "@/presentation/features/export/DeclarationSummary";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
 import { platform } from "@/presentation/theme/platformStyles";
@@ -46,16 +45,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
 
   return (
     <div className="animate-fadeIn space-y-8 font-sans" id="history_page">
-      <div className={`${platform.panel(darkMode)} ${platform.panelPadding} flex flex-wrap items-center justify-between gap-4`}>
-        <div className="flex items-center gap-3">
-          <History className="w-5 h-5 text-primary-500" />
-          <div>
-            <h2 className={platform.pageTitle(darkMode)}>Simulation history</h2>
-            <p className={platform.pageSubtitle(darkMode)}>
-              Saved simulations and exportable declaration sheets.
-            </p>
-          </div>
-        </div>
+      <div className="flex flex-wrap items-center justify-end gap-4">
         <button
           type="button"
           onClick={() => void load()}
@@ -82,8 +72,8 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
           No saved simulations. Run one in the Simulator tab.
         </p>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-4 space-y-2 max-h-[70vh] overflow-y-auto">
+        <div className="space-y-8">
+          <div className="max-h-[50vh] space-y-2 overflow-y-auto">
             {items.map((sim) => {
               const originName = countries.find((c) => c.code === sim.origin)?.name ?? sim.origin;
               const destName = countries.find((c) => c.code === sim.destination)?.name ?? sim.destination;
@@ -113,15 +103,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
           </div>
 
           {selected && (
-            <div className="lg:col-span-8 space-y-6">
-              <MetricsChart
-                baseTax={selected.baseTariffRate}
-                projection={selected.tariffProjection ?? []}
-                isEligible={selected.isEligiblePrefAfCFTA}
-                darkMode={darkMode}
-              />
-              <DeclarationSummary simulation={selected} darkMode={darkMode} />
-            </div>
+            <DeclarationSummary simulation={selected} darkMode={darkMode} />
           )}
         </div>
       )}

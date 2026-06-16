@@ -108,30 +108,16 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
   };
 
   return (
-    <div className={`${platform.panel(darkMode)} ${platform.panelPadding} font-sans transition-colors duration-300`} id="ai_classification_panel">
-      <div className={`mb-6 flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
-        <div className="flex items-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary-500" />
-          <div>
-            <h2 className={platform.pageTitle(darkMode)}>Smart HS classification</h2>
-            <p className={platform.pageSubtitle(darkMode)}>Describe your product to get a harmonized code</p>
-          </div>
-        </div>
-
-        {/* Informational tooltips */}
-        <div className={`flex items-center gap-1.5 text-xs font-semibold ${
-          darkMode ? "text-gray-400" : "text-gray-600"
-        }`}>
-          <span title="HS code is a standard international 8-digit nomenclature that uniquely identifies each exported product.">
-            <HelpCircle className="w-4 h-4 text-gray-400 cursor-pointer hover:text-primary-500" aria-hidden />
-          </span>
+    <div className="space-y-8 font-sans" id="ai_classification_panel">
+      <div className={`flex justify-end text-xs ${platform.textMuted(darkMode)}`}>
+        <span title="HS code is a standard international 8-digit nomenclature that uniquely identifies each exported product." className="inline-flex items-center gap-1.5">
+          <HelpCircle className="h-4 w-4 hover:text-primary-500" aria-hidden />
           <span className="hidden sm:inline">What is the HS code?</span>
-        </div>
+        </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-        {/* Input box */}
-        <div className="md:col-span-5 space-y-4">
+      <div className="flex flex-col gap-8">
+        <div className="space-y-4">
           <div>
             <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
               darkMode ? "text-gray-400" : "text-gray-500"
@@ -175,11 +161,9 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
           )}
         </div>
 
-        {/* Output Box */}
-        <div className="md:col-span-7">
-          <div className={`${platform.cardNested(darkMode)} flex h-full flex-col justify-between p-5 transition-colors`}>
+        <div className="space-y-4 border-t pt-8">
             {isLoading ? (
-              <div className="flex-1 flex flex-col justify-center items-center space-y-3 py-12" id="skeleton_loading_ai">
+              <div className="flex flex-col items-center justify-center space-y-3 py-12" id="skeleton_loading_ai">
                 <div className="relative font-bold">
                   <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
                   <Sparkles className="w-4 h-4 text-primary-500 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 animate-pulse" />
@@ -338,11 +322,10 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                 )}
               </div>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-xs text-gray-500 py-12">
-                No active simulation...
-              </div>
+              <p className={`py-12 text-center text-sm ${platform.textMuted(darkMode)}`}>
+                Enter a product description and run classification.
+              </p>
             )}
-          </div>
         </div>
       </div>
     </div>

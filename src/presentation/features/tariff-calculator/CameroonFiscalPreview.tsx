@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Landmark, Loader2, AlertCircle } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { CameroonFiscalResponse } from "@/infrastructure/http/regtechApiTypes";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface CameroonFiscalPreviewProps {
   cifValue: number;
@@ -89,22 +90,17 @@ export function CameroonFiscalPreview({
   if (cifValue <= 0) return null;
 
   return (
-    <div
-      className={`rounded-lg border p-4 mt-4 ${
-        darkMode ? "border-gray-800 bg-dark-primary/50" : "border-gray-200 bg-gray-50"
-      }`}
-      id="cameroon_fiscal_preview"
-    >
-      <div className="flex items-center gap-2 mb-3">
-        <Landmark className="w-4 h-4 text-primary-500" />
-        <h4 className={`text-xs font-bold uppercase tracking-wide ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-          Détail fiscal Cameroun
+    <div className={`${platform.cardNested(darkMode)} mt-4 rounded-2xl p-4`} id="cameroon_fiscal_preview">
+      <div className="mb-3 flex items-center gap-2">
+        <Landmark className="h-4 w-4 text-primary-500" />
+        <h4 className={`text-xs font-semibold uppercase tracking-wide ${platform.textPrimary(darkMode)}`}>
+          Cameroon tax breakdown
         </h4>
-        {loading && <Loader2 className="w-3.5 h-3.5 animate-spin text-primary-500 ml-auto" />}
+        {loading && <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin text-primary-500" />}
         {!loading && !apiLinked && (
-          <span className="ml-auto inline-flex items-center gap-1 text-[9px] text-amber-400">
-            <AlertCircle className="w-3 h-3" />
-            hors ligne
+          <span className="ml-auto inline-flex items-center gap-1 text-[10px] text-amber-400">
+            <AlertCircle className="h-3 w-3" />
+            offline
           </span>
         )}
       </div>
@@ -115,7 +111,7 @@ export function CameroonFiscalPreview({
             <thead>
               <tr className={darkMode ? "text-gray-500" : "text-gray-500"}>
                 <th className="text-left py-1">Code</th>
-                <th className="text-left py-1">Libellé</th>
+                <th className="py-1 text-left">Label</th>
                 <th className="text-right py-1">Taux</th>
                 <th className="text-right py-1">Montant</th>
               </tr>
@@ -135,7 +131,7 @@ export function CameroonFiscalPreview({
               ))}
               <tr className={`border-t font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
                 <td colSpan={3} className="py-2">
-                  Total taxes estimé
+                  Total estimated taxes
                 </td>
                 <td className="py-2 text-right font-mono text-primary-400">
                   {data.totalTaxes.toLocaleString("en-US")} XAF

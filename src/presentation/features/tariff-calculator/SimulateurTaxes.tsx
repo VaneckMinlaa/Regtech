@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Scale, ShieldAlert, BadgeCheck, Calculator, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { convertBetweenCurrencies } from "@/domain/reference/currencyUtils";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
@@ -42,7 +42,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   const [hsCode, setHSCode] = useState<string>("");
   const [declaredValue, setDeclaredValue] = useState<number>(0);
   const [quantity, setQuantity] = useState<number>(1);
-  const [year, setYear] = useState<number>(2026);
+  const [year] = useState<number>(2026);
 
   const [costMatiereLocale, setCostMatiereLocale] = useState<number>(0);
   const [mainOeuvreLocale, setMainOeuvreLocale] = useState<number>(0);
@@ -159,25 +159,15 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
     );
   }
 
-  const panel = `${platform.panel(darkMode)} ${platform.panelPadding} transition-colors duration-300`;
+  const fieldClass = platform.input(darkMode);
+  const sectionClass = `space-y-4 pb-10 border-b ${platform.borderSubtle(darkMode)} last:border-0 last:pb-0`;
 
   return (
-    <div className="grid grid-cols-1 gap-8 font-sans lg:grid-cols-12" id="simulator_workspace">
-      <div className="space-y-8 lg:col-span-7">
-        <div className={panel}>
-          <div className="mb-6 flex items-center gap-2">
-            <Calculator className="h-5 w-5 text-primary-500" />
-            <h2 className={platform.pageTitle(darkMode)}>Customs duties simulator</h2>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {/* Origin */}
+    <div className="flex flex-col gap-10 font-sans" id="simulator_workspace">
+      <section className={sectionClass}>
+        <div className="flex flex-col gap-4">
             <div>
-              <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                Country of origin
-              </label>
+              <label className={platform.fieldLabel(darkMode)}>Country of origin</label>
               <SearchableSelect
                 id="select_origin_country"
                 value={origin}
@@ -195,13 +185,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               />
             </div>
 
-            {/* Destination */}
             <div>
-              <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                Destination country
-              </label>
+              <label className={platform.fieldLabel(darkMode)}>Destination country</label>
               <SearchableSelect
                 id="select_destination_country"
                 value={destination}
@@ -219,12 +204,9 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               />
             </div>
 
-            {/* Product HS-Code Selection */}
-            <div className="md:col-span-2">
-              <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 flex justify-between items-center ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                <span>Product selection (HS code directory)</span>
+            <div>
+              <label className={`${platform.fieldLabel(darkMode)} flex items-center justify-between gap-2`}>
+                <span>Product (HS code directory)</span>
                 {products.length > 0 && (
                   <span className="text-[10px] font-normal opacity-70">
                     {products.length} codes HS
@@ -248,11 +230,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               />
             </div>
 
-            {/* Declared local Value */}
             <div>
-              <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
+              <label className={platform.fieldLabel(darkMode)}>
                 Declared value ({originCountry?.currency ?? "—"})
               </label>
               <div className="relative">
@@ -266,9 +245,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                     setDeclaredValue(val);
                     setPrixVenteExport(val);
                   }}
-                  className={`w-full rounded-lg pl-3.5 pr-12 py-2.5 text-sm font-mono focus:outline-none focus:border-primary-500 transition-colors ${
-                    darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-200 text-gray-900"
-                  }`}
+                  className={`${fieldClass} pr-12`}
                   placeholder="Ex: 5,000,000"
                 />
                 <span className={`absolute right-3.5 top-1/2 -translate-y-1/2 text-xs font-bold font-mono ${
@@ -293,61 +270,16 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               )}
             </div>
 
-            {/* Quantity */}
             <div>
-              <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                Quantity of items
-              </label>
+              <label className={platform.fieldLabel(darkMode)}>Quantity</label>
               <input
                 type="number"
                 id="input_quantity_articles"
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
-                className={`w-full rounded-lg px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:border-primary-500 transition-colors ${
-                  darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-200 text-gray-900"
-                }`}
+                className={fieldClass}
               />
-            </div>
-
-            {/* Year Slider Picker */}
-            <div className="md:col-span-2">
-              <div className="flex items-center justify-between mb-1">
-                <label className={`text-[11px] font-bold uppercase tracking-wider ${
-                  darkMode ? "text-gray-400" : "text-gray-500"
-                }`}>
-                  AfCFTA agreement calendar year
-                </label>
-                <span className={`text-xs font-extrabold font-mono ${
-                  darkMode ? "text-primary-400" : "text-primary-700"
-                }`}>
-                  {year === 2025
-                    ? "2025 (Outside treaty)"
-                    : `${year} (${year === 2030 ? "Total exemption" : `Reduction -${(0.75 + (year - 2026) * 0.05) * 100}%`})`}
-                </span>
-              </div>
-              <input
-                type="range"
-                id="input_year_slider"
-                min="2025"
-                max="2030"
-                step="1"
-                value={year}
-                onChange={(e) => setYear(Number(e.target.value))}
-                className="w-full accent-primary-500 rounded h-1.5 bg-gray-200 dark:bg-[#101828] cursor-pointer"
-              />
-              <div className={`flex justify-between text-[10px] font-mono mt-1 px-1 ${
-                darkMode ? "text-gray-500" : "text-gray-500"
-              }`}>
-                <span>2025</span>
-                <span>2026</span>
-                <span>2027</span>
-                <span>2028</span>
-                <span>2029</span>
-                <span>2030 (Free)</span>
-              </div>
             </div>
           </div>
 
@@ -360,137 +292,77 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             id="btn_run_simulation"
             disabled={!canSubmit || isLoading}
             onClick={() => void handleSimulate()}
-            className={`mt-6 w-full ${platform.buttonPrimary}`}
+            className={`mt-6 w-full ${platform.buttonGradient}`}
           >
             Calculate duties and taxes
           </button>
-        </div>
+      </section>
 
-        {/* Rule of Origin Subsection */}
-        <div className={panel}>
-          <div className="mb-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Scale className="w-5 h-5 text-primary-500" />
-              <h3 className={`text-sm font-bold font-display ${
-                darkMode ? "text-gray-100" : "text-gray-900"
-              }`}>Rule of Origin eligibility calculation (AFT)</h3>
-            </div>
-            <span className={`text-xs px-2.5 py-0.5 font-bold rounded-full border ${originValueRatio >= originThreshold ? "bg-primary-500/10 text-primary-600 border-primary-500/20" : "bg-rose-500/10 text-rose-600 border-rose-550/20"}`}>
+      <section className={sectionClass}>
+          <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Rule of origin (AFT)</p>
+            <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${originValueRatio >= originThreshold ? "border-primary-500/20 bg-primary-500/10 text-primary-600" : "border-rose-500/20 bg-rose-500/10 text-rose-600"}`}>
               {originValueRatio >= originThreshold
                 ? `Eligible (≥${originThreshold}%)`
                 : `Non-compliant (<${originThreshold}%)`}
             </span>
           </div>
 
-          <div className={`p-3 rounded-lg text-xs leading-5 font-mono border mb-4 ${
-            darkMode ? "bg-[#101828] border-gray-800 text-gray-300" : "bg-gray-50 border-gray-200 text-gray-700"
-          }`}>
-              <span className={`font-bold block mb-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Official mathematical formula (AfCFTA):</span>
-            <div className={`text-center font-bold text-xs my-2 tracking-wide font-display ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>
-              R_origine = (Coût Mat. Locales + Main d'Œuvre Loc. + Frais Locaux) / Prix de Vente Export × 100
-            </div>
-            <div className="text-center text-[10px] text-gray-500 mt-1">
-              ({costMatiereLocale.toLocaleString()} + {mainOeuvreLocale.toLocaleString()} + {fraisLocaux.toLocaleString()}) / {prixVenteExport.toLocaleString()} &times; 100 = <span className="text-primary-600 font-bold text-xs">{originValueRatio.toFixed(1)}%</span>
-            </div>
+          <div className={`mb-4 rounded-2xl px-4 py-3 text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
+            <span className={`mb-2 block text-xs font-semibold uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
+              AfCFTA origin formula
+            </span>
+            <p className={`text-center font-display font-semibold ${platform.textPrimary(darkMode)}`}>
+              R = (Local materials + Local labor + Local fees) / Export sale price × 100
+            </p>
+            <p className={`mt-2 text-center text-xs ${platform.textMuted(darkMode)}`}>
+              ({costMatiereLocale.toLocaleString()} + {mainOeuvreLocale.toLocaleString()} + {fraisLocaux.toLocaleString()}) / {prixVenteExport.toLocaleString()} × 100 ={" "}
+              <span className="font-semibold text-primary-500">{originValueRatio.toFixed(1)}%</span>
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
             <div>
-              <label className={`text-[10px] font-bold uppercase tracking-wide block mb-1 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
+              <label className={platform.fieldLabel(darkMode)}>
                 Local material costs ({originCountry?.currency ?? "—"})
               </label>
-              <input
-                type="number"
-                value={costMatiereLocale}
-                onChange={(e) => setCostMatiereLocale(Number(e.target.value))}
-                className={`w-full rounded px-3 py-1.5 text-xs font-mono ${
-                  darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-300 text-gray-900 focus:outline-none focus:border-primary-500"
-                }`}
-              />
+              <input type="number" value={costMatiereLocale} onChange={(e) => setCostMatiereLocale(Number(e.target.value))} className={fieldClass} />
             </div>
-
             <div>
-              <label className={`text-[10px] font-bold uppercase tracking-wide block mb-1 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
+              <label className={platform.fieldLabel(darkMode)}>
                 Local labor costs ({originCountry?.currency ?? "—"})
               </label>
-              <input
-                type="number"
-                value={mainOeuvreLocale}
-                onChange={(e) => setMainOeuvreLocale(Number(e.target.value))}
-                className={`w-full rounded px-3 py-1.5 text-xs font-mono ${
-                  darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-300 text-gray-900 focus:outline-none focus:border-primary-500"
-                }`}
-              />
+              <input type="number" value={mainOeuvreLocale} onChange={(e) => setMainOeuvreLocale(Number(e.target.value))} className={fieldClass} />
             </div>
-
             <div>
-              <label className={`text-[10px] font-bold uppercase tracking-wide block mb-1 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                Frais logistiques locaux ({originCountry?.currency ?? "—"})
+              <label className={platform.fieldLabel(darkMode)}>
+                Local logistics fees ({originCountry?.currency ?? "—"})
               </label>
-              <input
-                type="number"
-                value={fraisLocaux}
-                onChange={(e) => setFraisLocaux(Number(e.target.value))}
-                className={`w-full rounded px-3 py-1.5 text-xs font-mono ${
-                  darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-300 text-gray-900 focus:outline-none focus:border-primary-500"
-                }`}
-              />
+              <input type="number" value={fraisLocaux} onChange={(e) => setFraisLocaux(Number(e.target.value))} className={fieldClass} />
             </div>
-
             <div>
-              <label className={`text-[10px] font-bold uppercase tracking-wide block mb-1 ${
-                darkMode ? "text-gray-400" : "text-gray-500"
-              }`}>
-                Prix de vente export ({originCountry?.currency ?? "—"})
+              <label className={platform.fieldLabel(darkMode)}>
+                Export sale price ({originCountry?.currency ?? "—"})
               </label>
-              <input
-                type="number"
-                value={prixVenteExport}
-                onChange={(e) => setPrixVenteExport(Number(e.target.value))}
-                className={`w-full rounded px-3 py-1.5 text-xs font-mono ${
-                  darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-300 text-gray-900 focus:outline-none focus:border-primary-500"
-                }`}
-              />
+              <input type="number" value={prixVenteExport} onChange={(e) => setPrixVenteExport(Number(e.target.value))} className={fieldClass} />
             </div>
           </div>
-        </div>
-      </div>
+      </section>
 
-      {/* Simulator Results Output panel */}
-      <div className="lg:col-span-5 flex flex-col justify-between">
-        <div className={`${panel} flex h-full flex-col`}>
-          <div className={`flex items-center justify-between pb-4 mb-6 shrink-0 border-b ${
-            darkMode ? "border-gray-800" : "border-gray-100"
-          }`}>
-            <div>
-              <h3 className={`text-sm font-bold font-display ${
-                darkMode ? "text-gray-100" : "text-gray-800"
-              }`}>Simulated taxes calculation</h3>
-              <p className={`text-[10px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Instant result based on real concessions</p>
-            </div>
-            {isLoading && <RefreshCw className="w-4 h-4 text-primary-500 animate-spin" />}
+      <section className="space-y-6">
+          <div className={`flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
+            <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Tax estimate</p>
+            {isLoading && <RefreshCw className="h-4 w-4 animate-spin text-primary-500" />}
           </div>
 
           {currentResult ? (
             <div className="flex-1 flex flex-col justify-between space-y-6">
               {/* Main Total Callout */}
-              <div className={`p-5 rounded-xl border text-center ${
-                darkMode ? "bg-[#101828]/60 border-gray-800" : "bg-gray-50 border-gray-200 shadow-inner"
-              }`}>
-                <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider ${
-                  darkMode ? "bg-dark-secondary text-gray-400" : "bg-gray-200 text-gray-600"
-                }`}>
-                  Total Estimated Taxes
-                </span>
-                <div className="text-2xl font-black text-primary-600 dark:text-primary-400 font-mono mt-2 mb-1">
+              <div className="text-center">
+                <p className={`text-xs uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
+                  Total estimated taxes
+                </p>
+                <div className="mt-2 text-3xl font-bold text-primary-500 font-display">
                   {currentResult.totalTaxLocal.toLocaleString()} {destCountry?.currency ?? ""}
                 </div>
                 <div className={`text-xs font-mono ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
@@ -498,35 +370,24 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 </div>
               </div>
 
-              {/* Exclusion banner if sensitive product */}
               {selectedProduct?.sensitive && (
-                <div className={`border px-3.5 py-3 rounded-lg text-xs flex items-start gap-2 ${
-                  darkMode ? "bg-rose-950/20 border-rose-500/20 text-rose-300" : "bg-rose-50 border-rose-150 text-rose-900"
-                }`}>
-                  <ShieldAlert className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
-                  <div>
-                    <strong>Exclusion/Sensitivity (AFT-04):</strong>
-                    <p className={`text-[11px] mt-0.5 ${darkMode ? "text-rose-400/95" : "text-rose-700/95"}`}>
-                      &quot;{selectedProduct?.description}&quot; is listed as a sensitive product. The base customs duty ({Math.round((selectedProduct?.baseTariffRate ?? 0) * 100)}%) applies without concessions.
-                    </p>
-                  </div>
-                </div>
+                <p className={`text-sm leading-relaxed text-rose-500`}>
+                  <strong>Sensitive product (AFT-04).</strong> &quot;{selectedProduct.description}&quot; is excluded from preferential treatment. Base duty {(selectedProduct.baseTariffRate * 100).toFixed(0)}% applies.
+                </p>
               )}
 
-              {/* Preference success badge */}
               {selectedProduct && !selectedProduct.sensitive && currentResult.isEligiblePrefAfCFTA && (
-                <div className={`border px-3.5 py-3 rounded-lg text-xs flex items-start gap-2 ${
-                  darkMode ? "bg-primary-950/20 border-primary-500/20 text-primary-300" : "bg-primary-50 border-primary-200 text-primary-900"
-                }`}>
-                  <BadgeCheck className="w-4 h-4 text-primary-600 dark:text-primary-400 shrink-0 mt-0.5" />
-                  <div>
-                    <strong>AfCFTA preference granted:</strong>
-                    <p className={`text-[11px] mt-0.5 ${darkMode ? "text-primary-400/95" : "text-primary-800"}`}>
-                      A certified preferential treatment with a concession of {((1 - currentResult.appliedTariffRate/currentResult.baseTariffRate)*100).toFixed(0)}%. Final rate:{" "}
-                      <span className="underline font-bold">{(currentResult.appliedTariffRate * 100).toFixed(1)}%</span> instead of {(currentResult.baseTariffRate * 100).toFixed(1)}%.
-                    </p>
-                  </div>
-                </div>
+                <p className="text-sm leading-relaxed text-primary-500">
+                  <strong>AfCFTA preference granted.</strong> Concession of {((1 - currentResult.appliedTariffRate / currentResult.baseTariffRate) * 100).toFixed(0)}% — final rate {(currentResult.appliedTariffRate * 100).toFixed(1)}% instead of {(currentResult.baseTariffRate * 100).toFixed(1)}%.
+                </p>
+              )}
+
+              {selectedProduct && !selectedProduct.sensitive && !currentResult.isEligiblePrefAfCFTA && (
+                <p className="text-sm leading-relaxed text-rose-500">
+                  <strong>Standard customs regime applied.</strong>{" "}
+                  Insufficient local value addition ({currentResult.localOriginValueRatio}% / threshold{" "}
+                  {currentResult.originValueThresholdPct ?? 40}%). Duties collected at the full rate.
+                </p>
               )}
 
               {/* Detailed items line */}
@@ -555,7 +416,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                   <div className={`flex items-center justify-between text-xs py-1 border-b text-primary-600 dark:text-primary-400 ${
                     darkMode ? "border-gray-800" : "border-gray-100"
                   }`}>
-                    <span>Taux Tarifaire Préférentiel:</span>
+                    <span>Preferential tariff rate:</span>
                     <span className="font-mono font-bold">{(currentResult.appliedTariffRate * 100).toFixed(1)}%</span>
                   </div>
                 )}
@@ -580,24 +441,21 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               </div>
 
               {/* Taux de change utilisés par la simulation (Frankfurter / API backend) */}
-              <div className={`text-[10px] font-mono flex flex-col gap-1 px-3 py-2 rounded ${
-                darkMode ? "text-gray-500 bg-[#101828]" : "text-gray-600 bg-gray-100"
-              }`}>
+              <div className="flex flex-col gap-1 text-xs">
                 {originCountry && destCountry && currentResult && (
                   <>
-                    <div className="flex items-center justify-between">
-                      <span>
-                        Origin: 1 USD = {currentResult.originExchangeRateToUSD ?? originCountry.exchangeRateToUSD}{" "}
-                        {originCountry.currency}
-                      </span>
-                      <span>
-                        Destination: 1 USD = {currentResult.destinationExchangeRateToUSD ?? destCountry.exchangeRateToUSD}{" "}
-                        {destCountry.currency}
-                      </span>
-                    </div>
-                    <span className={`text-[9px] ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                      Rate source: {currentResult.exchangeRateSource === "frankfurter"
-                        ? "Frankfurter (ECB, free)"
+                    <span className={platform.textMuted(darkMode)}>
+                      Origin: 1 USD = {currentResult.originExchangeRateToUSD ?? originCountry.exchangeRateToUSD}{" "}
+                      {originCountry.currency}
+                    </span>
+                    <span className={platform.textMuted(darkMode)}>
+                      Destination: 1 USD = {currentResult.destinationExchangeRateToUSD ?? destCountry.exchangeRateToUSD}{" "}
+                      {destCountry.currency}
+                    </span>
+                    <span className={`text-[11px] ${platform.textMuted(darkMode)}`}>
+                      Rate source:{" "}
+                      {currentResult.exchangeRateSource === "frankfurter"
+                        ? "Frankfurter (ECB)"
                         : currentResult.exchangeRateSource === "pilot"
                           ? "AfCFTA pilot reference"
                           : "Country reference"}
@@ -617,14 +475,11 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               )}
             </div>
           ) : (
-            <div className={`flex-1 flex items-center justify-center text-xs ${
-              darkMode ? "text-gray-500" : "text-gray-400"
-            }`}>
-              Ready to calculate taxes...
+            <div className={`flex items-center justify-center py-12 text-sm ${platform.textMuted(darkMode)}`}>
+              Run a simulation to see your tax estimate.
             </div>
           )}
-        </div>
-      </div>
+      </section>
     </div>
   );
 };

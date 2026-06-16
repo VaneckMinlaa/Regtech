@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  BadgeCheck,
-  FileText,
-  Loader2,
-  ShieldCheck,
-} from "lucide-react";
+import { BadgeCheck, FileText, Loader2 } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type {
   AfcftaValidateResponse,
@@ -39,7 +34,6 @@ export function AfcftaToolsPanel({
   const [error, setError] = useState("");
 
   const inputClass = platform.input(darkMode);
-  const panel = `${platform.panel(darkMode)} ${platform.panelPadding}`;
 
   const handleValidate = async () => {
     if (!origin || !hsCode) return;
@@ -91,20 +85,17 @@ export function AfcftaToolsPanel({
   };
 
   return (
-    <div className={`${panel} space-y-6`} id="afcfta_tools_panel">
-      <div className={`flex items-center gap-3 border-b pb-4 ${darkMode ? "border-gray-800" : "border-gray-100"}`}>
-        <ShieldCheck className="w-5 h-5 text-primary-500" />
-        <div>
-          <h3 className={`text-sm font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
-            AfCFTA origin validation & certificate
-          </h3>
-          <p className={`text-xs mt-0.5 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-            Production inputs used to calculate local value addition
-          </p>
-        </div>
+    <section className="space-y-6 border-t pt-8" id="afcfta_tools_panel">
+      <div>
+        <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
+          AfCFTA origin validation & certificate
+        </h3>
+        <p className={`text-xs mt-1 ${platform.textMuted(darkMode)}`}>
+          Production inputs used to calculate local value addition
+        </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="flex flex-col gap-4">
         {[
           { id: "cost_matiere", label: "Material cost (XAF)", value: costMatiere, set: setCostMatiere },
           { id: "main_oeuvre", label: "Labor cost (XAF)", value: mainOeuvre, set: setMainOeuvre },
@@ -112,7 +103,7 @@ export function AfcftaToolsPanel({
           { id: "prix_vente", label: "Export sale price (XAF)", value: prixVente, set: setPrixVente },
         ].map(({ id, label, value, set }) => (
           <div key={id}>
-            <label htmlFor={id} className="text-[11px] font-bold text-gray-500 block mb-2">
+            <label htmlFor={id} className={platform.fieldLabel(darkMode)}>
               {label}
             </label>
             <input
@@ -126,7 +117,7 @@ export function AfcftaToolsPanel({
         ))}
       </div>
 
-      {error && <p className="text-sm text-rose-400 rounded-lg border border-rose-500/30 px-3 py-2">{error}</p>}
+      {error && <p className="text-sm text-rose-500">{error}</p>}
 
       <button
         type="button"
@@ -139,42 +130,33 @@ export function AfcftaToolsPanel({
       </button>
 
       {validateResult && (
-        <div
-          className={`rounded-2xl border p-5 space-y-4 ${
-            validateResult.eligible
-              ? darkMode
-                ? "border-primary-500/30 bg-primary-950/20"
-                : "border-primary-200 bg-primary-50"
-              : darkMode
-                ? "border-rose-500/30 bg-rose-950/20"
-                : "border-rose-200 bg-rose-50"
-          }`}
-        >
-          <p className={`font-bold text-sm ${darkMode ? "text-white" : "text-gray-900"}`}>
+        <div className="space-y-4 border-t pt-6">
+          <p
+            className={`text-sm font-semibold ${
+              validateResult.eligible ? "text-primary-500" : "text-rose-500"
+            }`}
+          >
             {validateResult.eligible ? "Eligible for preferential treatment" : "Not eligible"}
           </p>
-          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
-            <div>
-              <span className="text-gray-500 text-xs block">Calculated origin</span>
+          <div className={`space-y-3 text-sm ${platform.textSecondary(darkMode)}`}>
+            <p>
+              Calculated origin:{" "}
               <span className="font-mono font-bold">{validateResult.originPercentage.toFixed(1)}%</span>
-            </div>
-            <div>
-              <span className="text-gray-500 text-xs block">Required threshold</span>
-              <span className="font-mono">{validateResult.thresholdRequired}%</span>
-            </div>
-            <div>
-              <span className="text-gray-500 text-xs block">Category / group</span>
-              <span>{validateResult.productCategory} · {validateResult.countryGroup}</span>
-            </div>
-            <div>
-              <span className="text-gray-500 text-xs block">Estimated savings</span>
+              {" · "}
+              Required threshold: <span className="font-mono">{validateResult.thresholdRequired}%</span>
+            </p>
+            <p>
+              Category / group: {validateResult.productCategory} · {validateResult.countryGroup}
+            </p>
+            <p>
+              Estimated savings:{" "}
               <span className="font-mono text-primary-500">
                 {validateResult.savingsLocalCurrency.toLocaleString("en-US")} XAF
               </span>
-            </div>
+            </p>
           </div>
           {validateResult.recommendations.length > 0 && (
-            <ul className={`list-disc pl-5 space-y-1 text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+            <ul className={`list-disc pl-5 space-y-1 text-sm ${platform.textMuted(darkMode)}`}>
               {validateResult.recommendations.slice(0, 4).map((r) => (
                 <li key={r}>{r}</li>
               ))}
@@ -193,20 +175,24 @@ export function AfcftaToolsPanel({
       )}
 
       {certificate && (
-        <div className={`${platform.cardNested(darkMode)} space-y-4 p-5`}>
+        <div className="space-y-4 border-t pt-6">
           <div className="text-center border-b border-dashed pb-4">
             <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest">AfCFTA</p>
-            <p className={`font-bold text-base mt-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
+            <p className={`font-bold text-base mt-1 ${platform.textPrimary(darkMode)}`}>
               {certificate.title}
             </p>
-            <p className="font-mono text-xs text-gray-500 mt-2">Ref. {certificate.draftId}</p>
+            <p className={`font-mono text-xs mt-2 ${platform.textMuted(darkMode)}`}>
+              Ref. {certificate.draftId}
+            </p>
           </div>
-          <p className={`text-sm italic leading-relaxed ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
+          <p className={`text-sm italic leading-relaxed ${platform.textMuted(darkMode)}`}>
             {certificate.disclaimer}
           </p>
           <div>
-            <p className="text-[11px] font-bold uppercase text-gray-500 mb-2">Required documents</p>
-            <ul className={`space-y-2 text-sm ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
+            <p className={`text-[11px] font-bold uppercase mb-2 ${platform.textMuted(darkMode)}`}>
+              Required documents
+            </p>
+            <ul className={`space-y-2 text-sm ${platform.textSecondary(darkMode)}`}>
               {certificate.requiredDocuments.map((d) => (
                 <li key={d} className="flex gap-2">
                   <span className="text-primary-500">•</span>
@@ -217,6 +203,6 @@ export function AfcftaToolsPanel({
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }
