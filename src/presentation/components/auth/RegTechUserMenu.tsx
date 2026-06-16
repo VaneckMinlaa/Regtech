@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useClerk, useUser } from "@clerk/react";
-import { LogOut, Settings } from "lucide-react";
+import { LogOut, Settings, GraduationCap } from "lucide-react";
 import { RegTechAccountModal } from "@/presentation/components/auth/RegTechAccountModal";
 import { useTheme } from "@/presentation/providers/ThemeProvider";
 import { platform } from "@/presentation/theme/platformStyles";
@@ -49,7 +49,7 @@ function UserAvatar({
   );
 }
 
-export function RegTechUserMenu() {
+export function RegTechUserMenu({ onStartTour }: { onStartTour?: () => void } = {}) {
   const { darkMode } = useTheme();
   const { user } = useUser();
   const { signOut } = useClerk();
@@ -131,6 +131,22 @@ export function RegTechUserMenu() {
             </div>
 
             <div className="py-1.5">
+              {onStartTour ? (
+                <button
+                  type="button"
+                  role="menuitem"
+                  className={menuItemClass}
+                  onClick={() => {
+                    closeMenu();
+                    onStartTour();
+                  }}
+                  id="btn_platform_guide"
+                >
+                  <GraduationCap className={`w-4 h-4 shrink-0 ${platform.textMuted(darkMode)}`} />
+                  Platform guide
+                </button>
+              ) : null}
+
               <button
                 type="button"
                 role="menuitem"

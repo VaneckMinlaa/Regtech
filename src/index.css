@@ -176,3 +176,8 @@
     transition: none;
   }
 }
+
+.platform-tour-spotlight {
+  position: relative;
+  z-index: 115 !important;
+}

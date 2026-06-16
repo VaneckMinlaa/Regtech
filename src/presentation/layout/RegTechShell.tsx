@@ -17,6 +17,7 @@ import {
   CreditCard,
   ClipboardList,
   Landmark,
+  GraduationCap,
 } from "lucide-react";
 
 import { PricingPage } from "@/presentation/features/billing/PricingPage";
@@ -47,6 +48,8 @@ import {
 } from "@/presentation/layout/dashboardTabs";
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
+import { PlatformTour } from "@/presentation/features/onboarding/PlatformTour";
+import { usePlatformTour } from "@/presentation/features/onboarding/usePlatformTour";
 
 interface RegTechShellProps {
   initialTab?: string;
@@ -115,6 +118,8 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
   const [currentSelectedSimulation, setCurrentSelectedSimulation] = useState<SimulationResult | null>(null);
 
   const { confirmPaymentReturn, quotaAlert, dismissQuotaAlert } = useSubscription();
+
+  const { isOpen: tourOpen, stepIndex, setStepIndex, startTour, closeTour } = usePlatformTour();
 
   const [histNavKey, setHistNavKey] = useState(0);
 
@@ -254,6 +259,24 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
           <div className="flex items-center gap-3">
             <button
               type="button"
+              onClick={() => startTour(0)}
+              className={`hidden rounded-full border px-3 py-2 text-sm font-medium sm:inline-flex sm:items-center sm:gap-1.5 ${platform.buttonGhost(darkMode)}`}
+              id="btn_platform_tour"
+              title="Platform guide"
+            >
+              <GraduationCap className="h-4 w-4" />
+              Guide
+            </button>
+            <button
+              type="button"
+              onClick={() => startTour(0)}
+              className={`rounded-full border p-2 sm:hidden ${platform.buttonGhost(darkMode)}`}
+              aria-label="Platform guide"
+            >
+              <GraduationCap className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
               onClick={toggleDarkMode}
               className={`rounded-full border p-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 ${platform.buttonGhost(darkMode)}`}
               aria-label="Change theme"
@@ -262,7 +285,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
               {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <PlanBadge onClick={goToPricing} darkMode={darkMode} />
-            <ClerkAuthButton />
+            <ClerkAuthButton onStartTour={() => startTour(0)} />
           </div>
         </header>
 
@@ -354,6 +377,17 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
         onDismiss={dismissQuotaAlert}
         onUpgrade={goToPricing}
       />
+
+      {tourOpen && (
+        <PlatformTour
+          stepIndex={stepIndex}
+          darkMode={darkMode}
+          onStepChange={setStepIndex}
+          onNavigate={navigateToTab}
+          onClose={closeTour}
+          onOpenSidebar={() => setIsMobileSidebarOpen(true)}
+        />
+      )}
     </div>
   );
 }
