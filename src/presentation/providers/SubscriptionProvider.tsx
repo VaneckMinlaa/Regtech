@@ -186,24 +186,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   );
 
   const startCheckout = useCallback(
-    async (request: CheckoutRequest): Promise<CheckoutResponse> => {
-      try {
-        return await regtechApi.startCheckout(request);
-      } catch {
-        const country = PAWAPAY_COUNTRIES.find((c) => c.code === request.countryIso) ?? PAWAPAY_COUNTRIES[0];
-        const planDef = getPlanById(request.plan);
-        const depositId = crypto.randomUUID();
-        const returnUrl = `${window.location.origin}${window.location.pathname}?billing=return&status=pending&depositId=${depositId}`;
-        return {
-          depositId,
-          paymentPageUrl: `https://dashboard.sandbox.pawapay.io/demo?plan=${request.plan}&country=${request.countryIso}&return=${encodeURIComponent(returnUrl)}`,
-          amount: planDef.priceXafMonthly,
-          currency: country.currency,
-          countryIso: request.countryIso,
-          correspondent: country.operators[0],
-        };
-      }
-    },
+    (request: CheckoutRequest): Promise<CheckoutResponse> => regtechApi.startCheckout(request),
     [],
   );
 
