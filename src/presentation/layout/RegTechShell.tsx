@@ -47,8 +47,6 @@ import {
 } from "@/presentation/layout/dashboardTabs";
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
-import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
-import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
 
 interface RegTechShellProps {
   initialTab?: string;
@@ -270,22 +268,27 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
           <main className={platform.main}>
             <div className={platform.content} id="active_workspace_canvas">
-              <PlatformPageIntro
-                title={PAGE_INTROS[activeTab].title}
-                description={PAGE_INTROS[activeTab].description}
-                darkMode={darkMode}
-                trailing={
-                  activeTab === "IA" ? (
-                    <HelpToggle label="What is the HS code?" darkMode={darkMode}>
-                      <p>
-                        The Harmonized System (HS) code is an international 8-digit nomenclature that uniquely
-                        identifies each product for customs. RegTech proposes a code from your description and
-                        shows a confidence score — you can correct it before running a tariff simulation.
-                      </p>
-                    </HelpToggle>
-                  ) : undefined
-                }
-              />
+              {activeTab !== "AFT" && (
+                <PlatformPageIntro
+                  title={PAGE_INTROS[activeTab].title}
+                  description={PAGE_INTROS[activeTab].description}
+                  darkMode={darkMode}
+                  help={
+                    activeTab === "IA"
+                      ? {
+                          label: "What is the HS code?",
+                          children: (
+                            <p>
+                              The Harmonized System (HS) code is an international 8-digit nomenclature that uniquely
+                              identifies each product for customs. RegTech proposes a code from your description and
+                              shows a confidence score — you can correct it before running a tariff simulation.
+                            </p>
+                          ),
+                        }
+                      : undefined
+                  }
+                />
+              )}
 
               {activeTab === "SIM" && (
                 <SimulatorPage

@@ -22,7 +22,7 @@ export const platform = {
       ? "rounded-[20px] border border-gray-800 bg-dark-primary text-white"
       : "rounded-[20px] border border-gray-200 bg-white text-gray-800 shadow-theme-sm",
 
-  panelPadding: "p-6 sm:p-8",
+  panelPadding: "p-4 sm:p-5",
 
   card: (dark: boolean) =>
     dark
@@ -121,9 +121,9 @@ export const platform = {
 
   overlay: "bg-[#101828]/60",
 
-  main: "flex-1 overflow-y-auto py-8 px-5 sm:px-7",
+  main: "flex-1 overflow-y-auto py-4 px-3 sm:px-4",
 
-  content: "mx-auto w-full max-w-[72rem] space-y-8",
+  content: "w-full max-w-none space-y-5",
 
   success: (dark: boolean) => (dark ? "text-primary-400" : "text-primary-600"),
 

@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import type { Country, HSProduct } from "@/domain/reference/types";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
-import { AfcftaDutyProjection } from "@/presentation/features/afcfta/AfcftaDutyProjection";
+import {
+  AfcftaDutyProjection,
+  AfcftaReductionsHelpText,
+} from "@/presentation/features/afcfta/AfcftaDutyProjection";
 import { AfcftaToolsPanel } from "@/presentation/features/afcfta/AfcftaToolsPanel";
 import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
+import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
+import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import {
   SearchableSelect,
   countryToOptions,
@@ -114,16 +119,26 @@ export function AfcftaPage({
   }, [compProduct, compOrigin, compVal, dest1, dest2, dest3, countries]);
 
   return (
-    <div className="animate-fadeIn space-y-6" id="afcfta_page">
-      <SectionPanel darkMode={darkMode} id="afcfta_origin_rules">
+    <div className="animate-fadeIn space-y-5" id="afcfta_page">
+      <PlatformPageIntro
+        title={PAGE_INTROS.AFT.title}
+        description={PAGE_INTROS.AFT.description}
+        darkMode={darkMode}
+        help={{
+          label: "What are progressive AfCFTA reductions?",
+          children: <AfcftaReductionsHelpText />,
+        }}
+      />
+
+      <div className="space-y-4">
         <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
           Local value addition level
         </h2>
-        <p className={`mt-2 text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
+        <p className={`text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
           Eligibility criterion for continental preferential treatment. Economic compliance criterion: R_origin ≥
           40%.
         </p>
-      </SectionPanel>
+      </div>
 
       <SectionPanel darkMode={darkMode} id="afcfta_duty_projection_panel">
         <AfcftaDutyProjection
@@ -142,12 +157,10 @@ export function AfcftaPage({
         />
       </SectionPanel>
 
-      <SectionPanel darkMode={darkMode} id="afcfta_sensitive_goods">
-        <p className={`text-sm leading-relaxed text-rose-500`}>
-          <strong>Sensitive goods — blacklist (AFT-04).</strong> Automobiles, valuable textiles, code{" "}
-          <strong>98010000</strong>: excluded from concessions, full-rate tax applied automatically.
-        </p>
-      </SectionPanel>
+      <p className={`text-sm leading-relaxed text-rose-500`} id="afcfta_sensitive_goods">
+        <strong>Sensitive goods — blacklist (AFT-04).</strong> Automobiles, valuable textiles, code{" "}
+        <strong>98010000</strong>: excluded from concessions, full-rate tax applied automatically.
+      </p>
 
       <SectionPanel darkMode={darkMode} id="afcfta_compare_panel">
         <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>

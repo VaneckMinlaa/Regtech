@@ -4,6 +4,7 @@ import {
   CAMEROON_IMPORT_STEPS,
   type ChecklistStepId,
 } from "./checklistData";
+import { ChecklistProgressStepper } from "@/presentation/features/procedures/ChecklistProgressStepper";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { getPlanById } from "@/domain/billing/plans";
 import { UpgradeRequiredPanel } from "@/presentation/features/billing/UpgradeRequiredPanel";
@@ -45,30 +46,13 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
     );
   }
 
-  const doneCount = CAMEROON_IMPORT_STEPS.filter((s) => checked[s.id]).length;
-  const progress = Math.round((doneCount / CAMEROON_IMPORT_STEPS.length) * 100);
-
   const toggle = (id: ChecklistStepId) => {
     setChecked((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   return (
-    <div className="animate-fadeIn space-y-6" id="checklist_cameroon_page">
-      <SectionPanel darkMode={darkMode} id="checklist_progress_panel">
-        <div className="space-y-4">
-          <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Import progress</h2>
-          <div className="flex justify-between text-[10px] font-mono mb-1">
-            <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Progress</span>
-            <span className="text-primary-500">{progress}%</span>
-          </div>
-          <div className={`h-2 rounded-full overflow-hidden ${darkMode ? "bg-dark-secondary" : "bg-gray-100"}`}>
-            <div
-              className="h-full bg-primary-500 transition-all duration-300"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
-      </SectionPanel>
+    <div className="animate-fadeIn space-y-5" id="checklist_cameroon_page">
+      <ChecklistProgressStepper checked={checked} darkMode={darkMode} />
 
       <SectionPanel darkMode={darkMode} id="checklist_steps_panel">
         <h2 className={`mb-4 text-sm font-semibold ${platform.textPrimary(darkMode)}`}>e-GUCE / CAMCIS steps</h2>

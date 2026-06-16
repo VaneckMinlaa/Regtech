@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { Loader2 } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { ZlecafDutyResponse } from "@/infrastructure/http/regtechApiTypes";
-import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
 import { platform } from "@/presentation/theme/platformStyles";
 
 interface AfcftaDutyProjectionProps {
@@ -68,20 +68,19 @@ export function AfcftaDutyProjection({
 
   return (
     <div id="afcfta_duty_projection">
-      <HelpToggle
-        title="Progressive duty reductions"
-        description="AfCFTA phased tariff schedule (2025–2030) for the selected origin and HS code."
-        label="What are progressive AfCFTA reductions?"
-        darkMode={darkMode}
-        loading={loading}
-        disabled={!ready}
-      >
-        <p>
-          Under the AfCFTA tariff schedule, eligible goods benefit from a phased reduction of customs duties
-          between 2025 and 2030. Each calendar year applies a different concession rate — the active year is
-          used in your simulations.
-        </p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
+            Progressive duty reductions
+          </h2>
+          <p className={`mt-1 text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
+            AfCFTA phased tariff schedule (2025–2030) for the selected origin and HS code.
+          </p>
+        </div>
+        {loading && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary-500" />}
+      </div>
 
+      <div className={`mt-4 space-y-3 text-sm leading-relaxed ${platform.textSecondary(darkMode)}`}>
         {!ready && (
           <p className={platform.textMuted(darkMode)}>
             Select an origin country and an HS code to load the projection from the API.
@@ -115,7 +114,17 @@ export function AfcftaDutyProjection({
         {ready && !loading && !error && projections.length === 0 && (
           <p className={platform.textMuted(darkMode)}>No projection data available for this corridor.</p>
         )}
-      </HelpToggle>
+      </div>
     </div>
+  );
+}
+
+export function AfcftaReductionsHelpText() {
+  return (
+    <p>
+      Under the AfCFTA tariff schedule, eligible goods benefit from a phased reduction of customs duties between
+      2025 and 2030. Each calendar year applies a different concession rate — the active year is used in your
+      simulations.
+    </p>
   );
 }
