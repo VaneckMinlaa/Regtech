@@ -72,5 +72,7 @@ export interface PawapayCountry {
   name: string;
   currency: string;
   pawapaySupported: boolean;
+  /** Activé sur le compte marchand PawaPay (active-conf) */
+  checkoutEnabled?: boolean;
   operators: string[];
 }

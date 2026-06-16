@@ -24,6 +24,7 @@ import {
 } from "@/presentation/features/billing/quotaNotifications";
 
 const STORAGE_KEY = "regtech_subscription_v1";
+export const PENDING_DEPOSIT_STORAGE_KEY = "regtech_pending_deposit";
 
 interface SubscriptionContextValue {
   subscription: SubscriptionState;
@@ -97,7 +98,10 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const dismissQuotaAlert = useCallback(() => setQuotaAlert(null), []);
 
   const billingCountry = useMemo(
-    () => PAWAPAY_COUNTRIES.find((c) => c.code === billingCountryIso) ?? PAWAPAY_COUNTRIES[0],
+    () =>
+      PAWAPAY_COUNTRIES.find((c) => c.code === billingCountryIso) ??
+      PAWAPAY_COUNTRIES.find((c) => c.code === "CMR") ??
+      PAWAPAY_COUNTRIES[0],
     [billingCountryIso],
   );
 
@@ -146,15 +150,20 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   const confirmPaymentReturn = useCallback(
     async (depositId: string): Promise<string> => {
-      for (let attempt = 0; attempt < 5; attempt += 1) {
+      sessionStorage.setItem(PENDING_DEPOSIT_STORAGE_KEY, depositId);
+      for (let attempt = 0; attempt < 8; attempt += 1) {
         try {
           await regtechApi.syncProfile();
           const tx = await regtechApi.getBillingTransactionStatus(depositId);
           await refreshSubscription();
-          return tx.status.toUpperCase();
+          const status = tx.status.toUpperCase();
+          if (status === "COMPLETED" || status === "FAILED") {
+            sessionStorage.removeItem(PENDING_DEPOSIT_STORAGE_KEY);
+          }
+          return status;
         } catch {
-          if (attempt === 4) return "PENDING";
-          await new Promise((resolve) => window.setTimeout(resolve, 800));
+          if (attempt === 7) return "PENDING";
+          await new Promise((resolve) => window.setTimeout(resolve, 1000));
         }
       }
       return "PENDING";

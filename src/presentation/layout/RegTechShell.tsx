@@ -36,7 +36,7 @@ import { ApiStatusBanner } from "@/presentation/components/shared/ApiStatusBanne
 import type { SimulationResult } from "@/domain/reference/types";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
 import { useTheme } from "@/presentation/providers/ThemeProvider";
-import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
+import { useSubscription, PENDING_DEPOSIT_STORAGE_KEY } from "@/presentation/providers/SubscriptionProvider";
 import { platform } from "@/presentation/theme/platformStyles";
 import { QuotaToast } from "@/presentation/features/billing/QuotaToast";
 
@@ -77,21 +77,28 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
     const billing = params.get("billing");
     const tab = params.get("tab");
     const status = params.get("status");
-    const depositId = params.get("depositId");
+    const depositId =
+      params.get("depositId") ?? sessionStorage.getItem(PENDING_DEPOSIT_STORAGE_KEY);
 
-    if (billing === "return") {
+    const handlePaymentReturn = (id: string) => {
+      sessionStorage.setItem(PENDING_DEPOSIT_STORAGE_KEY, id);
+      setBillingReturnStatus("pending");
+      void confirmPaymentReturn(id).then((txStatus) => {
+        if (txStatus === "COMPLETED") {
+          setBillingReturnStatus("success");
+        } else if (txStatus === "FAILED") {
+          setBillingReturnStatus("failed");
+        } else {
+          setBillingReturnStatus("pending");
+        }
+        localStorage.removeItem("regtech_pending_plan");
+      });
+    };
+
+    if (billing === "return" || depositId) {
       setActiveTab("PRICING");
       if (depositId) {
-        void confirmPaymentReturn(depositId).then((txStatus) => {
-          if (txStatus === "COMPLETED") {
-            setBillingReturnStatus("success");
-          } else if (txStatus === "FAILED") {
-            setBillingReturnStatus("failed");
-          } else {
-            setBillingReturnStatus("pending");
-          }
-          localStorage.removeItem("regtech_pending_plan");
-        });
+        handlePaymentReturn(depositId);
       } else if (status === "success" || status === "pending" || status === "failed") {
         setBillingReturnStatus(status);
       }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, MapPin, CreditCard, CheckCircle2, AlertCircle, BarChart3 } from "lucide-react";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
+import { SubscriptionOverviewSkeleton } from "./SubscriptionPageSkeleton";
 import { getPlanById } from "@/domain/billing/plans";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { AnalyticsSummaryResponse } from "@/infrastructure/http/regtechApiTypes";
@@ -11,13 +12,19 @@ interface SubscriptionOverviewProps {
 }
 
 export function SubscriptionOverview({ darkMode = true, returnStatus }: SubscriptionOverviewProps) {
-  const { subscription } = useSubscription();
+  const { subscription, loading } = useSubscription();
   const plan = getPlanById(subscription.plan);
   const [analytics, setAnalytics] = useState<AnalyticsSummaryResponse | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(true);
 
   useEffect(() => {
-    void regtechApi.getMonetizationAnalytics().then(setAnalytics).catch(() => undefined);
-  }, []);
+    setAnalyticsLoading(true);
+    void regtechApi
+      .getMonetizationAnalytics()
+      .then(setAnalytics)
+      .catch(() => undefined)
+      .finally(() => setAnalyticsLoading(false));
+  }, [subscription.plan]);
 
   const periodEndLabel = subscription.periodEnd
     ? new Date(subscription.periodEnd).toLocaleDateString("fr-FR", {
@@ -26,6 +33,20 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
         year: "numeric",
       })
     : null;
+
+  if (loading) {
+    return (
+      <>
+        {returnStatus === "pending" && (
+          <div className="mb-4 flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2">
+            <AlertCircle className="w-4 h-4" />
+            Paiement en cours de validation…
+          </div>
+        )}
+        <SubscriptionOverviewSkeleton darkMode={darkMode} />
+      </>
+    );
+  }
 
   return (
     <div
@@ -88,7 +109,20 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
         </div>
       </div>
 
-      {analytics && (
+      {analyticsLoading ? (
+        <div
+          className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-3 ${
+            darkMode ? "border-gray-800" : "border-gray-100"
+          }`}
+        >
+          {[0, 1, 2].map((key) => (
+            <div
+              key={key}
+              className={`h-10 rounded-lg animate-pulse ${darkMode ? "bg-gray-800/80" : "bg-gray-200"}`}
+            />
+          ))}
+        </div>
+      ) : analytics ? (
         <div
           className={`mt-4 pt-4 border-t grid grid-cols-1 sm:grid-cols-3 gap-3 text-[11px] ${
             darkMode ? "border-gray-800" : "border-gray-100"
@@ -117,7 +151,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
             </p>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

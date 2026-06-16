@@ -7,7 +7,7 @@ import {
   ExternalLink,
   Shield,
 } from "lucide-react";
-import type { PlanId } from "@/domain/billing/types";
+import type { PlanId, PawapayCountry } from "@/domain/billing/types";
 import {
   formatLocalPrice,
   PRICING_PLANS,
@@ -18,6 +18,7 @@ import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { mergeApiPlansWithPricing } from "@/infrastructure/http/monetizationMapper";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { SubscriptionOverview } from "./SubscriptionOverview";
+import { SubscriptionPageSkeleton } from "./SubscriptionPageSkeleton";
 import { ReferenceVersionsFooter } from "./ReferenceVersionsFooter";
 
 interface PricingPageProps {
@@ -31,6 +32,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     billingCountry,
     setBillingCountryIso,
     startCheckout,
+    loading,
   } = useSubscription();
   const [yearly, setYearly] = useState(false);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
@@ -38,6 +40,28 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
   const [paidPlans, setPaidPlans] = useState<PricingPlan[]>(() =>
     PRICING_PLANS.filter((p) => p.id !== "free" && p.id !== "enterprise"),
   );
+  const [billingCountries, setBillingCountries] = useState<PawapayCountry[]>(PAWAPAY_COUNTRIES);
+
+  const selectedCountry =
+    billingCountries.find((c) => c.code === billingCountry.code) ?? billingCountry;
+  const checkoutAllowed = selectedCountry.checkoutEnabled !== false;
+
+  useEffect(() => {
+    void regtechApi
+      .getBillingCountries()
+      .then((remote) => {
+        const enabledByCode = new Map(remote.map((r) => [r.code, r.checkoutEnabled]));
+        setBillingCountries(
+          PAWAPAY_COUNTRIES.map((c) => ({
+            ...c,
+            checkoutEnabled: enabledByCode.get(c.code) ?? false,
+          })),
+        );
+      })
+      .catch(() => {
+        /* garde la liste locale */
+      });
+  }, []);
 
   useEffect(() => {
     void regtechApi
@@ -55,9 +79,16 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
 
   const handleCheckout = async (planId: PlanId) => {
     if (planId === "free" || planId === "enterprise") return;
-    if (!billingCountry.pawapaySupported) {
+    if (!selectedCountry.pawapaySupported) {
       setCheckoutError(
-        `${billingCountry.name} n'est pas encore couvert par PawaPay. Choisissez un autre pays de facturation.`,
+        `${selectedCountry.name} n'est pas couvert par PawaPay. Choisissez un autre pays de facturation.`,
+      );
+      return;
+    }
+    if (!checkoutAllowed) {
+      setCheckoutError(
+        `Les paiements depuis ${selectedCountry.name} ne sont pas encore activés sur le compte marchand PawaPay. ` +
+          "Demandez l'activation du pays dans le dashboard PawaPay, ou choisissez un autre pays (ex. Cameroun, Ghana, Kenya).",
       );
       return;
     }
@@ -67,7 +98,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     try {
       const response = await startCheckout({
         plan: planId,
-        countryIso: billingCountry.code,
+        countryIso: selectedCountry.code,
       });
 
       localStorage.setItem("regtech_pending_plan", planId);
@@ -78,6 +109,10 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
       setLoadingPlan(null);
     }
   };
+
+  if (loading && !returnStatus) {
+    return <SubscriptionPageSkeleton darkMode={darkMode} />;
+  }
 
   return (
     <div className="space-y-8 animate-fadeIn" id="pricing_page">
@@ -94,8 +129,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
               Offres RegTech
             </h2>
             <p className={`text-xs mt-1 max-w-xl ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Paiement Mobile Money via <strong>PawaPay</strong> — disponible dans tous les pays
-              couverts (CMR, NGA, GHA, CIV, KEN…).
+              Paiement Mobile Money via <strong>PawaPay</strong> — 20 pays Afrique (MoMo).
             </p>
           </div>
 
@@ -113,9 +147,10 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
               }`}
               id="select_billing_country"
             >
-              {PAWAPAY_COUNTRIES.map((c) => (
+              {billingCountries.map((c) => (
                 <option key={c.code} value={c.code}>
-                  {c.name} ({c.currency}){!c.pawapaySupported ? " — bientôt" : ""}
+                  {c.name} ({c.currency})
+                  {c.checkoutEnabled === false ? " — activation requise" : ""}
                 </option>
               ))}
             </select>
@@ -143,13 +178,23 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
           </div>
         </div>
 
-        {!billingCountry.pawapaySupported && (
+        {!checkoutAllowed && (
           <div
             className={`mb-4 text-xs rounded-lg border px-3 py-2 ${
               darkMode ? "border-amber-500/30 bg-amber-950/30 text-amber-200" : "border-amber-200 bg-amber-50 text-amber-900"
             }`}
           >
-            L&apos;Afrique du Sud (ZAF) n&apos;est pas couverte par PawaPay — sélectionnez un pays pilote MoMo.
+            {selectedCountry.name} n&apos;est pas encore activé sur le compte marchand PawaPay.
+            Activez ce pays dans le{" "}
+            <a
+              href="https://dashboard.pawapay.io/"
+              target="_blank"
+              rel="noreferrer"
+              className="underline hover:text-primary-400"
+            >
+              dashboard PawaPay
+            </a>{" "}
+            (section Providers), ou choisissez un pays déjà activé.
           </div>
         )}
 
@@ -191,7 +236,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   {plan.description}
                 </p>
                 <p className={`text-2xl font-extrabold font-display mt-4 ${darkMode ? "text-white" : "text-gray-900"}`}>
-                  {formatLocalPrice(priceXaf, billingCountry.currency)}
+                  {formatLocalPrice(priceXaf, selectedCountry.currency)}
                   <span className={`text-xs font-normal ml-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
                     /{yearly ? "an" : "mois"}
                   </span>
@@ -221,7 +266,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
 
                 <button
                   type="button"
-                  disabled={isCurrent || loadingPlan !== null || !billingCountry.pawapaySupported}
+                  disabled={isCurrent || loadingPlan !== null || !checkoutAllowed}
                   onClick={() => void handleCheckout(plan.id)}
                   className={`mt-5 w-full py-2.5 rounded-lg text-xs font-bold flex items-center justify-center gap-2 transition-colors ${
                     isCurrent

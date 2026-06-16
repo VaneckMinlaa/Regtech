@@ -29,6 +29,7 @@ import type {
   AfcftaValidateResponse,
   AnalyticsSummaryResponse,
   BackendCompareResponse,
+  BillingCountriesResponse,
   CompareRequest,
   CameroonFiscalRequest,
   CameroonFiscalResponse,
@@ -251,6 +252,11 @@ export const regtechApi = {
 
   startCheckout(payload: CheckoutRequest): Promise<CheckoutResponse> {
     return apiPost<CheckoutResponse>("/api/v1/billing/checkout", payload, true);
+  },
+
+  async getBillingCountries(): Promise<BillingCountriesResponse["countries"]> {
+    const response = await apiGet<BillingCountriesResponse>("/api/v1/billing/countries", false);
+    return response.countries;
   },
 
   getBillingTransactionStatus(depositId: string): Promise<BillingTransactionStatus> {

@@ -241,3 +241,14 @@ export interface UsageDayPoint {
   date: string;
   simulations: number;
 }
+
+export interface BillingCountryItem {
+  code: string;
+  name: string;
+  currency: string;
+  checkoutEnabled: boolean;
+}
+
+export interface BillingCountriesResponse {
+  countries: BillingCountryItem[];
+}

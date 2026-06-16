@@ -49,24 +49,32 @@ function parseApiError(body: unknown, status: number): string {
     : "Erreur lors de l'appel API.";
 }
 
-export async function apiGet<T>(
+async function fetchWithAuth<T>(
   path: string,
-  authenticated = false,
-  timeoutMs = 15_000,
+  init: RequestInit,
+  authenticated: boolean,
+  timeoutMs: number,
 ): Promise<T> {
-  const headers = await buildHeaders(authenticated);
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), timeoutMs);
   try {
-    const res = await fetch(buildApiUrl(path), {
-      headers,
-      signal: controller.signal,
-    });
-    if (!res.ok) {
-      const body = await res.json().catch(() => ({}));
-      throw new ApiError(parseApiError(body, res.status), res.status);
-    }
-    return res.json() as Promise<T>;
+    const attempt = async (retryOnUnauthorized: boolean): Promise<T> => {
+      const headers = await buildHeaders(authenticated);
+      const res = await fetch(buildApiUrl(path), {
+        ...init,
+        headers: { ...headers, ...(init.headers as Record<string, string> | undefined) },
+        signal: controller.signal,
+      });
+      if (!res.ok) {
+        if (authenticated && res.status === 401 && retryOnUnauthorized) {
+          return attempt(false);
+        }
+        const body = await res.json().catch(() => ({}));
+        throw new ApiError(parseApiError(body, res.status), res.status);
+      }
+      return res.json() as Promise<T>;
+    };
+    return await attempt(true);
   } catch (err) {
     if (err instanceof DOMException && err.name === "AbortError") {
       throw new ApiError("Delai depasse lors de l'appel API.", 408);
@@ -77,33 +85,24 @@ export async function apiGet<T>(
   }
 }
 
+export async function apiGet<T>(
+  path: string,
+  authenticated = false,
+  timeoutMs = 15_000,
+): Promise<T> {
+  return fetchWithAuth<T>(path, {}, authenticated, timeoutMs);
+}
+
 export async function apiPost<T>(
   path: string,
   body: unknown,
   authenticated = true,
   timeoutMs = 60_000,
 ): Promise<T> {
-  const headers = await buildHeaders(authenticated);
-  const controller = new AbortController();
-  const timer = window.setTimeout(() => controller.abort(), timeoutMs);
-  try {
-    const res = await fetch(buildApiUrl(path), {
-      method: "POST",
-      headers,
-      body: JSON.stringify(body),
-      signal: controller.signal,
-    });
-    if (!res.ok) {
-      const payload = await res.json().catch(() => ({}));
-      throw new ApiError(parseApiError(payload, res.status), res.status);
-    }
-    return res.json() as Promise<T>;
-  } catch (err) {
-    if (err instanceof DOMException && err.name === "AbortError") {
-      throw new ApiError("Delai depasse lors de l'appel API.", 408);
-    }
-    throw err;
-  } finally {
-    window.clearTimeout(timer);
-  }
+  return fetchWithAuth<T>(
+    path,
+    { method: "POST", body: JSON.stringify(body) },
+    authenticated,
+    timeoutMs,
+  );
 }
