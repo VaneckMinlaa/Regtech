@@ -16,6 +16,10 @@ import {
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
 import { platform } from "@/presentation/theme/platformStyles";
+import {
+  AfcftaPageSkeleton,
+  CompareRowsSkeleton,
+} from "@/presentation/components/shared/PlatformSkeletons";
 
 interface CompareRow {
   countryCode: string;
@@ -118,6 +122,10 @@ export function AfcftaPage({
       window.clearTimeout(timer);
     };
   }, [compProduct, compOrigin, compVal, dest1, dest2, dest3, countries]);
+
+  if (refLoading) {
+    return <AfcftaPageSkeleton darkMode={darkMode} />;
+  }
 
   return (
     <div className="animate-fadeIn space-y-5" id="afcfta_page">
@@ -238,7 +246,7 @@ export function AfcftaPage({
         </div>
 
         <div className={`mt-6 space-y-3 border-t pt-6 ${platform.borderSubtle(darkMode)}`}>
-          {compLoading && <p className={`text-xs font-mono ${platform.textMuted(darkMode)}`}>Calculating…</p>}
+          {compLoading && <CompareRowsSkeleton darkMode={darkMode} rows={3} />}
           {!compLoading && compTariffs.length === 0 && (
             <p className={`text-sm ${platform.textMuted(darkMode)}`}>
               Select origin, product, and value to compare.

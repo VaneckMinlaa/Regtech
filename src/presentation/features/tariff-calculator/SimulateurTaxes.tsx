@@ -4,12 +4,10 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { RefreshCw } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { convertBetweenCurrencies } from "@/domain/reference/currencyUtils";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
-import { CameroonFiscalPreview } from "@/presentation/features/tariff-calculator/CameroonFiscalPreview";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
 import { ApiError } from "@/infrastructure/http/apiClient";
 import {
@@ -20,6 +18,7 @@ import {
 import { platform } from "@/presentation/theme/platformStyles";
 import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
+import { SimulatorPageSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 interface SimulateurTaxesProps {
   onSimulationRun: (result: SimulationResult) => void;
@@ -55,15 +54,6 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   // States
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
-  const [currentResult, setCurrentResult] = useState<SimulationResult | null>(null);
-
-  useEffect(() => {
-    if (!currentResult) return;
-    const timer = window.setTimeout(() => {
-      document.getElementById("simulation_tax_results")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
-    return () => window.clearTimeout(timer);
-  }, [currentResult?.id]);
 
   useEffect(() => {
     if (initialized || countries.length === 0) return;
@@ -89,20 +79,16 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
 
   const originCountry = countries.find((c) => c.code === origin);
   const destCountry = countries.find((c) => c.code === destination);
-  const selectedProduct = products.find((p) => p.code === hsCode);
 
-  const originFx =
-    currentResult?.originExchangeRateToUSD ?? originCountry?.exchangeRateToUSD ?? 0;
-  const destFx =
-    currentResult?.destinationExchangeRateToUSD ?? destCountry?.exchangeRateToUSD ?? 0;
+  const originFx = originCountry?.exchangeRateToUSD ?? 0;
+  const destFx = destCountry?.exchangeRateToUSD ?? 0;
 
   const declaredValueInDest =
     originCountry && destCountry && declaredValue > 0
       ? convertBetweenCurrencies(declaredValue, originFx, destFx)
       : 0;
   const declaredValueUsd =
-    currentResult?.declaredValueUSD ??
-    (originFx > 0 && declaredValue > 0 ? declaredValue / originFx : 0);
+    originFx > 0 && declaredValue > 0 ? declaredValue / originFx : 0;
 
   // Quick calculate helpers in under 100ms
   const handleSimulate = async () => {
@@ -126,7 +112,6 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
         prixVenteExport: prixVenteExport || declaredValue,
         year,
       });
-      setCurrentResult(data);
       recordUsage("simulations");
       onSimulationRun(data);
     } catch (err) {
@@ -156,17 +141,13 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
     declaredValue > 0 &&
     prixVenteExport > 0;
 
-  const originThreshold = currentResult?.originValueThresholdPct ?? 40;
+  const originThreshold = 40;
   const originValueRatio = prixVenteExport > 0 
     ? ((costMatiereLocale + mainOeuvreLocale + fraisLocaux) / prixVenteExport) * 100 
     : 0;
 
   if (refLoading) {
-    return (
-      <p className={`text-sm ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-        Loading countries from the API...
-      </p>
-    );
+    return <SimulatorPageSkeleton darkMode={darkMode} />;
   }
 
   const fieldClass = platform.input(darkMode);
@@ -272,9 +253,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                   {declaredValueUsd > 0 && (
                     <> · {declaredValueUsd.toLocaleString(undefined, { maximumFractionDigits: 2 })} USD</>
                   )}
-                  {!currentResult && (
-                    <span className="opacity-70"> (exchange rate)</span>
-                  )}
+                  <span className="opacity-70"> (exchange rate)</span>
                 </p>
               )}
             </div>
@@ -369,140 +348,6 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
           </div>
         </HelpToggle>
       </div>
-
-      {(currentResult || isLoading) && (
-      <SectionPanel darkMode={darkMode} id="simulation_tax_results" className="scroll-mt-24">
-        <div className="space-y-6">
-          <div className={`flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
-            <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Tax estimate</h2>
-            {isLoading && <RefreshCw className="h-4 w-4 animate-spin text-primary-500" />}
-          </div>
-
-          {currentResult ? (
-            <div className="flex-1 flex flex-col justify-between space-y-6">
-              {/* Main Total Callout */}
-              <div className="text-center">
-                <p className={`text-xs uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
-                  Total estimated taxes
-                </p>
-                <div className="mt-2 text-3xl font-bold text-primary-500 font-display">
-                  {currentResult.totalTaxLocal.toLocaleString()} {destCountry?.currency ?? ""}
-                </div>
-                <div className={`text-xs font-mono ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  ≈ {currentResult.totalTaxUSD.toLocaleString()} USD
-                </div>
-              </div>
-
-              {selectedProduct?.sensitive && (
-                <p className={`text-sm leading-relaxed text-rose-500`}>
-                  <strong>Sensitive product (AFT-04).</strong> &quot;{selectedProduct.description}&quot; is excluded from preferential treatment. Base duty {(selectedProduct.baseTariffRate * 100).toFixed(0)}% applies.
-                </p>
-              )}
-
-              {selectedProduct && !selectedProduct.sensitive && currentResult.isEligiblePrefAfCFTA && (
-                <p className="text-sm leading-relaxed text-primary-500">
-                  <strong>AfCFTA preference granted.</strong> Concession of {((1 - currentResult.appliedTariffRate / currentResult.baseTariffRate) * 100).toFixed(0)}% — final rate {(currentResult.appliedTariffRate * 100).toFixed(1)}% instead of {(currentResult.baseTariffRate * 100).toFixed(1)}%.
-                </p>
-              )}
-
-              {selectedProduct && !selectedProduct.sensitive && !currentResult.isEligiblePrefAfCFTA && (
-                <p className="text-sm leading-relaxed text-rose-500">
-                  <strong>Standard customs regime applied.</strong>{" "}
-                  Insufficient local value addition ({currentResult.localOriginValueRatio}% / threshold{" "}
-                  {currentResult.originValueThresholdPct ?? 40}%). Duties collected at the full rate.
-                </p>
-              )}
-
-              <div className="space-y-3 pt-2">
-                <div className={`flex items-center justify-between text-sm py-1 border-b ${
-                  darkMode ? "border-gray-800" : "border-gray-100"
-                }`}>
-                  <span className={platform.textMuted(darkMode)}>HS classification code:</span>
-                  <span className={`font-mono font-semibold ${platform.textPrimary(darkMode)}`}>{currentResult.hsCode}</span>
-                </div>
-                <div className={`flex items-center justify-between text-sm py-1 border-b ${
-                  darkMode ? "border-gray-800" : "border-gray-100"
-                }`}>
-                  <span className={platform.textMuted(darkMode)}>Product description:</span>
-                  <span className={`font-semibold truncate max-w-[200px] ${platform.textSecondary(darkMode)}`} title={currentResult.productDescription}>
-                    {currentResult.productDescription}
-                  </span>
-                </div>
-                <div className={`flex items-center justify-between text-sm py-1 border-b ${
-                  darkMode ? "border-gray-800" : "border-gray-100"
-                }`}>
-                  <span className={platform.textMuted(darkMode)}>Base customs duty:</span>
-                  <span className={`font-mono ${platform.textSecondary(darkMode)}`}>{(currentResult.baseTariffRate * 100).toFixed(1)}%</span>
-                </div>
-                {currentResult.isEligiblePrefAfCFTA && (
-                  <div className={`flex items-center justify-between text-sm py-1 border-b text-primary-600 dark:text-primary-400 ${
-                    darkMode ? "border-gray-800" : "border-gray-100"
-                  }`}>
-                    <span>Preferential tariff rate:</span>
-                    <span className="font-mono font-bold">{(currentResult.appliedTariffRate * 100).toFixed(1)}%</span>
-                  </div>
-                )}
-                <div className={`flex items-center justify-between text-sm py-1 border-b ${
-                  darkMode ? "border-gray-800" : "border-gray-100"
-                }`}>
-                  <span className={platform.textMuted(darkMode)}>Customs duty amount:</span>
-                  <span className={`font-mono font-semibold ${platform.textPrimary(darkMode)}`}>
-                    {currentResult.dutyPaidLocal.toLocaleString()} {destCountry?.currency ?? ""}
-                  </span>
-                </div>
-                <div className={`flex items-center justify-between text-sm py-1 border-b ${
-                  darkMode ? "border-gray-800" : "border-gray-100"
-                }`}>
-                  <span className={platform.textMuted(darkMode)}>
-                    Destination VAT ({Math.round((destCountry?.vatRate ?? 0) * 100)}%):
-                  </span>
-                  <span className={`font-mono font-semibold ${platform.textPrimary(darkMode)}`}>
-                    {currentResult.vatPaidLocal.toLocaleString()} {destCountry?.currency ?? ""}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1 text-sm">
-                {originCountry && destCountry && currentResult && (
-                  <>
-                    <span className={platform.textMuted(darkMode)}>
-                      Origin: 1 USD = {currentResult.originExchangeRateToUSD ?? originCountry.exchangeRateToUSD}{" "}
-                      {originCountry.currency}
-                    </span>
-                    <span className={platform.textMuted(darkMode)}>
-                      Destination: 1 USD = {currentResult.destinationExchangeRateToUSD ?? destCountry.exchangeRateToUSD}{" "}
-                      {destCountry.currency}
-                    </span>
-                    <span className={`text-[11px] ${platform.textMuted(darkMode)}`}>
-                      Rate source:{" "}
-                      {currentResult.exchangeRateSource === "frankfurter"
-                        ? "Frankfurter (ECB)"
-                        : currentResult.exchangeRateSource === "pilot"
-                          ? "AfCFTA pilot reference"
-                          : "Country reference"}
-                    </span>
-                  </>
-                )}
-              </div>
-              {destination === "CMR" && currentResult && (
-                <CameroonFiscalPreview
-                  cifValue={declaredValue}
-                  hsCode={currentResult.hsCode}
-                  originCountryIso={origin}
-                  year={year}
-                  applyZlecaf={currentResult.isEligiblePrefAfCFTA}
-                  darkMode={darkMode}
-                />
-              )}
-            </div>
-          ) : (
-            <div className={`flex items-center justify-center py-12 text-sm ${platform.textMuted(darkMode)}`}>
-              Calculating…
-            </div>
-          )}
-        </div>
-      </SectionPanel>
-      )}
     </div>
   );
 };

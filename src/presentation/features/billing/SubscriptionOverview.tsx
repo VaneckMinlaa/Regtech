@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, MapPin, CreditCard, CheckCircle2, AlertCircle, BarChart3 } from "lucide-react";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { SubscriptionOverviewSkeleton } from "./SubscriptionPageSkeleton";
+import { Skeleton } from "@/presentation/components/shared/Skeleton";
 import { UsageMeterCard } from "./UsageMeterCard";
 import { getPlanById } from "@/domain/billing/plans";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
@@ -128,10 +129,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
           }`}
         >
           {[0, 1, 2].map((key) => (
-            <div
-              key={key}
-              className={`h-10 rounded-lg animate-pulse ${darkMode ? "bg-gray-800/80" : "bg-gray-200"}`}
-            />
+            <Skeleton key={key} darkMode={darkMode} className="h-10 w-full" />
           ))}
         </div>
       ) : analytics ? (

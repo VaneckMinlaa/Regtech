@@ -301,7 +301,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
           <main className={platform.main}>
             <div className={platform.content} id="active_workspace_canvas">
-              {activeTab !== "AFT" && activeTab !== "HIST" && (
+              {activeTab !== "AFT" && activeTab !== "HIST" && activeTab !== "SIM" && (
                 <PlatformPageIntro
                   title={PAGE_INTROS[activeTab].title}
                   description={PAGE_INTROS[activeTab].description}
@@ -328,7 +328,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
                   darkMode={darkMode}
                   initialHSCode={passedHSCode}
                   initialProductDesc={passedDesc}
-                  selectedSimulation={currentSelectedSimulation}
+                  simulation={currentSelectedSimulation}
                   onSimulationRun={setCurrentSelectedSimulation}
                   onUpgrade={goToPricing}
                   onOpenHistory={goToHistory}

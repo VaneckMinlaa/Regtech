@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { ZlecafDutyResponse } from "@/infrastructure/http/regtechApiTypes";
 import { platform } from "@/presentation/theme/platformStyles";
+import { ProjectionListSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 interface AfcftaDutyProjectionProps {
   originCountryIso: string;
@@ -77,7 +77,6 @@ export function AfcftaDutyProjection({
             AfCFTA phased tariff schedule (2025–2030) for the selected origin and HS code.
           </p>
         </div>
-        {loading && <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary-500" />}
       </div>
 
       <div className={`mt-4 space-y-3 text-sm leading-relaxed ${platform.textSecondary(darkMode)}`}>
@@ -89,7 +88,9 @@ export function AfcftaDutyProjection({
 
         {error && <p className="text-rose-500">{error}</p>}
 
-        {ready && projections.length > 0 && (
+        {ready && loading && <ProjectionListSkeleton darkMode={darkMode} items={5} />}
+
+        {ready && projections.length > 0 && !loading && (
           <ul className="space-y-2">
             {projections.map((p) => {
               const isActive = p.calculationYear === CURRENT_YEAR;

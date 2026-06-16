@@ -105,11 +105,20 @@ export function SearchableSelect({
     setQuery("");
   };
 
-  const idlePlaceholder = loading
-    ? loadingPlaceholder
-    : options.length === 0
-      ? noDataPlaceholder
-      : placeholder;
+  const idlePlaceholder = options.length === 0 ? noDataPlaceholder : placeholder;
+
+  if (loading) {
+    return (
+      <div
+        id={id}
+        className={`w-full rounded-lg animate-pulse ${
+          dense ? "h-8" : "h-10"
+        } ${darkMode ? "bg-gray-800/80" : "bg-gray-200"} ${className}`}
+        aria-busy="true"
+        aria-label={loadingPlaceholder}
+      />
+    );
+  }
 
   if (!useSearch && options.length > 0) {
     return (

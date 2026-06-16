@@ -1,5 +1,6 @@
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
+import { ApiBannerSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 interface ApiStatusBannerProps {
   darkMode: boolean;
@@ -8,34 +9,8 @@ interface ApiStatusBannerProps {
 export function ApiStatusBanner({ darkMode }: ApiStatusBannerProps) {
   const { isLoading, productsLoading, error, reload } = useReferenceData();
 
-  if (isLoading) {
-    return (
-      <div
-        className={`flex items-center gap-2 px-5 py-2 text-xs border-b ${
-          darkMode
-            ? "bg-dark-primary/80 border-gray-800 text-gray-400"
-            : "bg-white/90 border-gray-100 text-gray-600"
-        }`}
-      >
-        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-        Loading countries from the API...
-      </div>
-    );
-  }
-
-  if (productsLoading) {
-    return (
-      <div
-        className={`flex items-center gap-2 px-5 py-2 text-xs border-b ${
-          darkMode
-            ? "bg-dark-primary/80 border-gray-800 text-gray-400"
-            : "bg-white/90 border-gray-100 text-gray-600"
-        }`}
-      >
-        <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-        Loading HS product catalog...
-      </div>
-    );
+  if (isLoading || productsLoading) {
+    return <ApiBannerSkeleton darkMode={darkMode} />;
   }
 
   if (!error) return null;

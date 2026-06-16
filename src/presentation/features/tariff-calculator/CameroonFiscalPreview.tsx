@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Landmark, Loader2, AlertCircle } from "lucide-react";
+import { Landmark, AlertCircle } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { CameroonFiscalResponse } from "@/infrastructure/http/regtechApiTypes";
 import { platform } from "@/presentation/theme/platformStyles";
+import { TableRowsSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 interface CameroonFiscalPreviewProps {
   cifValue: number;
@@ -96,7 +97,6 @@ export function CameroonFiscalPreview({
         <h4 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
           Cameroon tax breakdown
         </h4>
-        {loading && <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin text-primary-500" />}
         {!loading && !apiLinked && (
           <span className="ml-auto inline-flex items-center gap-1 text-[10px] text-amber-400">
             <AlertCircle className="h-3 w-3" />
@@ -105,7 +105,9 @@ export function CameroonFiscalPreview({
         )}
       </div>
 
-      {data && (
+      {loading && <TableRowsSkeleton darkMode={darkMode} rows={5} />}
+
+      {!loading && data && (
         <>
           <table className="w-full text-sm">
             <thead>

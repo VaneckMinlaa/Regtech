@@ -24,6 +24,7 @@ import {
   TaskListTag,
 } from "@/presentation/components/shared/PlatformTaskList";
 import { platform } from "@/presentation/theme/platformStyles";
+import { TableRowsSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 type StatusFilter = "all" | "preferential" | "standard" | "excluded";
 type SortKey = "date" | "product" | "totalTax";
@@ -306,7 +307,11 @@ export function SimulationHistoryTable({
           }
         />
 
-        {paginated.length === 0 ? (
+        {loading ? (
+          <div className="p-4">
+            <TableRowsSkeleton darkMode={darkMode} rows={6} />
+          </div>
+        ) : paginated.length === 0 ? (
           <TaskListEmpty darkMode={darkMode}>No simulations match your filters.</TaskListEmpty>
         ) : (
           groups.map((group) => (

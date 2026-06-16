@@ -8,6 +8,7 @@ import {
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
+import { CameroonPageSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 import { platform } from "@/presentation/theme/platformStyles";
 
 interface CameroonPageProps {
@@ -24,6 +25,11 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
   const [applyZlecaf, setApplyZlecaf] = useState(true);
 
   const inputClass = platform.input(darkMode);
+
+  if (isLoading) {
+    return <CameroonPageSkeleton darkMode={darkMode} />;
+  }
+
   return (
     <div className="animate-fadeIn space-y-6 font-sans" id="cameroon_page">
       <SectionPanel darkMode={darkMode} id="cameroon_fiscal_inputs">

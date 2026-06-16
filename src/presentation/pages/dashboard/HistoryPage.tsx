@@ -1,5 +1,4 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { SimulationHistoryTable } from "@/presentation/features/export/SimulationHistoryTable";
@@ -7,6 +6,7 @@ import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPage
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import { readHistoryIdFromUrl, writeHistoryIdToUrl } from "@/presentation/layout/dashboardTabs";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
+import { HistoryPageSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 import { platform } from "@/presentation/theme/platformStyles";
 import { HistoryDetailPage } from "./HistoryDetailPage";
 
@@ -60,12 +60,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
 
   if (historyId) {
     if (loading && !selected) {
-      return (
-        <p className={`flex items-center justify-center gap-2 py-12 text-sm ${platform.textMuted(darkMode)}`}>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Loading simulation…
-        </p>
-      );
+      return <HistoryPageSkeleton darkMode={darkMode} />;
     }
 
     if (!loading && !selected) {
@@ -103,10 +98,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
       {error && <p className="text-sm text-rose-500">{error}</p>}
 
       {loading && items.length === 0 ? (
-        <p className={`flex items-center justify-center gap-2 py-12 text-sm ${platform.textMuted(darkMode)}`}>
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Loading history…
-        </p>
+        <HistoryPageSkeleton darkMode={darkMode} />
       ) : items.length === 0 ? (
         <p className={`py-12 text-center text-sm ${platform.textMuted(darkMode)}`}>
           No saved simulations. Run one in the Simulator tab.

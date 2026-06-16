@@ -1,5 +1,7 @@
 /** Onglets du workspace dashboard — persistance via ?tab= */
 
+import type { SimulationResult } from "@/domain/reference/types";
+
 export const DASHBOARD_TABS = [
   "SIM",
   "IA",
@@ -46,12 +48,55 @@ export function writeHistoryIdToUrl(id: string | null, mode: "push" | "replace" 
   else window.history.replaceState({}, "", next);
 }
 
+export type SimulatorView = "form" | "estimate" | "certificate";
+
+const SIMULATOR_VIEWS = new Set<string>(["estimate", "certificate"]);
+
+export function readSimulatorViewFromUrl(): SimulatorView {
+  const params = new URLSearchParams(window.location.search);
+  const tab = params.get("tab")?.toUpperCase();
+  if (tab && tab !== "SIM") return "form";
+  const view = params.get("view")?.toLowerCase();
+  if (view && SIMULATOR_VIEWS.has(view)) return view as SimulatorView;
+  return "form";
+}
+
+export function writeSimulatorViewToUrl(view: SimulatorView, mode: "push" | "replace" = "push"): void {
+  const url = new URL(window.location.href);
+  url.searchParams.set("tab", "sim");
+  if (view === "form") url.searchParams.delete("view");
+  else url.searchParams.set("view", view);
+  const next = `${url.pathname}${url.search}${url.hash}`;
+  if (mode === "push") window.history.pushState({}, "", next);
+  else window.history.replaceState({}, "", next);
+}
+
+const LAST_SIMULATION_KEY = "regtech_last_simulation";
+
+export function persistLastSimulation(result: SimulationResult): void {
+  try {
+    sessionStorage.setItem(LAST_SIMULATION_KEY, JSON.stringify(result));
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+export function readLastSimulation(): SimulationResult | null {
+  try {
+    const raw = sessionStorage.getItem(LAST_SIMULATION_KEY);
+    return raw ? (JSON.parse(raw) as SimulationResult) : null;
+  } catch {
+    return null;
+  }
+}
+
 export function writeDashboardTabToUrl(tab: DashboardTab): void {
   const url = new URL(window.location.href);
   url.searchParams.delete("billing");
   url.searchParams.delete("depositId");
   url.searchParams.delete("status");
   url.searchParams.delete("id");
+  url.searchParams.delete("view");
   if (tab === "SIM") {
     url.searchParams.delete("tab");
   } else {

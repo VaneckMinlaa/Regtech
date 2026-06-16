@@ -14,6 +14,10 @@ import {
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
 import { platform } from "@/presentation/theme/platformStyles";
+import {
+  ClassifierPageSkeleton,
+  ClassifierResultSkeleton,
+} from "@/presentation/components/shared/PlatformSkeletons";
 
 interface IntelligentClassifierProps {
   onSelectHSCode: (code: string, description: string) => void;
@@ -107,6 +111,10 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
     });
   };
 
+  if (refLoading) {
+    return <ClassifierPageSkeleton darkMode={darkMode} />;
+  }
+
   return (
     <div className="space-y-8 font-sans" id="ai_classification_panel">
       <div className="flex flex-col gap-8">
@@ -156,16 +164,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
 
         <div className="space-y-4 border-t pt-8">
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center space-y-3 py-12" id="skeleton_loading_ai">
-                <div className="relative font-bold">
-                  <div className="w-10 h-10 border-4 border-primary-500/20 border-t-primary-500 rounded-full animate-spin"></div>
-                  <Sparkles className="w-4 h-4 text-primary-500 absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 animate-pulse" />
-                </div>
-                <div className="text-center font-bold">
-                  <p className={`text-xs font-semibold font-display ${darkMode ? "text-gray-300" : "text-primary-900"}`}>Querying the business intelligence model...</p>
-                  <p className={`text-[10px] font-mono mt-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>Analysis in progress…</p>
-                </div>
-              </div>
+              <ClassifierResultSkeleton darkMode={darkMode} />
             ) : result ? (
               <div className="space-y-4">
                 <div className="flex items-start justify-between">

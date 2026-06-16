@@ -37,6 +37,7 @@ import {
 } from "@/presentation/features/export/batchExcelTemplate";
 import { BatchPreviewTable } from "@/presentation/features/export/BatchPreviewTable";
 import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
+import { BatchResultsSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 interface BatchLoaderProps {
   darkMode?: boolean;
@@ -316,12 +317,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
       {(isProcessing || results.length > 0) && (
         <SectionPanel darkMode={darkMode} id="batch_results_panel">
             {isProcessing ? (
-              <div className="flex flex-col items-center justify-center py-16 space-y-2">
-                <RefreshCw className="w-6 h-6 text-primary-500 animate-spin" />
-                <span className={`text-sm ${platform.textMuted(darkMode)}`}>
-                  Calculating taxes and FX conversions for each row…
-                </span>
-              </div>
+              <BatchResultsSkeleton darkMode={darkMode} />
             ) : results.length > 0 && summary ? (
               <div className="space-y-4 font-sans">
                 <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Batch results</h2>

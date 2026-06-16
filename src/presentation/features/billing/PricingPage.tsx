@@ -13,6 +13,7 @@ import type { PricingPlan } from "@/domain/billing/types";
 import type { PlanPriceItem } from "@/infrastructure/http/regtechApiTypes";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { mergeApiPlansWithPricing } from "@/infrastructure/http/monetizationMapper";
+import { Skeleton } from "@/presentation/components/shared/Skeleton";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { formatPlanAmount } from "./formatPlanAmount";
 import { SubscriptionOverview } from "./SubscriptionOverview";
@@ -260,11 +261,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   <p className={`mt-3 text-sm ${platform.textMuted(darkMode)}`}>{plan.description}</p>
                   <p className={`mt-4 flex items-baseline font-display text-3xl font-bold ${platform.textPrimary(darkMode)}`}>
                     {planPricesLoading ? (
-                      <span
-                        className={`inline-block h-9 w-28 animate-pulse rounded-full ${
-                          darkMode ? "bg-gray-800/80" : "bg-gray-200"
-                        }`}
-                      />
+                      <Skeleton darkMode={darkMode} className="inline-block h-9 w-28 rounded-full" />
                     ) : localAmount != null && apiPrice ? (
                       formatPlanAmount(localAmount, apiPrice.currency)
                     ) : (
@@ -317,7 +314,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                     ) : (
                       <span className="inline-flex items-center justify-center gap-2">
                         <Smartphone className="h-4 w-4" />
-                        Pay via MoMo
+                        Pay
                       </span>
                     )}
                   </button>

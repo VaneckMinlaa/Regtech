@@ -39,7 +39,7 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
     return (
       <UpgradeRequiredPanel
         feature="Cameroon import checklist"
-        message="Available starting from the Starter plan. Pay via MoMo using PawaPay in all supported countries."
+        message="Available starting from the Starter plan. Pay using PawaPay in all supported countries."
         darkMode={darkMode}
         onUpgrade={onUpgrade}
       />
