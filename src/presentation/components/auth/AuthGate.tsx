@@ -14,19 +14,44 @@ export function AuthGate({ children }: { children: ReactNode }) {
   const [showSignIn, setShowSignIn] = useState(false);
   const [authMode, setAuthMode] = useState<"sign-in" | "sign-up">("sign-in");
   const mountTime = useRef(Date.now());
-  const [introPhase, setIntroPhase] = useState<"splash" | "done">("splash");
-  const [splashExit, setSplashExit] = useState(false);
+  const onOAuthReturn = useRef(isSsoCallbackRoute());
+  const [introPhase, setIntroPhase] = useState<"splash" | "done">(() =>
+    onOAuthReturn.current ? "done" : "splash",
+  );
+  const [splashExit, setSplashExit] = useState(() => onOAuthReturn.current);
 
   useEffect(() => {
-    if (!isLoaded) return;
+    if (isSsoCallbackRoute()) {
+      setIntroPhase("done");
+      setSplashExit(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isLoaded || onOAuthReturn.current || showSignIn) return;
 
     const elapsed = Date.now() - mountTime.current;
     const wait = Math.max(0, INTRO_MIN_MS - elapsed);
     const timer = window.setTimeout(() => setSplashExit(true), wait);
     return () => window.clearTimeout(timer);
-  }, [isLoaded]);
+  }, [isLoaded, showSignIn]);
 
-  const showSplash = introPhase === "splash";
+  const showSplash = introPhase === "splash" && !onOAuthReturn.current && !showSignIn;
+
+  if (isSsoCallbackRoute()) {
+    return (
+      <SsoCallbackHandler
+        onNavigateToSignIn={() => {
+          setAuthMode("sign-in");
+          setShowSignIn(true);
+        }}
+        onNavigateToSignUp={() => {
+          setAuthMode("sign-up");
+          setShowSignIn(true);
+        }}
+      />
+    );
+  }
 
   if (!isLoaded || showSplash) {
     if (isLoaded && isSignedIn) {
@@ -70,21 +95,6 @@ export function AuthGate({ children }: { children: ReactNode }) {
           />
         )}
       </>
-    );
-  }
-
-  if (!isSignedIn && isSsoCallbackRoute()) {
-    return (
-      <SsoCallbackHandler
-        onNavigateToSignIn={() => {
-          setAuthMode("sign-in");
-          setShowSignIn(true);
-        }}
-        onNavigateToSignUp={() => {
-          setAuthMode("sign-up");
-          setShowSignIn(true);
-        }}
-      />
     );
   }
 

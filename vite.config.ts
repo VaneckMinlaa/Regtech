@@ -1,7 +1,40 @@
 import path from "path";
+import type { ServerResponse } from "http";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig, loadEnv, type Plugin } from "vite";
+
+function tradeNewsDevApi(apiKey: string): Plugin {
+  return {
+    name: "trade-news-dev-api",
+    configureServer(server) {
+      server.middlewares.use(async (req, res, next) => {
+        const pathname = req.url?.split("?")[0];
+        if (pathname !== "/api/trade-news") return next();
+
+        const httpRes = res as ServerResponse;
+        const sendJson = (status: number, body: unknown) => {
+          httpRes.statusCode = status;
+          httpRes.setHeader("Content-Type", "application/json");
+          httpRes.end(JSON.stringify(body));
+        };
+
+        if (!apiKey) {
+          sendJson(503, { articles: [], error: "NEWS_API_KEY is not configured" });
+          return;
+        }
+
+        try {
+          const { loadTradeNewsFromNewsApi } = await import("./shared/tradeNewsCore.ts");
+          const articles = await loadTradeNewsFromNewsApi(apiKey);
+          sendJson(200, { articles });
+        } catch {
+          sendJson(502, { articles: [], error: "NewsAPI request failed" });
+        }
+      });
+    },
+  };
+}
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "");
@@ -9,7 +42,7 @@ export default defineConfig(({ mode }) => {
   const newsApiKey = env.NEWS_API_KEY || env.VITE_NEWS_API_KEY || "";
 
   return {
-    plugins: [react(), tailwindcss()],
+    plugins: [tradeNewsDevApi(newsApiKey), react(), tailwindcss()],
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
@@ -21,22 +54,8 @@ export default defineConfig(({ mode }) => {
         "/api": {
           target: proxyTarget,
           changeOrigin: true,
-        },
-        "/news-api": {
-          target: "https://newsapi.org",
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/news-api/, ""),
-          configure: (proxy) => {
-            if (!newsApiKey) return;
-            proxy.on("proxyReq", (proxyReq, req) => {
-              const raw = req.url ?? "";
-              const qIndex = raw.indexOf("?");
-              const pathPart = qIndex >= 0 ? raw.slice(0, qIndex) : raw;
-              const search = qIndex >= 0 ? raw.slice(qIndex + 1) : "";
-              const params = new URLSearchParams(search);
-              if (!params.has("apiKey")) params.set("apiKey", newsApiKey);
-              proxyReq.path = `${pathPart}?${params.toString()}`;
-            });
+          bypass(req) {
+            if (req.url?.split("?")[0] === "/api/trade-news") return req.url;
           },
         },
       },
