@@ -258,17 +258,21 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                     )}
                   </div>
                   <p className={`mt-3 text-sm ${platform.textMuted(darkMode)}`}>{plan.description}</p>
-                  <p className={`mt-4 flex items-baseline font-display text-3xl font-bold ${platform.textPrimary(darkMode)}`}>
-                    {planPricesLoading ? (
-                      <Skeleton darkMode={darkMode} className="inline-block h-9 w-28 rounded-full" />
-                    ) : localAmount != null && apiPrice ? (
-                      formatPlanAmount(localAmount, apiPrice.currency)
-                    ) : (
-                      <span className="text-base font-semibold text-rose-400">Unavailable</span>
-                    )}
-                    <span className={`ml-1 text-sm font-normal ${platform.textMuted(darkMode)}`}>
-                      /{yearly ? "year" : "month"}
+                  <p className={`mt-4 flex flex-wrap items-baseline gap-x-1.5 gap-y-1 ${platform.textPrimary(darkMode)}`}>
+                    <span className="font-display text-2xl font-bold tabular-nums sm:text-3xl">
+                      {planPricesLoading ? (
+                        <Skeleton darkMode={darkMode} className="inline-block h-9 w-28 rounded-full" />
+                      ) : localAmount != null && apiPrice ? (
+                        formatPlanAmount(localAmount, apiPrice.currency)
+                      ) : (
+                        <span className="text-base font-semibold text-rose-400">Unavailable</span>
+                      )}
                     </span>
+                    {localAmount != null && apiPrice && !planPricesLoading && (
+                      <span className={`shrink-0 whitespace-nowrap text-sm font-normal ${platform.textMuted(darkMode)}`}>
+                        / {yearly ? "year" : "month"}
+                      </span>
+                    )}
                   </p>
                   <p className={`mt-1 text-xs ${platform.textMuted(darkMode)}`}>
                     ≈ {priceXaf.toLocaleString("en-US")} FCFA

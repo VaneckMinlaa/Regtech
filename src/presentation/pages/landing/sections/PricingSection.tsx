@@ -67,13 +67,13 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                         </span>
                       )}
                     </div>
-                    <p className="flex items-baseline mt-4">
-                      <span className="text-4xl font-semibold text-gray-800 dark:text-white/90">
+                    <p className="mt-4 flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+                      <span className="text-2xl font-semibold tabular-nums text-gray-800 dark:text-white/90 sm:text-3xl lg:text-2xl xl:text-3xl">
                         {isFree ? "Free" : formatLocalPrice(priceXaf, "XAF")}
                       </span>
                       {!isFree && (
-                        <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">
-                          /{yearly ? "year" : "month"}
+                        <span className="shrink-0 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          / {yearly ? "year" : "month"}
                         </span>
                       )}
                     </p>
