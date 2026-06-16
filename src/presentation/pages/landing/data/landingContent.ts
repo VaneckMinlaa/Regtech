@@ -153,7 +153,7 @@ export const TESTIMONIALS = [
   {
     id: 4,
     name: "Jean-Pierre Nkomo",
-    company: "Douala Import PME",
+    company: "Douala Import SME",
     image: "/landing/users/user-4.png",
     testimonial:
       "The Cameroon import checklist structures our team along the e-GUCE journey. A real assistant for our first imports.",

@@ -47,7 +47,7 @@ import {
 } from "@/presentation/layout/dashboardTabs";
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
-import { PlatformPageContent } from "@/presentation/components/shared/PlatformPageContent";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 import { HelpToggle } from "@/presentation/components/shared/HelpToggle";
 
 interface RegTechShellProps {
@@ -287,7 +287,6 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
                 }
               />
 
-              <PlatformPageContent darkMode={darkMode}>
               {activeTab === "SIM" && (
                 <SimulatorPage
                   darkMode={darkMode}
@@ -334,7 +333,6 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
               {activeTab === "CHECKLIST" && (
                 <CameroonChecklist darkMode={darkMode} onUpgrade={goToPricing} />
               )}
-              </PlatformPageContent>
             </div>
           </main>
 

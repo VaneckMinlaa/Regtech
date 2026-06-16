@@ -198,7 +198,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                 {/* Score de confiance */}
                 <div>
                   <div className="flex justify-between text-xs mb-1 font-mono">
-                    <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Indice de confiance :</span>
+                    <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Confidence score:</span>
                     <span className={`font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>{result.confidence}%</span>
                   </div>
                   <div className={`w-full rounded-full h-1.5 overflow-hidden ${darkMode ? "bg-dark-primary" : "bg-gray-205"}`}>

@@ -6,9 +6,9 @@ function checklistGuideBlocks(): [string, string][] {
     `${String(index + 1).padStart(2, "0")} — ${step.title}`,
     [
       step.detail,
-      `Documents : ${step.docs.join(", ")}`,
-      `Durée indicative : ${step.duration}`,
-      "link" in step && step.link ? `Portail : ${step.link}` : "",
+      `Documents: ${step.docs.join(", ")}`,
+      `Typical duration: ${step.duration}`,
+      "link" in step && step.link ? `Portal: ${step.link}` : "",
     ]
       .filter(Boolean)
       .join("\n"),
@@ -17,9 +17,9 @@ function checklistGuideBlocks(): [string, string][] {
 
 export async function downloadChecklistGuidePdf(): Promise<void> {
   const buffer = await buildRegTechGuidePdf({
-    title: "RegTech — Checklist import Cameroun",
+    title: "RegTech — Cameroon import checklist",
     subtitle:
-      "Parcours e-GUCE / CAMCIS en 12 étapes. Cochez chaque étape dans l'application pour suivre votre progression.",
+      "e-GUCE / CAMCIS journey in 12 steps. Check off each step in the app to track your progress.",
     blocks: checklistGuideBlocks(),
   });
 
@@ -27,7 +27,7 @@ export async function downloadChecklistGuidePdf(): Promise<void> {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "RegTech_Checklist_Import_Cameroun.pdf";
+  link.download = "RegTech_Cameroon_Import_Checklist.pdf";
   link.click();
   URL.revokeObjectURL(url);
 }

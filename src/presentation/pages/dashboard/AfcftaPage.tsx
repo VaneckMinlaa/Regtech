@@ -3,6 +3,7 @@ import type { Country, HSProduct } from "@/domain/reference/types";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { AfcftaDutyProjection } from "@/presentation/features/afcfta/AfcftaDutyProjection";
 import { AfcftaToolsPanel } from "@/presentation/features/afcfta/AfcftaToolsPanel";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 import {
   SearchableSelect,
   countryToOptions,
@@ -25,7 +26,7 @@ interface AfcftaPageProps {
   darkMode?: boolean;
 }
 
-/** Zone d'échanges ZLECAf — règles, projection API, comparaison multi-destinations. */
+/** AfCFTA rules — projection API, validation, multi-destination comparison. */
 export function AfcftaPage({
   countries,
   products,
@@ -113,42 +114,49 @@ export function AfcftaPage({
   }, [compProduct, compOrigin, compVal, dest1, dest2, dest3, countries]);
 
   return (
-    <div className="animate-fadeIn space-y-8" id="afcfta_page">
-      <section className="space-y-4 border-b pb-8">
+    <div className="animate-fadeIn space-y-6" id="afcfta_page">
+      <SectionPanel darkMode={darkMode} id="afcfta_origin_rules">
         <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
           Local value addition level
         </h2>
-        <p className={`text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
-          Eligibility criterion for continental preferential treatment. Economic compliance criterion: R_origin ≥ 40%.
+        <p className={`mt-2 text-sm leading-relaxed ${platform.textMuted(darkMode)}`}>
+          Eligibility criterion for continental preferential treatment. Economic compliance criterion: R_origin ≥
+          40%.
         </p>
-      </section>
+      </SectionPanel>
 
-      <AfcftaDutyProjection
-        originCountryIso={compOrigin}
-        hsCode={compProduct}
-        darkMode={darkMode}
-      />
+      <SectionPanel darkMode={darkMode} id="afcfta_duty_projection_panel">
+        <AfcftaDutyProjection
+          originCountryIso={compOrigin}
+          hsCode={compProduct}
+          darkMode={darkMode}
+        />
+      </SectionPanel>
 
-      <AfcftaToolsPanel
-        origin={compOrigin}
-        hsCode={compProduct}
-        declaredValue={compVal}
-        darkMode={darkMode}
-      />
+      <SectionPanel darkMode={darkMode} id="afcfta_validation_panel">
+        <AfcftaToolsPanel
+          origin={compOrigin}
+          hsCode={compProduct}
+          declaredValue={compVal}
+          darkMode={darkMode}
+        />
+      </SectionPanel>
 
-      <p className={`text-sm leading-relaxed text-rose-500`}>
-        <strong>Sensitive goods — blacklist (AFT-04).</strong> Automobiles, valuable textiles, code{" "}
-        <strong>98010000</strong>: excluded from concessions, full-rate tax applied automatically.
-      </p>
+      <SectionPanel darkMode={darkMode} id="afcfta_sensitive_goods">
+        <p className={`text-sm leading-relaxed text-rose-500`}>
+          <strong>Sensitive goods — blacklist (AFT-04).</strong> Automobiles, valuable textiles, code{" "}
+          <strong>98010000</strong>: excluded from concessions, full-rate tax applied automatically.
+        </p>
+      </SectionPanel>
 
-      <section className={`space-y-5 border-t pt-8 ${platform.borderSubtle(darkMode)}`}>
+      <SectionPanel darkMode={darkMode} id="afcfta_compare_panel">
         <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
           Multi-destination comparison
         </h3>
 
-        <div className="space-y-4">
+        <div className="mt-6 space-y-4">
           <div>
-            <label className="text-[11px] font-bold text-gray-500 block mb-2">Origin country</label>
+            <label className={platform.fieldLabel(darkMode)}>Origin country</label>
             <SearchableSelect
               value={compOrigin}
               onChange={setCompOrigin}
@@ -160,7 +168,7 @@ export function AfcftaPage({
             />
           </div>
           <div>
-            <label className="text-[11px] font-bold text-gray-500 block mb-2">Product (HS code)</label>
+            <label className={platform.fieldLabel(darkMode)}>Product (HS code)</label>
             <SearchableSelect
               value={compProduct}
               onChange={setCompProduct}
@@ -172,7 +180,7 @@ export function AfcftaPage({
             />
           </div>
           <div>
-            <label className="text-[11px] font-bold text-gray-500 block mb-2">Comparable value (FCFA)</label>
+            <label className={platform.fieldLabel(darkMode)}>Comparable value (FCFA)</label>
             <input
               type="number"
               value={compVal}
@@ -182,15 +190,17 @@ export function AfcftaPage({
           </div>
         </div>
 
-        <div className="space-y-3">
-          <p className="text-[11px] font-bold text-gray-500 uppercase tracking-wide">Destinations to compare</p>
+        <div className="mt-6 space-y-3">
+          <p className={platform.fieldLabel(darkMode)}>Destinations to compare</p>
           {[
             { label: "Destination 1", value: dest1, set: setDest1 },
             { label: "Destination 2", value: dest2, set: setDest2 },
             { label: "Destination 3", value: dest3, set: setDest3 },
           ].map(({ label, value, set }) => (
             <div key={label}>
-              <label className="text-[10px] font-bold text-gray-500 block mb-1.5">{label}</label>
+              <label className={`text-xs font-medium mb-1.5 block ${platform.textMuted(darkMode)}`}>
+                {label}
+              </label>
               <SearchableSelect
                 value={value}
                 onChange={set}
@@ -204,42 +214,48 @@ export function AfcftaPage({
           ))}
         </div>
 
-        <div className={`space-y-3 pt-5 border-t ${darkMode ? "border-gray-800" : "border-gray-100"}`}>
-          {compLoading && <p className="text-xs text-gray-500 font-mono">Calculating…</p>}
+        <div className={`mt-6 space-y-3 border-t pt-6 ${platform.borderSubtle(darkMode)}`}>
+          {compLoading && <p className={`text-xs font-mono ${platform.textMuted(darkMode)}`}>Calculating…</p>}
           {!compLoading && compTariffs.length === 0 && (
-            <p className="text-xs text-gray-500">Select origin, product, and value to compare.</p>
+            <p className={`text-sm ${platform.textMuted(darkMode)}`}>
+              Select origin, product, and value to compare.
+            </p>
           )}
           {compTariffs.map((c, i) => (
             <div
               key={i}
-              className={`border-b py-4 last:border-b-0 ${darkMode ? "border-gray-800" : "border-gray-200"}`}
+              className={`flex flex-wrap items-center justify-between gap-3 border-b py-4 last:border-b-0 ${platform.borderSubtle(darkMode)}`}
             >
-              <div className="flex justify-between items-start gap-3 mb-2">
-                <span className={`font-bold text-sm ${darkMode ? "text-white" : "text-gray-900"}`}>
+              <div>
+                <span className={`font-semibold text-sm ${platform.textPrimary(darkMode)}`}>
                   {c.countryName}
-                  <span className="font-mono text-gray-500 font-normal ml-1">({c.countryCode})</span>
                 </span>
+                <span className={`ml-1 font-mono text-xs ${platform.textMuted(darkMode)}`}>
+                  ({c.countryCode})
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
                 <span
-                  className={`text-[10px] font-mono px-2 py-1 border rounded shrink-0 ${
+                  className={`text-xs font-medium rounded-full px-2.5 py-0.5 ${
                     c.isEligiblePrefAfCFTA
                       ? darkMode
-                        ? "bg-primary-500/10 text-primary-300 border-primary-500/20"
-                        : "bg-primary-100 text-primary-800 border-primary-200"
+                        ? "bg-primary-500/15 text-primary-300"
+                        : "bg-primary-50 text-primary-700"
                       : darkMode
-                        ? "bg-dark-secondary text-gray-400 border-gray-700"
-                        : "bg-gray-100 text-gray-600 border-gray-200"
+                        ? "bg-amber-500/15 text-amber-300"
+                        : "bg-amber-50 text-amber-700"
                   }`}
                 >
                   {c.isEligiblePrefAfCFTA ? "Preferential" : "Standard"}
                 </span>
+                <span className="font-mono text-sm font-semibold text-primary-500">
+                  {c.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} {c.currency}
+                </span>
               </div>
-              <p className={`font-mono text-sm font-bold ${darkMode ? "text-primary-400" : "text-primary-700"}`}>
-                {c.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} {c.currency}
-              </p>
             </div>
           ))}
         </div>
-      </section>
+      </SectionPanel>
     </div>
   );
 }

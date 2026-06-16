@@ -42,7 +42,7 @@ export function RegTechAccountModal({ open, darkMode, onClose }: RegTechAccountM
       <button
         type="button"
         className={`absolute inset-0 ${platform.overlay} backdrop-blur-sm`}
-        aria-label="Fermer"
+        aria-label="Close"
         onClick={onClose}
       />
 
@@ -60,10 +60,10 @@ export function RegTechAccountModal({ open, darkMode, onClose }: RegTechAccountM
               id="user_profile_title"
               className={`text-base font-bold font-display ${platform.textPrimary(darkMode)}`}
             >
-              Mon compte
+              My account
             </h2>
             <p className={`text-xs mt-0.5 ${platform.textMuted(darkMode)}`}>
-              Profil, sécurité et comptes connectés
+              Profile, security, and connected accounts
             </p>
           </div>
 
@@ -71,7 +71,7 @@ export function RegTechAccountModal({ open, darkMode, onClose }: RegTechAccountM
             type="button"
             onClick={onClose}
             className={`rounded-lg border p-1.5 transition-colors ${platform.buttonGhost(darkMode)}`}
-            aria-label="Fermer le profil"
+            aria-label="Close profile"
             id="btn_close_profile"
           >
             <X className="w-4 h-4" />

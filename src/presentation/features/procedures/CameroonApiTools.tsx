@@ -71,7 +71,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
   ];
 
   return (
-    <div className="space-y-8 animate-fadeIn border-t pt-8" id="cameroon_api_tools">
+    <div className="space-y-8 animate-fadeIn" id="cameroon_api_tools">
       <div className="flex items-center gap-2 mb-4">
         <Package className="w-5 h-5 text-primary-500" />
         <h3 className={`text-sm font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
@@ -256,7 +256,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
             }
             className={`${platform.buttonPrimary} px-4 py-2 text-xs`}
           >
-            Calculer landed cost
+            Calculate landed cost
           </button>
           {landedResult && (
             <div className={`text-[11px] ${darkMode ? "text-gray-300" : "text-gray-700"}`}>

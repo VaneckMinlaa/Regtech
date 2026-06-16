@@ -69,6 +69,8 @@ export function AfcftaDutyProjection({
   return (
     <div id="afcfta_duty_projection">
       <HelpToggle
+        title="Progressive duty reductions"
+        description="AfCFTA phased tariff schedule (2025–2030) for the selected origin and HS code."
         label="What are progressive AfCFTA reductions?"
         darkMode={darkMode}
         loading={loading}
@@ -76,8 +78,8 @@ export function AfcftaDutyProjection({
       >
         <p>
           Under the AfCFTA tariff schedule, eligible goods benefit from a phased reduction of customs duties
-          between 2025 and 2030. Each calendar year applies a different concession rate for the same origin
-          country and HS code — the active year is used in your simulations.
+          between 2025 and 2030. Each calendar year applies a different concession rate — the active year is
+          used in your simulations.
         </p>
 
         {!ready && (

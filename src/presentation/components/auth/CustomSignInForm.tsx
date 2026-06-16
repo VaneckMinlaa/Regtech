@@ -141,7 +141,7 @@ export function CustomSignInForm() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className={authInputClass}
-          placeholder="votre@email.com"
+          placeholder="your@email.com"
           disabled={isLoading}
           required
         />

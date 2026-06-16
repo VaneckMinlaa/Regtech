@@ -41,7 +41,7 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
               }`}
             >
               Annual
-              <span className="bg-orange-400 text-white text-xs px-2 py-0.5 rounded-full">−20 %</span>
+              <span className="bg-orange-400 text-white text-xs px-2 py-0.5 rounded-full">−20%</span>
             </button>
           </div>
         </div>

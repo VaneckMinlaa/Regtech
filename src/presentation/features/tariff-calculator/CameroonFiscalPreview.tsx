@@ -23,15 +23,15 @@ function localFallback(cifValue: number, hsCode: string) {
   const rid = Math.round(cifValue * 0.005);
   return {
     lines: [
-      { code: "DDI", label: "Droit de douane", amount: ddi, rate: ddiRate },
-      { code: "DAC", label: "Accises", amount: dac, rate: 0.05 },
+      { code: "DDI", label: "Import customs duty", amount: ddi, rate: ddiRate },
+      { code: "DAC", label: "Excise duty", amount: dac, rate: 0.05 },
       { code: "TVA", label: "TVA", amount: tva, rate: 0.1925 },
       { code: "TCI", label: "TCI CEMAC", amount: tci, rate: 0.01 },
-      { code: "RID", label: "Redev. informatique", amount: rid, rate: 0.005 },
+      { code: "RID", label: "IT levy", amount: rid, rate: 0.005 },
     ],
     totalTaxes: ddi + dac + tva + tci + rid,
     totalEstimatedCostPctCif: ((ddi + dac + tva + tci + rid) / cifValue) * 100,
-    disclaimer: "Estimation locale (API indisponible)",
+    disclaimer: "Local estimate (API unavailable)",
     zlecafAppliedRate: null as number | null,
   };
 }
@@ -140,7 +140,7 @@ export function CameroonFiscalPreview({
             </tbody>
           </table>
           <p className={`text-sm mt-2 ${platform.textMuted(darkMode)}`}>
-            ~{data.totalEstimatedCostPctCif.toFixed(0)} % de la valeur CIF
+            ~{data.totalEstimatedCostPctCif.toFixed(0)}% of CIF value
             {data.zlecafAppliedRate != null && (
               <> · AfCFTA {(data.zlecafAppliedRate * 100).toFixed(1)}%</>
             )}

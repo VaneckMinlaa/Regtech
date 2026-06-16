@@ -85,7 +85,7 @@ export function AfcftaToolsPanel({
   };
 
   return (
-    <section className="space-y-6 border-t pt-8" id="afcfta_tools_panel">
+    <div id="afcfta_tools_panel" className="space-y-6">
       <div>
         <h3 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
           AfCFTA origin validation & certificate
@@ -203,6 +203,6 @@ export function AfcftaToolsPanel({
           </div>
         </div>
       )}
-    </section>
+    </div>
   );
 }

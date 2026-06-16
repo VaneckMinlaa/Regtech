@@ -1,8 +1,10 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Loader2, RefreshCw } from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Loader2 } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { DeclarationSummary } from "@/presentation/features/export/DeclarationSummary";
+import { SimulationHistoryTable } from "@/presentation/features/export/SimulationHistoryTable";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
 import { platform } from "@/presentation/theme/platformStyles";
 
@@ -17,6 +19,7 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
   const [selected, setSelected] = useState<SimulationResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const detailRef = useRef<HTMLDivElement>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -41,71 +44,48 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
     void load();
   }, [load]);
 
-  const cardClass = (active: boolean) => platform.historyItem(darkMode, active);
+  const handleSelect = (sim: SimulationResult) => {
+    setSelected(sim);
+    window.setTimeout(() => {
+      detailRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  };
 
   return (
     <div className="animate-fadeIn space-y-8 font-sans" id="history_page">
-      <div className="flex flex-wrap items-center justify-end gap-4">
-        <button
-          type="button"
-          onClick={() => void load()}
-          disabled={loading}
-          className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold border ${
-            darkMode ? "border-gray-700 text-gray-300 hover:bg-dark-secondary" : "border-gray-200 text-gray-700"
-          }`}
-        >
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-          Refresh
-        </button>
-      </div>
-
-      {error && (
-        <p className="text-xs text-rose-400 rounded-lg border border-rose-500/30 px-3 py-2">{error}</p>
-      )}
+      {error && <p className="text-sm text-rose-500">{error}</p>}
 
       {loading && items.length === 0 ? (
-        <p className={`text-xs text-center py-12 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
+        <p className={`flex items-center justify-center gap-2 py-12 text-sm ${platform.textMuted(darkMode)}`}>
+          <Loader2 className="h-4 w-4 animate-spin" />
           Loading history…
         </p>
       ) : items.length === 0 ? (
-        <p className={`text-xs text-center py-12 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
+        <p className={`text-center py-12 text-sm ${platform.textMuted(darkMode)}`}>
           No saved simulations. Run one in the Simulator tab.
         </p>
       ) : (
-        <div className="space-y-8">
-          <div className="max-h-[50vh] space-y-2 overflow-y-auto">
-            {items.map((sim) => {
-              const originName = countries.find((c) => c.code === sim.origin)?.name ?? sim.origin;
-              const destName = countries.find((c) => c.code === sim.destination)?.name ?? sim.destination;
-              return (
-                <button
-                  key={sim.id}
-                  type="button"
-                  onClick={() => setSelected(sim)}
-                  className={cardClass(selected?.id === sim.id)}
-                >
-                  <div className="flex justify-between gap-2">
-                    <span className="font-mono text-[10px] text-gray-500 truncate">{sim.id}</span>
-                    <span className="text-[9px] text-gray-500">{sim.year}</span>
-                  </div>
-                  <p className={`font-semibold mt-1 truncate ${darkMode ? "text-gray-200" : "text-gray-900"}`}>
-                    {sim.productDescription}
-                  </p>
-                  <p className="text-[10px] text-gray-500 mt-1 font-mono">
-                    {originName} → {destName}
-                  </p>
-                  <p className="text-[10px] text-primary-500 font-mono mt-1">
-                    {sim.totalTaxLocal.toLocaleString("en-US")} · HS {sim.hsCode}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
+        <>
+          <SectionPanel darkMode={darkMode}>
+            <SimulationHistoryTable
+              items={items}
+              countries={countries}
+              selectedId={selected?.id ?? null}
+              loading={loading}
+              darkMode={darkMode}
+              onSelect={handleSelect}
+              onRefresh={() => void load()}
+            />
+          </SectionPanel>
 
           {selected && (
-            <DeclarationSummary simulation={selected} darkMode={darkMode} />
+            <SectionPanel darkMode={darkMode}>
+              <div ref={detailRef} className="scroll-mt-24">
+                <DeclarationSummary simulation={selected} darkMode={darkMode} />
+              </div>
+            </SectionPanel>
           )}
-        </div>
+        </>
       )}
     </div>
   );

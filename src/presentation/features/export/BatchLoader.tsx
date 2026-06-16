@@ -6,7 +6,6 @@
 import React, { useRef, useState } from "react";
 import {
   ChevronRight,
-  FileText,
   CheckCircle2,
   Download,
   Table,
@@ -32,7 +31,8 @@ import {
   parseBatchCsvContent,
 } from "@/presentation/features/export/batchCsvParser";
 import { downloadBatchExcelTemplate } from "@/presentation/features/export/batchExcelTemplate";
-import { BATCH_HEADERS_CSV } from "@/presentation/features/export/batchColumnDefs";
+import { BatchPreviewTable } from "@/presentation/features/export/BatchPreviewTable";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 
 interface BatchLoaderProps {
   darkMode?: boolean;
@@ -101,7 +101,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
             : "CSV line decoding error.";
       setErrorMsg(msg);
       if (err instanceof ApiError && err.status === 402) onUpgrade?.();
-      if (err instanceof Error && err.message.includes("Quota lot")) onUpgrade?.();
+      if (err instanceof Error && err.message.toLowerCase().includes("quota")) onUpgrade?.();
     } finally {
       setIsProcessing(false);
     }
@@ -138,180 +138,174 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
   };
 
   return (
-    <div
-      className="space-y-8 font-sans transition-colors duration-300"
-      id="bulk_customs_panel"
-    >
-      <div className={`flex items-center justify-between mb-6 pb-4 border-b ${
-        darkMode ? "border-gray-800" : "border-gray-100"
-      }`}>
-        <div className="flex items-center gap-2">
-          <Table className="w-5 h-5 text-purple-500 animate-pulse" />
-          <div>
-            <h2 className={`text-base font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Batch simulation (CSV / Excel)
-            </h2>
-            <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-              ZIP: template to fill + guide · Import = automatic calculation of all rows
-            </p>
+    <div className="space-y-6 font-sans transition-colors duration-300" id="bulk_customs_panel">
+      <SectionPanel darkMode={darkMode} id="batch_import_panel">
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex items-start gap-2">
+            <Table className="mt-0.5 h-5 w-5 shrink-0 text-primary-500" />
+            <div>
+              <h2 className={`text-base font-bold font-display ${platform.textPrimary(darkMode)}`}>
+                Batch simulation (CSV / Excel)
+              </h2>
+              <p className={`mt-1 text-sm ${platform.textMuted(darkMode)}`}>
+                ZIP template + guide · import triggers automatic calculation for all rows
+              </p>
+            </div>
           </div>
+
+          <button
+            onClick={() => void handleDownloadTemplate()}
+            id="btn_download_template"
+            disabled={isDownloadingTemplate}
+            className={`inline-flex shrink-0 items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
+          >
+            {isDownloadingTemplate ? (
+              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+            ) : (
+              <Download className="w-3.5 h-3.5" />
+            )}
+            <span>{isDownloadingTemplate ? "Generating…" : "Download template + guide"}</span>
+          </button>
         </div>
 
-        <button
-          onClick={() => void handleDownloadTemplate()}
-          id="btn_download_template"
-          disabled={isDownloadingTemplate}
-          className="text-xs text-primary-600 hover:text-primary-500 flex items-center gap-1 hover:underline cursor-pointer font-semibold disabled:opacity-50"
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".csv,.txt,.xlsx,.xls"
+          className="hidden"
+          onChange={handleFileInputChange}
+        />
+
+        <div
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            setDragOver(true);
+          }}
+          onDragLeave={() => setDragOver(false)}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`rounded-2xl border-2 border-dashed p-10 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 ${
+            dragOver
+              ? darkMode
+                ? "border-primary-500 bg-primary-500/10"
+                : "border-primary-400 bg-primary-50"
+              : darkMode
+                ? "border-gray-700 hover:border-primary-500/40 hover:bg-white/5"
+                : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 bg-gray-50/50"
+          }`}
         >
-          {isDownloadingTemplate ? (
-            <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-          ) : (
-            <Download className="w-3.5 h-3.5" />
-          )}
-          <span>{isDownloadingTemplate ? "Generating…" : "Download template + guide (ZIP)"}</span>
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        <div className="xl:col-span-5 space-y-4">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept=".csv,.txt,.xlsx,.xls"
-            className="hidden"
-            onChange={handleFileInputChange}
-          />
-
-          <div
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") fileInputRef.current?.click();
-            }}
-            onDragOver={(e) => {
-              e.preventDefault();
-              setDragOver(true);
-            }}
-            onDragLeave={() => setDragOver(false)}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={`rounded-2xl border-2 border-dashed p-8 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 ${
-              dragOver
-                ? darkMode
-                  ? "border-primary-500 bg-primary-500/10"
-                  : "border-primary-400 bg-primary-50"
-                : darkMode
-                  ? "border-gray-700 hover:border-primary-500/40 hover:bg-white/5 bg-[#101828]/50"
-                  : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 bg-gray-50"
+          <Upload
+            className={`mx-auto mb-3 h-10 w-10 ${
+              isImporting || isProcessing ? "animate-pulse text-primary-400" : "text-primary-500"
             }`}
-          >
-            <Upload
-              className={`mx-auto mb-2 h-8 w-8 ${
-                isImporting || isProcessing ? "animate-pulse text-primary-400" : "text-primary-500"
-              }`}
-            />
-            <p className={`text-sm font-semibold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
-              Import CSV or Excel
-            </p>
-            <p className={`text-[11px] mt-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-              Calculation starts automatically after import
-            </p>
-            {importedFileName && (
-              <p className={`text-[10px] mt-2 font-mono ${darkMode ? "text-primary-400" : "text-primary-700"}`}>
-                File: {importedFileName}
-              </p>
-            )}
-          </div>
+          />
+          <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Import CSV or Excel</p>
+          <p className={`mt-1 text-sm ${platform.textMuted(darkMode)}`}>
+            Calculation starts automatically after import
+          </p>
+          {importedFileName && (
+            <p className={`mt-2 font-mono text-xs text-primary-500`}>File: {importedFileName}</p>
+          )}
+        </div>
+      </SectionPanel>
 
+      <SectionPanel darkMode={darkMode} id="batch_preview_panel">
+        <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 flex justify-between items-center ${
-              darkMode ? "text-gray-400" : "text-gray-500"
-            }`}>
-              <span>Apercu / collage manuel</span>
-              <span className={`text-[10px] font-semibold ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
-                Comma separator
-              </span>
-            </label>
-            <textarea
-              id="txt_raw_csv_paste"
-              rows={6}
-              value={csvText}
-              onChange={(e) => setCsvText(e.target.value)}
-              className={`w-full rounded-lg px-3.5 py-2.5 text-xs font-mono focus:outline-none focus:border-purple-550 transition-colors ${
-                darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-200 text-gray-900"
-              }`}
-              placeholder={`${BATCH_HEADERS_CSV}\nCMR,NGA,851712,1000000,...`}
-            />
+            <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Data preview</h2>
+            <p className={`mt-1 text-sm ${platform.textMuted(darkMode)}`}>
+              Review imported rows before recalculating
+            </p>
           </div>
+          <span className={`text-xs ${platform.textMuted(darkMode)}`}>Comma-separated values</span>
+        </div>
 
+        <BatchPreviewTable csvText={csvText} darkMode={darkMode} />
+
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const text = await navigator.clipboard.readText();
+                if (text.trim()) {
+                  setCsvText(validateBatchCsvContent(text));
+                }
+              } catch {
+                setErrorMsg("Unable to read clipboard. Paste your CSV into a file and import it.");
+              }
+            }}
+            className={`sm:w-auto w-full ${platform.buttonSecondary(darkMode)} text-sm py-2.5`}
+          >
+            Paste from clipboard
+          </button>
           <button
             onClick={() => void runBatch(csvText)}
             id="btn_run_csv_processing"
             disabled={isProcessing || !csvText.trim()}
-            className={`w-full ${platform.buttonPrimary} text-xs`}
+            className={`flex-1 ${platform.buttonGradient} text-sm py-2.5`}
           >
             {isProcessing ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
             ) : (
               <Play className="w-3.5 h-3.5" />
             )}
-            <span>{isProcessing ? "Processing..." : "Recalculate batch"}</span>
+            <span>{isProcessing ? "Processing…" : "Recalculate batch"}</span>
           </button>
-
-          {errorMsg && (
-            <div className="p-3 bg-rose-950/20 border border-rose-500/20 text-rose-300 rounded text-xs flex items-center gap-2">
-              <AlertCircle className="w-4 h-4 text-rose-400" />
-              <span>{errorMsg}</span>
-            </div>
-          )}
         </div>
 
-        <div className="xl:col-span-7">
-          <div className={`border rounded-lg p-4 h-full flex flex-col transition-colors ${
-            darkMode ? "bg-[#101828]/50 border-gray-800" : "bg-gray-50 border-gray-200 text-gray-800"
-          }`}>
+        {errorMsg && (
+          <p className="mt-4 flex items-center gap-2 text-sm text-rose-500">
+            <AlertCircle className="h-4 w-4 shrink-0" />
+            {errorMsg}
+          </p>
+        )}
+      </SectionPanel>
+
+      {(isProcessing || results.length > 0) && (
+        <SectionPanel darkMode={darkMode} id="batch_results_panel">
             {isProcessing ? (
-              <div className="flex-1 flex flex-col items-center justify-center py-16 space-y-2">
-                <RefreshCw className="w-6 h-6 text-purple-500 animate-spin" />
-                <span className={`text-xs font-mono ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-                  Calculating taxes + currency conversions (Frankfurter) for each row...
+              <div className="flex flex-col items-center justify-center py-16 space-y-2">
+                <RefreshCw className="w-6 h-6 text-primary-500 animate-spin" />
+                <span className={`text-sm ${platform.textMuted(darkMode)}`}>
+                  Calculating taxes and FX conversions for each row…
                 </span>
               </div>
             ) : results.length > 0 && summary ? (
               <div className="space-y-4 font-sans">
+                <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Batch results</h2>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className={`text-[10px] font-bold uppercase tracking-widest font-mono ${
-                    darkMode ? "text-gray-500" : "text-gray-500"
-                  }`}>
-                    Batch report • {summary.processedCount} rows
+                  <span className={`text-xs font-semibold uppercase tracking-wide ${platform.textMuted(darkMode)}`}>
+                    Report · {summary.processedCount} rows
                   </span>
-                  <span className={`text-[10px] font-mono px-2 py-0.5 rounded border ${
-                    darkMode ? "border-gray-700 text-gray-400" : "border-gray-200 text-gray-600"
-                  }`}>
-                    FX : {fxSourceLabel(summary.exchangeRateSource)}
+                  <span className={`text-xs font-mono rounded-full border px-2.5 py-0.5 ${platform.border(darkMode)} ${platform.textMuted(darkMode)}`}>
+                    FX: {fxSourceLabel(summary.exchangeRateSource)}
                   </span>
                 </div>
 
-                <div className={`grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-[10px] font-mono ${
-                  darkMode ? "text-gray-300" : "text-gray-700"
+                <div className={`grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-sm ${
+                  platform.textSecondary(darkMode)
                 }`}>
-                  <div className={`rounded-lg border p-2 ${darkMode ? "border-gray-800 bg-dark-primary" : "border-gray-200 bg-white"}`}>
-                    <div className="text-gray-500">Success</div>
+                  <div className={`rounded-xl border p-3 ${platform.border(darkMode)}`}>
+                    <div className={platform.textMuted(darkMode)}>Success</div>
                     <div className="text-lg font-bold text-primary-500">{summary.successCount}</div>
                   </div>
-                  <div className={`rounded-lg border p-2 ${darkMode ? "border-gray-800 bg-dark-primary" : "border-gray-200 bg-white"}`}>
-                    <div className="text-gray-500">Errors</div>
+                  <div className={`rounded-xl border p-3 ${platform.border(darkMode)}`}>
+                    <div className={platform.textMuted(darkMode)}>Errors</div>
                     <div className="text-lg font-bold text-rose-500">{summary.errorCount}</div>
                   </div>
-                  <div className={`rounded-lg border p-2 col-span-2 ${darkMode ? "border-gray-800 bg-dark-primary" : "border-gray-200 bg-white"}`}>
-                    <div className="text-gray-500">Total taxes (USD)</div>
+                  <div className={`rounded-xl border p-3 col-span-2 ${platform.border(darkMode)}`}>
+                    <div className={platform.textMuted(darkMode)}>Total taxes (USD)</div>
                     <div className="text-lg font-bold">{summary.totalTaxUSD.toLocaleString()} USD</div>
                   </div>
                 </div>
 
-                <div className={`overflow-x-auto border rounded-lg ${
-                  darkMode ? "border-gray-800" : "border-gray-200"
-                }`}>
+                <div className={`overflow-x-auto rounded-xl border ${platform.border(darkMode)}`}>
                   <table className="w-full text-xs text-left min-w-[720px]" id="table_bulk_results">
                     <thead className={`font-semibold uppercase text-[10px] tracking-wider border-b ${
                       darkMode ? "bg-dark-primary border-gray-800 text-gray-400" : "bg-gray-100 border-gray-200 text-gray-600"
@@ -360,7 +354,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                                   ? "bg-primary-500/10 text-primary-600 border-primary-500/20"
                                   : "bg-rose-500/10 text-rose-600 border-rose-500/20"
                               }`}>
-                                {r.isEligiblePrefAfCFTA ? "OUI" : "NON"}
+                                {r.isEligiblePrefAfCFTA ? "YES" : "NO"}
                               </span>
                             )}
                           </td>
@@ -390,29 +384,16 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                   </table>
                 </div>
 
-                <div className={`border p-3 rounded-lg text-[11px] leading-relaxed flex items-start gap-1.5 ${
-                  darkMode ? "bg-purple-950/20 text-purple-300 border-purple-500/10" : "bg-purple-50 text-purple-900 border-purple-150"
-                }`}>
-                  <CheckCircle2 className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" />
-                  <div>
-                    <strong>Batch calculated:</strong> {summary.successCount} simulation(s) with duties, VAT and conversion
-                    via {fxSourceLabel(summary.exchangeRateSource)}. Consolidated total:{" "}
-                    <strong>{summary.totalTaxUSD.toLocaleString()} USD</strong>.
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 flex flex-col items-center justify-center py-16 text-gray-500 text-center">
-                <FileText className="w-8 h-8 text-gray-405 mb-2" />
-                <p className="text-xs font-semibold">No batch simulations.</p>
-                <p className="text-[10px] text-gray-500 mt-0.5">
-                  Import a CSV — calculation starts automatically.
+                <p className={`text-sm leading-relaxed ${platform.textSecondary(darkMode)}`}>
+                  <CheckCircle2 className="mb-0.5 mr-1 inline h-4 w-4 text-primary-500" />
+                  <strong>Batch complete:</strong> {summary.successCount} simulation(s) with duties, VAT, and FX via{" "}
+                  {fxSourceLabel(summary.exchangeRateSource)}. Consolidated total:{" "}
+                  <strong>{summary.totalTaxUSD.toLocaleString()} USD</strong>.
                 </p>
               </div>
-            )}
-          </div>
-        </div>
-      </div>
+            ) : null}
+        </SectionPanel>
+      )}
     </div>
   );
 };

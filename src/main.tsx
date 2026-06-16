@@ -16,8 +16,8 @@ function MissingClerkConfig() {
     <div className="min-h-screen flex items-center justify-center bg-slate-950 text-slate-200 p-8">
       <p className="text-sm text-center max-w-md">
         Variable <code className="font-mono text-emerald-400">VITE_CLERK_PUBLISHABLE_KEY</code>{" "}
-        manquante. Copiez <code className="font-mono">.env.example</code> vers{" "}
-        <code className="font-mono">.env</code> et renseignez votre cle Clerk.
+        is missing. Copy <code className="font-mono">.env.example</code> to{" "}
+        <code className="font-mono">.env</code> and set your Clerk publishable key.
       </p>
     </div>
   );

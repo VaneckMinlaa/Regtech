@@ -25,7 +25,7 @@ export async function fileToCsvText(file: File): Promise<string> {
       workbook.SheetNames[0];
 
     if (!sheetName) {
-      throw new Error("Le fichier Excel ne contient aucune feuille.");
+      throw new Error("The Excel file contains no worksheets.");
     }
 
     const sheet = workbook.Sheets[sheetName];
@@ -38,14 +38,14 @@ export async function fileToCsvText(file: File): Promise<string> {
     return gridToNormalizedCsv(rows);
   }
 
-  throw new Error("Format non supporté. Utilisez .csv, .xlsx ou .xls");
+  throw new Error("Unsupported format. Use .csv, .xlsx, or .xls");
 }
 
 function normalizeCsvText(content: string): string {
   const lines = content.split("\n").map((l) => l.trim()).filter(Boolean);
   if (lines.length < 2) {
     throw new Error(
-      "Le fichier doit contenir au moins une ligne d'en-tête et une ligne de données.",
+      "The file must contain at least one header row and one data row.",
     );
   }
 
@@ -57,7 +57,7 @@ export function validateBatchCsvContent(content: string): string {
   const lines = content.split("\n").map((l) => l.trim()).filter(Boolean);
   if (lines.length < 2) {
     throw new Error(
-      "Le fichier doit contenir au moins une ligne d'en-tête et une ligne de données.",
+      "The file must contain at least one header row and one data row.",
     );
   }
   return content;

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { RefreshCw } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { convertBetweenCurrencies } from "@/domain/reference/currencyUtils";
@@ -18,6 +18,7 @@ import {
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
 import { platform } from "@/presentation/theme/platformStyles";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 
 interface SimulateurTaxesProps {
   onSimulationRun: (result: SimulationResult) => void;
@@ -54,12 +55,11 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentResult, setCurrentResult] = useState<SimulationResult | null>(null);
-  const resultsRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!currentResult) return;
     const timer = window.setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("simulation_tax_results")?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 120);
     return () => window.clearTimeout(timer);
   }, [currentResult?.id]);
@@ -169,11 +169,10 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   }
 
   const fieldClass = platform.input(darkMode);
-  const sectionClass = `space-y-4 pb-10 border-b ${platform.borderSubtle(darkMode)} last:border-0 last:pb-0`;
 
   return (
-    <div className="flex flex-col gap-10 font-sans" id="simulator_workspace">
-      <section className={sectionClass}>
+    <div className="space-y-6 font-sans" id="simulator_workspace">
+      <SectionPanel darkMode={darkMode} id="simulator_inputs_panel">
         <div className="flex flex-col gap-4">
             <div>
               <label className={platform.fieldLabel(darkMode)}>Country of origin</label>
@@ -218,7 +217,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 <span>Product (HS code directory)</span>
                 {products.length > 0 && (
                   <span className="text-[10px] font-normal opacity-70">
-                    {products.length} codes HS
+                    {products.length} HS codes
                   </span>
                 )}
                 {initialHSCode && (
@@ -305,9 +304,9 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
           >
             Calculate duties and taxes
           </button>
-      </section>
+      </SectionPanel>
 
-      <section className={sectionClass}>
+      <SectionPanel darkMode={darkMode} id="simulator_origin_panel">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Rule of origin (AFT)</p>
             <span className={`rounded-full border px-2.5 py-0.5 text-xs font-semibold ${originValueRatio >= originThreshold ? "border-primary-500/20 bg-primary-500/10 text-primary-600" : "border-rose-500/20 bg-rose-500/10 text-rose-600"}`}>
@@ -356,9 +355,10 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               <input type="number" value={prixVenteExport} onChange={(e) => setPrixVenteExport(Number(e.target.value))} className={fieldClass} />
             </div>
           </div>
-      </section>
+      </SectionPanel>
 
-      <section ref={resultsRef} id="simulation_tax_results" className="space-y-6 scroll-mt-24">
+      <SectionPanel darkMode={darkMode} id="simulation_tax_results" className="scroll-mt-24">
+        <div className="space-y-6">
           <div className={`flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
             <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Tax estimate</h2>
             {isLoading && <RefreshCw className="h-4 w-4 animate-spin text-primary-500" />}
@@ -486,7 +486,8 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
               Run a simulation to see your tax estimate.
             </div>
           )}
-      </section>
+        </div>
+      </SectionPanel>
     </div>
   );
 };

@@ -60,7 +60,7 @@ export function RegTechUserMenu() {
   const displayName =
     user?.fullName?.trim() ||
     [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim() ||
-    "Utilisateur";
+    "User";
   const email = user?.primaryEmailAddress?.emailAddress ?? "";
   const initials = getUserInitials(user?.firstName, user?.lastName, displayName);
 
@@ -142,7 +142,7 @@ export function RegTechUserMenu() {
                 id="btn_manage_account"
               >
                 <Settings className={`w-4 h-4 shrink-0 ${platform.textMuted(darkMode)}`} />
-                Mon compte
+                My account
               </button>
 
               <button
@@ -160,7 +160,7 @@ export function RegTechUserMenu() {
                 id="btn_sign_out"
               >
                 <LogOut className="w-4 h-4 shrink-0" />
-                Se déconnecter
+                Sign out
               </button>
             </div>
           </div>

@@ -1,11 +1,13 @@
 import { BATCH_COLUMNS } from "@/presentation/features/export/batchColumnDefs";
 
+export const BATCH_TEMPLATE_FILENAME = "01_RegTech_Simulations_Template.xlsx";
+
 export const BATCH_GUIDE_BLOCKS: [string, string][] = [
   [
     "Step 1 — Open the template",
     [
       "1. Unzip the downloaded ZIP file.",
-      "2. Open \"01_Modele_Simulations_RegTech.xlsx\" (not the PDF guide).",
+      `2. Open "${BATCH_TEMPLATE_FILENAME}" (not the PDF guide).`,
       "3. You’ll see the table to fill in, with examples already included.",
     ].join("\n"),
   ],
@@ -24,7 +26,7 @@ export const BATCH_GUIDE_BLOCKS: [string, string][] = [
     [
       "1. Save the filled template.",
       "2. RegTech → Batch processing → Import CSV or Excel.",
-      "3. Select \"01_Modele_Simulations_RegTech.xlsx\".",
+      `3. Select "${BATCH_TEMPLATE_FILENAME}".`,
       "4. Tax calculation and AfCFTA eligibility start automatically.",
     ].join("\n"),
   ],
@@ -42,5 +44,4 @@ export const BATCH_GUIDE_BLOCKS: [string, string][] = [
   ],
 ];
 
-export const BATCH_GUIDE_SUBTITLE =
-  "This guide accompanies the \"01_Modele_Simulations_RegTech.xlsx\" Excel template. Import only the Excel model in RegTech.";
+export const BATCH_GUIDE_SUBTITLE = `This guide accompanies the "${BATCH_TEMPLATE_FILENAME}" Excel template. Import only the Excel model in RegTech.`;

@@ -24,11 +24,10 @@ export function ToolsTabSection({ onGetStarted }: ToolsTabSectionProps) {
       <div className="wrapper">
         <div className="max-w-2xl mx-auto mb-12 text-center">
           <h2 className="mb-3 font-bold text-center text-gray-800 dark:text-white/90 text-3xl md:text-title-lg">
-            Tous vos outils douaniers, au même endroit.
+            All your customs tools in one place
           </h2>
           <p className="max-w-2xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
-            Du simulateur tarifaire à la checklist import, RegTech couvre l&apos;ensemble du parcours
-            de vos opérations commerciales AfCFTA.
+            From the tariff simulator to the import checklist, RegTech covers your full AfCFTA trade workflow.
           </p>
         </div>
 
@@ -72,7 +71,7 @@ export function ToolsTabSection({ onGetStarted }: ToolsTabSectionProps) {
               onClick={onGetStarted}
               className="px-6 py-3 text-sm font-medium text-white transition-colors rounded-full bg-primary-500 hover:bg-primary-600"
             >
-              Essayer gratuitement
+              Try for free
             </button>
           </div>
         </div>

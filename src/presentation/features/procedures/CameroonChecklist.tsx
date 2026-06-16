@@ -7,6 +7,8 @@ import {
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { getPlanById } from "@/domain/billing/plans";
 import { UpgradeRequiredPanel } from "@/presentation/features/billing/UpgradeRequiredPanel";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
+import { platform } from "@/presentation/theme/platformStyles";
 
 const STORAGE_KEY = "regtech_checklist_cm_v1";
 
@@ -51,21 +53,26 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
   };
 
   return (
-    <div className="animate-fadeIn space-y-8" id="checklist_cameroon_page">
-      <div className="space-y-4">
-        <div className="flex justify-between text-[10px] font-mono mb-1">
-          <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Progress</span>
-          <span className="text-primary-500">{progress}%</span>
+    <div className="animate-fadeIn space-y-6" id="checklist_cameroon_page">
+      <SectionPanel darkMode={darkMode} id="checklist_progress_panel">
+        <div className="space-y-4">
+          <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Import progress</h2>
+          <div className="flex justify-between text-[10px] font-mono mb-1">
+            <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Progress</span>
+            <span className="text-primary-500">{progress}%</span>
+          </div>
+          <div className={`h-2 rounded-full overflow-hidden ${darkMode ? "bg-dark-secondary" : "bg-gray-100"}`}>
+            <div
+              className="h-full bg-primary-500 transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-        <div className={`h-2 rounded-full overflow-hidden ${darkMode ? "bg-dark-secondary" : "bg-gray-100"}`}>
-          <div
-            className="h-full bg-primary-500 transition-all duration-300"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
+      </SectionPanel>
 
-      <ol className="space-y-3">
+      <SectionPanel darkMode={darkMode} id="checklist_steps_panel">
+        <h2 className={`mb-4 text-sm font-semibold ${platform.textPrimary(darkMode)}`}>e-GUCE / CAMCIS steps</h2>
+        <ol className="space-y-3">
         {CAMEROON_IMPORT_STEPS.map((step, index) => {
           const isDone = !!checked[step.id];
           return (
@@ -126,7 +133,8 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
             </li>
           );
         })}
-      </ol>
+        </ol>
+      </SectionPanel>
     </div>
   );
 }

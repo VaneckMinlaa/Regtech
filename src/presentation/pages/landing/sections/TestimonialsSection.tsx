@@ -10,11 +10,10 @@ export function TestimonialsSection() {
       <div className="wrapper">
         <div className="max-w-2xl mx-auto mb-12 text-center">
           <h2 className="mb-3 font-bold text-center text-gray-800 text-3xl dark:text-white/90 md:text-title-lg">
-            Ce que disent nos utilisateurs
+            What our users say
           </h2>
           <p className="max-w-xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
-            Des PME, transitaires et exportateurs utilisent RegTech pour sécuriser leurs opérations
-            douanières au quotidien.
+            SMEs, freight forwarders, and exporters use RegTech to secure their daily customs operations.
           </p>
         </div>
 
@@ -50,7 +49,7 @@ export function TestimonialsSection() {
             onClick={() => setShowAll(!showAll)}
             className="inline-flex items-center dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 px-6 py-3.5 text-sm font-medium text-gray-800 bg-white border border-gray-200 rounded-full shadow-theme-xs hover:bg-gray-50"
           >
-            {showAll ? "Voir moins" : "Voir plus"}
+            {showAll ? "Show less" : "Show more"}
           </button>
         </div>
       </div>

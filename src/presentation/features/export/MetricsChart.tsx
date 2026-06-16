@@ -76,13 +76,13 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
           darkMode ? "bg-primary-500/20 text-primary-400 border-primary-500/30" : "bg-primary-100 text-primary-800 border-primary-200"
         }`}>
-          Données API
+          API data
         </span>
       </div>
 
       {!isEligible && (
         <p className={`text-[10px] mb-2 font-semibold ${darkMode ? "text-amber-400" : "text-amber-700"}`}>
-          Produit ou route non éligible — courbe préférentielle non applicable (taux classique affiché).
+          Ineligible product or route — preferential curve not applicable (standard rate shown).
         </p>
       )}
 

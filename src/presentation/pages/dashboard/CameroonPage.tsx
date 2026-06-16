@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { CameroonFiscalPreview } from "@/presentation/features/tariff-calculator/CameroonFiscalPreview";
 import { CameroonApiTools } from "@/presentation/features/procedures/CameroonApiTools";
+import { SectionPanel } from "@/presentation/components/shared/SectionPanel";
 import {
   SearchableSelect,
   countryToOptions,
@@ -13,7 +14,7 @@ interface CameroonPageProps {
   darkMode?: boolean;
 }
 
-/** F-05 / F-06 — Moteur fiscal Cameroun et outils logistiques. */
+/** Cameroon fiscal engine and logistics tools. */
 export function CameroonPage({ darkMode = true }: CameroonPageProps) {
   const { countries, products, isLoading } = useReferenceData();
   const [cifValue, setCifValue] = useState(10_000_000);
@@ -24,11 +25,18 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
 
   const inputClass = platform.input(darkMode);
   return (
-    <div className="animate-fadeIn space-y-8 font-sans" id="cameroon_page">
-      <section className="space-y-6">
-        <div className="flex flex-col gap-4">
+    <div className="animate-fadeIn space-y-6 font-sans" id="cameroon_page">
+      <SectionPanel darkMode={darkMode} id="cameroon_fiscal_inputs">
+        <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
+          Cameroon fiscal estimate
+        </h2>
+        <p className={`mt-1 text-sm ${platform.textMuted(darkMode)}`}>
+          Enter CIF value, HS code, and origin to estimate CEMAC duties and taxes.
+        </p>
+
+        <div className="mt-6 space-y-4">
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">CIF VALUE (XAF)</label>
+            <label className={platform.fieldLabel(darkMode)}>CIF value (XAF)</label>
             <input
               type="number"
               value={cifValue}
@@ -37,7 +45,7 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             />
           </div>
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">HS CODE</label>
+            <label className={platform.fieldLabel(darkMode)}>HS code</label>
             <SearchableSelect
               value={hsCode}
               onChange={setHsCode}
@@ -50,7 +58,7 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             />
           </div>
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">ORIGIN</label>
+            <label className={platform.fieldLabel(darkMode)}>Origin</label>
             <SearchableSelect
               value={origin}
               onChange={setOrigin}
@@ -63,7 +71,7 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             />
           </div>
           <div>
-            <label className="text-[9px] font-bold text-gray-500 block mb-1">YEAR</label>
+            <label className={platform.fieldLabel(darkMode)}>Year</label>
             <input
               type="number"
               value={year}
@@ -72,7 +80,8 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             />
           </div>
         </div>
-        <label className="flex items-center gap-2 mt-3 text-xs cursor-pointer">
+
+        <label className="flex items-center gap-2 mt-4 text-xs cursor-pointer">
           <input
             type="checkbox"
             checked={applyZlecaf}
@@ -81,8 +90,10 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
           />
           <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Apply AfCFTA concessions if eligible</span>
         </label>
+      </SectionPanel>
 
-        {hsCode && cifValue > 0 && (
+      {hsCode && cifValue > 0 && (
+        <SectionPanel darkMode={darkMode} id="cameroon_fiscal_results">
           <CameroonFiscalPreview
             cifValue={cifValue}
             hsCode={hsCode}
@@ -91,10 +102,12 @@ export function CameroonPage({ darkMode = true }: CameroonPageProps) {
             applyZlecaf={applyZlecaf}
             darkMode={darkMode}
           />
-        )}
-      </section>
+        </SectionPanel>
+      )}
 
-      <CameroonApiTools darkMode={darkMode} />
+      <SectionPanel darkMode={darkMode} id="cameroon_api_tools_panel">
+        <CameroonApiTools darkMode={darkMode} />
+      </SectionPanel>
     </div>
   );
 }

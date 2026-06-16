@@ -15,7 +15,7 @@ export function SsoCallbackHandler({ onNavigateToSignIn, onNavigateToSignUp }: S
     <div className="min-h-screen flex items-center justify-center bg-[#101828]">
       <div className="flex flex-col items-center gap-4 text-center px-6">
         <div className="w-8 h-8 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-        <p className="text-sm text-gray-400">Finalisation de la connexion…</p>
+        <p className="text-sm text-gray-400">Completing sign-in…</p>
         <HandleSSOCallback
           navigateToApp={() => clearCallbackHash()}
           navigateToSignIn={() => {

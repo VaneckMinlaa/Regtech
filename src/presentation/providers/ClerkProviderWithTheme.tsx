@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { ClerkProvider } from "@clerk/react";
+import { enUS } from "@clerk/localizations";
 import { clerkAppearance } from "@/presentation/providers/clerkAppearance";
 import { useTheme } from "@/presentation/providers/ThemeProvider";
 
@@ -16,6 +17,7 @@ export function ClerkProviderWithTheme({
     <ClerkProvider
       publishableKey={publishableKey}
       afterSignOutUrl="/"
+      localization={enUS}
       appearance={clerkAppearance(darkMode)}
     >
       {children}

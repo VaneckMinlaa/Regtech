@@ -24,16 +24,19 @@ const NUMERIC_KEYS = new Set([
   "year",
 ]);
 
+const TEMPLATE_FILENAME = "01_RegTech_Simulations_Template.xlsx";
+const GUIDE_FILENAME = "02_RegTech_User_Guide.xlsx";
+
 const FORMAT_HINTS = [
-  "ex. CMR",
-  "ex. NGA",
-  "ex. 851712",
-  "ex. 1 000 000",
-  "ex. 400 000",
-  "ex. 150 000",
-  "ex. 100 000",
-  "ex. 1 000 000",
-  "ex. 2026",
+  "e.g. CMR",
+  "e.g. NGA",
+  "e.g. 851712",
+  "e.g. 1,000,000",
+  "e.g. 400,000",
+  "e.g. 150,000",
+  "e.g. 100,000",
+  "e.g. 1,000,000",
+  "e.g. 2026",
 ];
 
 function colLetter(count: number): string {
@@ -54,8 +57,8 @@ export async function downloadBatchExcelTemplate(): Promise<void> {
   const guideBuffer = await guideWorkbook.xlsx.writeBuffer();
 
   const zip = new JSZip.default();
-  zip.file("01_Modele_Simulations_RegTech.xlsx", templateBuffer);
-  zip.file("02_Guide_Utilisation_RegTech.xlsx", guideBuffer);
+  zip.file(TEMPLATE_FILENAME, templateBuffer);
+  zip.file(GUIDE_FILENAME, guideBuffer);
 
   const zipBlob = await zip.generateAsync({ type: "blob" });
   const url = URL.createObjectURL(zipBlob);
@@ -78,7 +81,7 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
 
   const subtitle = sheet.getCell("A2");
   subtitle.value =
-    "This file comes with the \"01_Modele_Simulations_RegTech.xlsx\" Excel template. Import only the Excel template in RegTech.";
+    `This file comes with the "${TEMPLATE_FILENAME}" Excel template. Import only the Excel template in RegTech.`;
   subtitle.font = { name: "Calibri", size: 11, color: { argb: TEXT_MUTED } };
   subtitle.alignment = { wrapText: true, vertical: "top" };
   sheet.getRow(2).height = 28;
@@ -88,7 +91,7 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
       "Step 1 — Open the template",
       [
         "1. Unzip the downloaded ZIP file.",
-        "2. Open \"01_Modele_Simulations_RegTech.xlsx\" (not this guide).",
+        `2. Open "${TEMPLATE_FILENAME}" (not this guide).`,
         "3. You’ll see the table to fill in, with examples already included.",
       ].join("\n"),
     ],
@@ -107,7 +110,7 @@ function buildGuideSheet(sheet: import("exceljs").Worksheet) {
       [
         "1. Save the filled template.",
         "2. RegTech → Batch processing → Import CSV or Excel.",
-        "3. Select \"01_Modele_Simulations_RegTech.xlsx\".",
+        `3. Select "${TEMPLATE_FILENAME}".`,
         "4. Tax calculation and AfCFTA eligibility start automatically.",
       ].join("\n"),
     ],
@@ -168,7 +171,7 @@ function buildTemplateSheet(sheet: import("exceljs").Worksheet) {
   sheet.mergeCells(`A2:${lastCol}2`);
   const hint = sheet.getCell("A2");
   hint.value =
-    "Fill the yellow rows. Blue rows are examples. The detailed guide is in the \"02_Guide_Utilisation_RegTech.xlsx\" file.";
+    `Fill the yellow rows. Blue rows are examples. The detailed guide is in the "${GUIDE_FILENAME}" file.`;
   hint.font = { name: "Calibri", size: 10, italic: true, color: { argb: TEXT_MUTED } };
   hint.fill = { type: "pattern", pattern: "solid", fgColor: { argb: BRAND_SURFACE } };
   hint.alignment = { vertical: "middle", horizontal: "center", wrapText: true };

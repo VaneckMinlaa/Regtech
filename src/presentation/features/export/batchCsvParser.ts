@@ -47,7 +47,7 @@ export function parseBatchCsvContent(content: string): BatchRowInput[] {
 }
 
 export function fxSourceLabel(source: string): string {
-  if (source === "frankfurter") return "Frankfurter (BCE, gratuit)";
-  if (source === "pilot") return "Référentiel pilote AfCFTA";
-  return "Référentiel pays";
+  if (source === "frankfurter") return "Frankfurter (ECB, free)";
+  if (source === "pilot") return "AfCFTA pilot reference";
+  return "Country reference";
 }
