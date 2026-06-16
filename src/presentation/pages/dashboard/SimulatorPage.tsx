@@ -33,7 +33,7 @@ export function SimulatorPage({
       />
 
       {selectedSimulation && (
-        <div className="space-y-8" id="simulation_results_panel">
+        <div className="space-y-8 border-t pt-8" id="simulation_results_panel">
           <DeclarationSummary simulation={selectedSimulation} darkMode={darkMode} />
         </div>
       )}

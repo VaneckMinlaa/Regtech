@@ -17,6 +17,7 @@ import {
   CreditCard,
   ClipboardList,
   Landmark,
+  HelpCircle,
 } from "lucide-react";
 
 import { PricingPage } from "@/presentation/features/billing/PricingPage";
@@ -47,6 +48,7 @@ import {
 } from "@/presentation/layout/dashboardTabs";
 import { PAGE_INTROS } from "@/presentation/layout/pageIntros";
 import { PlatformPageIntro } from "@/presentation/components/shared/PlatformPageIntro";
+import { PlatformPageContent } from "@/presentation/components/shared/PlatformPageContent";
 
 interface RegTechShellProps {
   initialTab?: string;
@@ -272,8 +274,20 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
                 title={PAGE_INTROS[activeTab].title}
                 description={PAGE_INTROS[activeTab].description}
                 darkMode={darkMode}
+                trailing={
+                  activeTab === "IA" ? (
+                    <span
+                      title="HS code is an international 8-digit nomenclature that uniquely identifies each exported product."
+                      className={`inline-flex items-center gap-1.5 ${platform.textMuted(darkMode)}`}
+                    >
+                      <HelpCircle className="h-4 w-4 shrink-0" aria-hidden />
+                      What is the HS code?
+                    </span>
+                  ) : undefined
+                }
               />
 
+              <PlatformPageContent darkMode={darkMode}>
               {activeTab === "SIM" && (
                 <SimulatorPage
                   darkMode={darkMode}
@@ -320,6 +334,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
               {activeTab === "CHECKLIST" && (
                 <CameroonChecklist darkMode={darkMode} onUpgrade={goToPricing} />
               )}
+              </PlatformPageContent>
             </div>
           </main>
 

@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from "react";
-import { Sparkles, ArrowRight, HelpCircle, AlertCircle, ThumbsUp, Save, CheckCircle2, RefreshCw } from "lucide-react";
+import { Sparkles, ArrowRight, AlertCircle, ThumbsUp, Save, CheckCircle2, RefreshCw } from "lucide-react";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
 import { ApiError } from "@/infrastructure/http/apiClient";
@@ -109,13 +109,6 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
 
   return (
     <div className="space-y-8 font-sans" id="ai_classification_panel">
-      <div className={`flex justify-end text-xs ${platform.textMuted(darkMode)}`}>
-        <span title="HS code is a standard international 8-digit nomenclature that uniquely identifies each exported product." className="inline-flex items-center gap-1.5">
-          <HelpCircle className="h-4 w-4 hover:text-primary-500" aria-hidden />
-          <span className="hidden sm:inline">What is the HS code?</span>
-        </span>
-      </div>
-
       <div className="flex flex-col gap-8">
         <div className="space-y-4">
           <div>

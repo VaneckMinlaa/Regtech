@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { RefreshCw } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import { convertBetweenCurrencies } from "@/domain/reference/currencyUtils";
@@ -54,6 +54,15 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [currentResult, setCurrentResult] = useState<SimulationResult | null>(null);
+  const resultsRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (!currentResult) return;
+    const timer = window.setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
+    return () => window.clearTimeout(timer);
+  }, [currentResult?.id]);
 
   useEffect(() => {
     if (initialized || countries.length === 0) return;
@@ -349,9 +358,9 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
           </div>
       </section>
 
-      <section className="space-y-6">
+      <section ref={resultsRef} id="simulation_tax_results" className="space-y-6 scroll-mt-24">
           <div className={`flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
-            <p className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Tax estimate</p>
+            <h2 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>Tax estimate</h2>
             {isLoading && <RefreshCw className="h-4 w-4 animate-spin text-primary-500" />}
           </div>
 
@@ -390,58 +399,56 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
                 </p>
               )}
 
-              {/* Detailed items line */}
               <div className="space-y-3 pt-2">
-                <div className={`flex items-center justify-between text-xs py-1 border-b ${
+                <div className={`flex items-center justify-between text-sm py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>HS classification code:</span>
-                  <span className={`font-mono font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>{currentResult.hsCode}</span>
+                  <span className={platform.textMuted(darkMode)}>HS classification code:</span>
+                  <span className={`font-mono font-semibold ${platform.textPrimary(darkMode)}`}>{currentResult.hsCode}</span>
                 </div>
-                <div className={`flex items-center justify-between text-xs py-1 border-b ${
+                <div className={`flex items-center justify-between text-sm py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Product description:</span>
-                  <span className={`font-semibold truncate max-w-[200px] ${darkMode ? "text-gray-300" : "text-gray-800"}`} title={currentResult.productDescription}>
+                  <span className={platform.textMuted(darkMode)}>Product description:</span>
+                  <span className={`font-semibold truncate max-w-[200px] ${platform.textSecondary(darkMode)}`} title={currentResult.productDescription}>
                     {currentResult.productDescription}
                   </span>
                 </div>
-                <div className={`flex items-center justify-between text-xs py-1 border-b ${
+                <div className={`flex items-center justify-between text-sm py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Base customs duty:</span>
-                  <span className={`font-mono ${darkMode ? "text-gray-300" : "text-gray-700"}`}>{(currentResult.baseTariffRate * 100).toFixed(1)}%</span>
+                  <span className={platform.textMuted(darkMode)}>Base customs duty:</span>
+                  <span className={`font-mono ${platform.textSecondary(darkMode)}`}>{(currentResult.baseTariffRate * 100).toFixed(1)}%</span>
                 </div>
                 {currentResult.isEligiblePrefAfCFTA && (
-                  <div className={`flex items-center justify-between text-xs py-1 border-b text-primary-600 dark:text-primary-400 ${
+                  <div className={`flex items-center justify-between text-sm py-1 border-b text-primary-600 dark:text-primary-400 ${
                     darkMode ? "border-gray-800" : "border-gray-100"
                   }`}>
                     <span>Preferential tariff rate:</span>
                     <span className="font-mono font-bold">{(currentResult.appliedTariffRate * 100).toFixed(1)}%</span>
                   </div>
                 )}
-                <div className={`flex items-center justify-between text-xs py-1 border-b ${
+                <div className={`flex items-center justify-between text-sm py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>Customs duty amount:</span>
-                  <span className={`font-mono font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
+                  <span className={platform.textMuted(darkMode)}>Customs duty amount:</span>
+                  <span className={`font-mono font-semibold ${platform.textPrimary(darkMode)}`}>
                     {currentResult.dutyPaidLocal.toLocaleString()} {destCountry?.currency ?? ""}
                   </span>
                 </div>
-                <div className={`flex items-center justify-between text-xs py-1 border-b ${
+                <div className={`flex items-center justify-between text-sm py-1 border-b ${
                   darkMode ? "border-gray-800" : "border-gray-100"
                 }`}>
-                  <span className={darkMode ? "text-gray-400" : "text-gray-500"}>
+                  <span className={platform.textMuted(darkMode)}>
                     Destination VAT ({Math.round((destCountry?.vatRate ?? 0) * 100)}%):
                   </span>
-                  <span className={`font-mono font-semibold ${darkMode ? "text-white" : "text-gray-900"}`}>
+                  <span className={`font-mono font-semibold ${platform.textPrimary(darkMode)}`}>
                     {currentResult.vatPaidLocal.toLocaleString()} {destCountry?.currency ?? ""}
                   </span>
                 </div>
               </div>
 
-              {/* Taux de change utilisés par la simulation (Frankfurter / API backend) */}
-              <div className="flex flex-col gap-1 text-xs">
+              <div className="flex flex-col gap-1 text-sm">
                 {originCountry && destCountry && currentResult && (
                   <>
                     <span className={platform.textMuted(darkMode)}>

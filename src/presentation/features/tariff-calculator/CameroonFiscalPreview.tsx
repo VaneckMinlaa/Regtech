@@ -90,10 +90,10 @@ export function CameroonFiscalPreview({
   if (cifValue <= 0) return null;
 
   return (
-    <div className={`${platform.cardNested(darkMode)} mt-4 rounded-2xl p-4`} id="cameroon_fiscal_preview">
+    <div className={`mt-4 border-t pt-6 ${platform.borderSubtle(darkMode)}`} id="cameroon_fiscal_preview">
       <div className="mb-3 flex items-center gap-2">
         <Landmark className="h-4 w-4 text-primary-500" />
-        <h4 className={`text-xs font-semibold uppercase tracking-wide ${platform.textPrimary(darkMode)}`}>
+        <h4 className={`text-sm font-semibold ${platform.textPrimary(darkMode)}`}>
           Cameroon tax breakdown
         </h4>
         {loading && <Loader2 className="ml-auto h-3.5 w-3.5 animate-spin text-primary-500" />}
@@ -107,39 +107,39 @@ export function CameroonFiscalPreview({
 
       {data && (
         <>
-          <table className="w-full text-[11px]">
+          <table className="w-full text-sm">
             <thead>
-              <tr className={darkMode ? "text-gray-500" : "text-gray-500"}>
-                <th className="text-left py-1">Code</th>
-                <th className="py-1 text-left">Label</th>
-                <th className="text-right py-1">Taux</th>
-                <th className="text-right py-1">Montant</th>
+              <tr className={platform.textMuted(darkMode)}>
+                <th className="text-left py-2 font-medium">Code</th>
+                <th className="py-2 text-left font-medium">Label</th>
+                <th className="text-right py-2 font-medium">Rate</th>
+                <th className="text-right py-2 font-medium">Amount</th>
               </tr>
             </thead>
-            <tbody className={darkMode ? "text-gray-300" : "text-gray-700"}>
+            <tbody className={platform.textSecondary(darkMode)}>
               {data.lines.map((row) => (
-                <tr key={row.code} className="border-t border-gray-800/30">
-                  <td className="py-1.5 font-mono text-amber-500">{row.code}</td>
-                  <td className="py-1.5">{"label" in row ? row.label : ""}</td>
-                  <td className="py-1.5 text-right font-mono">
+                <tr key={row.code} className={`border-t ${platform.borderSubtle(darkMode)}`}>
+                  <td className="py-2 font-mono font-semibold text-primary-600 dark:text-primary-400">{row.code}</td>
+                  <td className="py-2">{"label" in row ? row.label : ""}</td>
+                  <td className="py-2 text-right font-mono">
                     {(row.rate * 100).toFixed(row.rate < 0.1 ? 1 : 0)}%
                   </td>
-                  <td className="py-1.5 text-right font-mono">
+                  <td className="py-2 text-right font-mono">
                     {row.amount.toLocaleString("en-US")} XAF
                   </td>
                 </tr>
               ))}
-              <tr className={`border-t font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
+              <tr className={`border-t font-semibold ${platform.textPrimary(darkMode)}`}>
                 <td colSpan={3} className="py-2">
                   Total estimated taxes
                 </td>
-                <td className="py-2 text-right font-mono text-primary-400">
+                <td className="py-2 text-right font-mono text-primary-500">
                   {data.totalTaxes.toLocaleString("en-US")} XAF
                 </td>
               </tr>
             </tbody>
           </table>
-          <p className={`text-[10px] mt-2 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
+          <p className={`text-sm mt-2 ${platform.textMuted(darkMode)}`}>
             ~{data.totalEstimatedCostPctCif.toFixed(0)} % de la valeur CIF
             {data.zlecafAppliedRate != null && (
               <> · AfCFTA {(data.zlecafAppliedRate * 100).toFixed(1)}%</>

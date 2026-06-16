@@ -19,7 +19,13 @@ export function LandingPage({ onSignIn, onGetStarted }: LandingPageProps) {
   const { darkMode } = useTheme();
 
   return (
-    <div className={`landing-page flex flex-col flex-1 min-h-screen ${darkMode ? "bg-[#101828]" : "bg-white"}`}>
+    <div
+      className={`landing-page flex flex-col flex-1 min-h-screen ${
+        darkMode
+          ? "bg-[#101828]"
+          : "bg-gradient-to-b from-[#F0F4FF] via-white to-white"
+      }`}
+    >
       <LandingHeader onSignIn={onSignIn} onGetStarted={onGetStarted} />
       <div className="isolate flex-1 flex flex-col">
         <HeroSection onGetStarted={onGetStarted} />
