@@ -26,7 +26,7 @@ export function PlanBadge({ onClick, darkMode = true }: PlanBadgeProps) {
       onClick={onClick}
       className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wide transition-opacity hover:opacity-90 ${colors[subscription.plan] ?? colors.free}`}
       id="badge_current_plan"
-      title="Gérer l'abonnement"
+      title="Manage subscription"
     >
       <Crown className="w-3 h-3" />
       {plan.name}

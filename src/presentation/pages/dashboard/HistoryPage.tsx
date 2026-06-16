@@ -5,6 +5,7 @@ import { regtechApi } from "@/infrastructure/http/regtechApi";
 import { MetricsChart } from "@/presentation/features/export/MetricsChart";
 import { DeclarationSummary } from "@/presentation/features/export/DeclarationSummary";
 import { useReferenceData } from "@/presentation/providers/ReferenceDataProvider";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface HistoryPageProps {
   darkMode?: boolean;
@@ -41,32 +42,17 @@ export function HistoryPage({ darkMode = true }: HistoryPageProps) {
     void load();
   }, [load]);
 
-  const cardClass = (active: boolean) =>
-    `w-full text-left p-3 rounded-lg border text-xs transition-all ${
-      active
-        ? darkMode
-          ? "border-primary-500/50 bg-primary-950/20 ring-1 ring-primary-500/30"
-          : "border-primary-300 bg-primary-50 ring-1 ring-primary-200"
-        : darkMode
-          ? "bg-[#101828] border-gray-800 hover:border-gray-700"
-          : "bg-white border-gray-200 hover:border-gray-300 shadow-sm"
-    }`;
+  const cardClass = (active: boolean) => platform.historyItem(darkMode, active);
 
   return (
-    <div className="space-y-6 animate-fadeIn font-sans" id="history_page">
-      <div
-        className={`rounded-xl border p-5 flex flex-wrap items-center justify-between gap-3 ${
-          darkMode ? "bg-dark-primary border-gray-800" : "bg-white border-gray-200 shadow-sm"
-        }`}
-      >
+    <div className="animate-fadeIn space-y-8 font-sans" id="history_page">
+      <div className={`${platform.panel(darkMode)} ${platform.panelPadding} flex flex-wrap items-center justify-between gap-4`}>
         <div className="flex items-center gap-3">
           <History className="w-5 h-5 text-primary-500" />
           <div>
-            <h2 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Simulation history
-            </h2>
-            <p className={`text-xs mt-0.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              All your saved simulations — ZLECAf sheets and PDF exports.
+            <h2 className={platform.pageTitle(darkMode)}>Simulation history</h2>
+            <p className={platform.pageSubtitle(darkMode)}>
+              Saved simulations and exportable declaration sheets.
             </p>
           </div>
         </div>

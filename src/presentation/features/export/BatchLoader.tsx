@@ -22,6 +22,7 @@ import {
 } from "@/infrastructure/http/regtechApi";
 import { ApiError } from "@/infrastructure/http/apiClient";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
+import { platform } from "@/presentation/theme/platformStyles";
 import {
   fileToCsvText,
   validateBatchCsvContent,
@@ -138,9 +139,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
 
   return (
     <div
-      className={`border rounded-lg p-6 transition-colors duration-300 font-sans ${
-        darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-      }`}
+      className={`${platform.panel(darkMode)} ${platform.panelPadding} font-sans transition-colors duration-300`}
       id="bulk_customs_panel"
     >
       <div className={`flex items-center justify-between mb-6 pb-4 border-b ${
@@ -196,19 +195,19 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
             onDragLeave={() => setDragOver(false)}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/40 ${
+            className={`rounded-2xl border-2 border-dashed p-8 text-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 ${
               dragOver
                 ? darkMode
-                  ? "border-purple-500 bg-purple-500/10"
-                  : "border-purple-500 bg-purple-50"
+                  ? "border-primary-500 bg-primary-500/10"
+                  : "border-primary-400 bg-primary-50"
                 : darkMode
-                  ? "border-gray-700 hover:border-gray-500 bg-[#101828]/50"
-                  : "border-gray-300 hover:border-gray-400 bg-gray-50"
+                  ? "border-gray-700 hover:border-primary-500/40 hover:bg-white/5 bg-[#101828]/50"
+                  : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/30 bg-gray-50"
             }`}
           >
             <Upload
-              className={`w-8 h-8 mx-auto mb-2 ${
-                isImporting || isProcessing ? "animate-pulse text-purple-400" : "text-purple-500"
+              className={`mx-auto mb-2 h-8 w-8 ${
+                isImporting || isProcessing ? "animate-pulse text-primary-400" : "text-primary-500"
               }`}
             />
             <p className={`text-sm font-semibold ${darkMode ? "text-gray-200" : "text-gray-800"}`}>
@@ -249,7 +248,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
             onClick={() => void runBatch(csvText)}
             id="btn_run_csv_processing"
             disabled={isProcessing || !csvText.trim()}
-            className="w-full bg-purple-650 hover:bg-purple-600 disabled:opacity-40 text-white font-semibold py-2 px-4 rounded-lg text-xs transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow"
+            className={`w-full ${platform.buttonPrimary} text-xs`}
           >
             {isProcessing ? (
               <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -321,7 +320,7 @@ export const BatchLoader: React.FC<BatchLoaderProps> = ({ darkMode = true, onUpg
                         <th className="px-2 py-2">#</th>
                         <th className="px-2 py-2">Route</th>
                         <th className="px-2 py-2">Product</th>
-                        <th className="px-2 py-2 text-center">ZLECAf</th>
+                        <th className="px-2 py-2 text-center">AfCFTA</th>
                         <th className="px-2 py-2 text-right">Duties</th>
                         <th className="px-2 py-2 text-right">VAT</th>
                         <th className="px-2 py-2 text-right">Total</th>

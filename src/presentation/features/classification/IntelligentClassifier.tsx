@@ -13,6 +13,7 @@ import {
   SearchableSelect,
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface IntelligentClassifierProps {
   onSelectHSCode: (code: string, description: string) => void;
@@ -107,19 +108,13 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
   };
 
   return (
-    <div className={`border rounded-lg p-6 transition-colors duration-300 font-sans ${
-      darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-    }`} id="ai_classification_panel">
-      <div className={`flex items-center justify-between mb-6 pb-4 border-b ${
-        darkMode ? "border-gray-800" : "border-gray-100"
-      }`}>
+    <div className={`${platform.panel(darkMode)} ${platform.panelPadding} font-sans transition-colors duration-300`} id="ai_classification_panel">
+      <div className={`mb-6 flex items-center justify-between border-b pb-4 ${platform.borderSubtle(darkMode)}`}>
         <div className="flex items-center gap-2">
-          <Sparkles className="w-5 h-5 text-primary-500" />
+          <Sparkles className="h-5 w-5 text-primary-500" />
           <div>
-            <h2 className={`text-base font-bold font-display ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Smart HS classification</h2>
-            <p className={`text-[11px] ${darkMode ? "text-gray-400" : "text-gray-500"}`}>Classifier for text descriptions into eligibility tariff</p>
+            <h2 className={platform.pageTitle(darkMode)}>Smart HS classification</h2>
+            <p className={platform.pageSubtitle(darkMode)}>Describe your product to get a harmonized code</p>
           </div>
         </div>
 
@@ -148,9 +143,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className={`w-full rounded-lg px-3.5 py-2.5 text-sm focus:outline-none focus:border-primary-500 transition-colors ${
-                darkMode ? "bg-[#101828] border-gray-800 text-gray-100" : "bg-white border-gray-200 text-gray-900"
-              }`}
+              className={`${platform.input(darkMode)} resize-y min-h-[100px]`}
               placeholder="Ex: import of 50 i7 core laptop computers with accessories for resale..."
             />
           </div>
@@ -159,7 +152,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
             onClick={handleClassify}
             id="btn_run_classification"
             disabled={isLoading || !description.trim()}
-            className="w-full bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-600 hover:to-primary-600 text-white font-semibold py-2.5 rounded-lg text-sm transition-all shadow-md active:scale-[0.98] disabled:opacity-40 disabled:pointer-events-none flex items-center justify-center gap-2 cursor-pointer"
+            className={`w-full ${platform.buttonGradient} py-3`}
           >
             {isLoading ? (
               <>
@@ -184,9 +177,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
 
         {/* Output Box */}
         <div className="md:col-span-7">
-          <div className={`border rounded-lg p-5 h-full flex flex-col justify-between transition-colors ${
-            darkMode ? "bg-[#101828] border-gray-800 text-white" : "bg-gray-50 border-gray-200 text-gray-800"
-          }`}>
+          <div className={`${platform.cardNested(darkMode)} flex h-full flex-col justify-between p-5 transition-colors`}>
             {isLoading ? (
               <div className="flex-1 flex flex-col justify-center items-center space-y-3 py-12" id="skeleton_loading_ai">
                 <div className="relative font-bold">
@@ -292,7 +283,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                       onSelectHSCode(result.hs_code, desc);
                     }}
                     id="btn_load_in_simulator"
-                    className="flex-1 bg-primary-500 hover:bg-primary-555 text-white py-2 rounded-lg text-xs font-semibold shadow transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    className={`flex-1 ${platform.buttonPrimary} py-2 text-xs`}
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     <span>Load into simulator</span>

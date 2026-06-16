@@ -9,6 +9,7 @@ import {
   countryToOptions,
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface CompareRow {
   countryCode: string;
@@ -26,9 +27,7 @@ interface AfcftaPageProps {
 }
 
 const panelClass = (darkMode: boolean) =>
-  `rounded-xl border p-6 ${
-    darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-  }`;
+  `${platform.panel(darkMode)} ${platform.panelPadding}`;
 
 /** Zone d'échanges ZLECAf — règles, projection API, comparaison multi-destinations. */
 export function AfcftaPage({
@@ -46,9 +45,7 @@ export function AfcftaPage({
   const [compTariffs, setCompTariffs] = useState<CompareRow[]>([]);
   const [compLoading, setCompLoading] = useState(false);
 
-  const inputClass = `w-full rounded-lg px-3 py-2.5 text-sm font-mono border ${
-    darkMode ? "bg-dark-secondary border-gray-800 text-gray-100" : "bg-white border-gray-300 text-gray-900"
-  }`;
+  const inputClass = platform.input(darkMode);
 
   useEffect(() => {
     if (countries.length === 0) return;
@@ -120,18 +117,8 @@ export function AfcftaPage({
   }, [compProduct, compOrigin, compVal, dest1, dest2, dest3, countries]);
 
   return (
-    <div className="space-y-8 animate-fadeIn" id="afcfta_page">
-      <div className={panelClass(darkMode)}>
-        <h3 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-          AfCFTA rules directory & preferential treatment (AFT)
-        </h3>
-        <p className={`text-sm leading-relaxed mt-2 max-w-3xl ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-          African-origin goods: preferential tax treatment based on local value addition, with a minimum of 40%
-          (AfCFTA manual).
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+    <div className="animate-fadeIn space-y-8" id="afcfta_page">
+      <div className="grid grid-cols-1 items-start gap-8 xl:grid-cols-2">
         {/* Colonne gauche : règles + projection + validation (utilise l'espace vertical) */}
         <div className="space-y-8">
           <div className={`${panelClass(darkMode)} space-y-5`}>

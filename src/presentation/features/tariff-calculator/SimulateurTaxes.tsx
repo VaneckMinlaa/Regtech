@@ -17,6 +17,7 @@ import {
   countryToOptions,
   productToOptions,
 } from "@/presentation/components/shared/SearchableSelect";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface SimulateurTaxesProps {
   onSimulationRun: (result: SimulationResult) => void;
@@ -158,21 +159,18 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
     );
   }
 
+  const panel = `${platform.panel(darkMode)} ${platform.panelPadding} transition-colors duration-300`;
+
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 font-sans" id="simulator_workspace">
-      {/* Simulation Inputs Box */}
-      <div className="lg:col-span-7 space-y-6">
-        <div className={`border rounded-lg p-6 transition-colors duration-300 ${
-          darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-        }`}>
-          <div className="flex items-center gap-2 mb-6">
-            <Calculator className="w-5 h-5 text-primary-500" />
-            <h2 className={`text-base font-bold font-display ${
-              darkMode ? "text-white" : "text-gray-900"
-            }`}>Customs duties simulator</h2>
+    <div className="grid grid-cols-1 gap-8 font-sans lg:grid-cols-12" id="simulator_workspace">
+      <div className="space-y-8 lg:col-span-7">
+        <div className={panel}>
+          <div className="mb-6 flex items-center gap-2">
+            <Calculator className="h-5 w-5 text-primary-500" />
+            <h2 className={platform.pageTitle(darkMode)}>Customs duties simulator</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             {/* Origin */}
             <div>
               <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
@@ -362,17 +360,15 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
             id="btn_run_simulation"
             disabled={!canSubmit || isLoading}
             onClick={() => void handleSimulate()}
-            className="mt-4 w-full bg-primary-500 hover:bg-primary-500 disabled:opacity-40 disabled:pointer-events-none text-white font-semibold py-2.5 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2"
+            className={`mt-6 w-full ${platform.buttonPrimary}`}
           >
             Calculate duties and taxes
           </button>
         </div>
 
         {/* Rule of Origin Subsection */}
-        <div className={`border rounded-lg p-6 transition-all duration-300 ${
-          darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-        }`}>
-          <div className="flex justify-between items-center mb-4">
+        <div className={panel}>
+          <div className="mb-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Scale className="w-5 h-5 text-primary-500" />
               <h3 className={`text-sm font-bold font-display ${
@@ -470,9 +466,7 @@ export const SimulateurTaxes: React.FC<SimulateurTaxesProps> = ({
 
       {/* Simulator Results Output panel */}
       <div className="lg:col-span-5 flex flex-col justify-between">
-        <div className={`border rounded-lg p-6 h-full flex flex-col transition-all duration-300 ${
-          darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-        }`}>
+        <div className={`${panel} flex h-full flex-col`}>
           <div className={`flex items-center justify-between pb-4 mb-6 shrink-0 border-b ${
             darkMode ? "border-gray-800" : "border-gray-100"
           }`}>

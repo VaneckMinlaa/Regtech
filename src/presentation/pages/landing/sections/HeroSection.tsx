@@ -29,7 +29,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
                 Simplify your customs operations with AfCFTA intelligence
               </h1>
               <p className="max-w-[537px] text-center mx-auto text-gray-600 dark:text-gray-400 text-base">
-                Simulate duties and taxes, verify ZLECAf eligibility, classify your products, and compare multiple
+                Simulate duties and taxes, verify AfCFTA eligibility, classify your products, and compare multiple
                 destinations — all in a unified workspace.
               </p>
 
@@ -104,7 +104,7 @@ export function HeroSection({ onGetStarted }: HeroSectionProps) {
             Built for economic operators across Africa
           </p>
           <div className="flex flex-wrap justify-center items-center gap-7 md:gap-14 mt-10">
-            {["CEMAC", "UEMOA", "AfCFTA", "ZLECAf", "HS Code", "Mobile Money", "PawaPay"].map((label) => (
+            {["CEMAC", "UEMOA", "AfCFTA", "HS Code", "Mobile Money", "PawaPay"].map((label) => (
               <span
                 key={label}
                 className="text-gray-400 dark:text-white/40 text-sm font-semibold tracking-wide uppercase opacity-80 hover:opacity-100 transition"

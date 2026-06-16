@@ -29,7 +29,7 @@ export function ReferenceVersionsFooter({ darkMode = true }: ReferenceVersionsFo
         Reference versions (F-24)
       </p>
       <p>TEC CEMAC : {versions.tecCemac}</p>
-      <p>Moteur ZLECAf : {versions.zlecafTariffEngine}</p>
+      <p>AfCFTA engine : {versions.zlecafTariffEngine}</p>
       <p>Catalogue HS : {versions.hsCatalogue}</p>
       <p>VAT Africa : {versions.africaVatRates} · Engine {versions.engineVersion}</p>
     </div>

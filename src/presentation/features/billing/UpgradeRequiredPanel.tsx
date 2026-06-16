@@ -1,5 +1,6 @@
 import React from "react";
 import { Lock, ArrowRight } from "lucide-react";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface UpgradeRequiredPanelProps {
   feature: string;
@@ -16,9 +17,7 @@ export function UpgradeRequiredPanel({
 }: UpgradeRequiredPanelProps) {
   return (
     <div
-      className={`rounded-lg border p-6 text-center space-y-4 ${
-        darkMode ? "bg-dark-primary border-gray-800" : "bg-white border-gray-200 shadow-sm"
-      }`}
+      className={`${platform.panel(darkMode)} ${platform.panelPadding} space-y-4 text-center`}
       id="upgrade_required_panel"
     >
       <div
@@ -40,7 +39,7 @@ export function UpgradeRequiredPanel({
       <button
         type="button"
         onClick={onUpgrade}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-500 hover:bg-primary-500 text-white text-xs font-bold"
+        className={`${platform.buttonGradient} gap-2 px-5 py-2 text-sm`}
       >
       Choose a plan
         <ArrowRight className="w-4 h-4" />

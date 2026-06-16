@@ -76,7 +76,7 @@ export function AfcftaDutyProjection({
       <span className={`text-[11px] font-bold uppercase tracking-widest block font-mono ${
         darkMode ? "text-gray-500" : "text-gray-500"
       }`}>
-        Progressive reductions (ZLECAf API)
+        Progressive reductions (AfCFTA API)
       </span>
 
       {loading && (

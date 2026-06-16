@@ -10,6 +10,7 @@ import type {
   AfcftaValidateResponse,
   CertificateDraftResponse,
 } from "@/infrastructure/http/regtechApiTypes";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface AfcftaToolsPanelProps {
   origin: string;
@@ -37,9 +38,8 @@ export function AfcftaToolsPanel({
   const [loadingCert, setLoadingCert] = useState(false);
   const [error, setError] = useState("");
 
-  const inputClass = `w-full rounded-lg px-3 py-2.5 text-sm font-mono border ${
-    darkMode ? "bg-dark-secondary border-gray-800 text-gray-100" : "bg-white border-gray-300 text-gray-900"
-  }`;
+  const inputClass = platform.input(darkMode);
+  const panel = `${platform.panel(darkMode)} ${platform.panelPadding}`;
 
   const handleValidate = async () => {
     if (!origin || !hsCode) return;
@@ -91,12 +91,7 @@ export function AfcftaToolsPanel({
   };
 
   return (
-    <div
-      className={`border rounded-xl p-6 space-y-6 ${
-        darkMode ? "bg-dark-primary border-gray-800 text-white" : "bg-white border-gray-200 text-gray-800 shadow-sm"
-      }`}
-      id="afcfta_tools_panel"
-    >
+    <div className={`${panel} space-y-6`} id="afcfta_tools_panel">
       <div className={`flex items-center gap-3 border-b pb-4 ${darkMode ? "border-gray-800" : "border-gray-100"}`}>
         <ShieldCheck className="w-5 h-5 text-primary-500" />
         <div>
@@ -137,7 +132,7 @@ export function AfcftaToolsPanel({
         type="button"
         disabled={!origin || !hsCode || loadingValidate}
         onClick={() => void handleValidate()}
-        className="w-full py-3 rounded-lg text-sm font-bold bg-primary-500 hover:bg-primary-600 text-white flex items-center justify-center gap-2"
+        className={`w-full ${platform.buttonGradient} py-3`}
       >
         {loadingValidate ? <Loader2 className="w-4 h-4 animate-spin" /> : <BadgeCheck className="w-4 h-4" />}
         Validate AfCFTA eligibility
@@ -145,7 +140,7 @@ export function AfcftaToolsPanel({
 
       {validateResult && (
         <div
-          className={`rounded-xl border p-5 space-y-4 ${
+          className={`rounded-2xl border p-5 space-y-4 ${
             validateResult.eligible
               ? darkMode
                 ? "border-primary-500/30 bg-primary-950/20"
@@ -189,7 +184,7 @@ export function AfcftaToolsPanel({
             type="button"
             disabled={loadingCert}
             onClick={() => void handleCertificate()}
-            className="w-full py-2.5 rounded-lg text-sm font-bold border-2 border-primary-500/50 text-primary-400 hover:bg-primary-500/10 flex items-center justify-center gap-2"
+            className={`w-full ${platform.buttonSecondary(darkMode)} border-2 border-primary-500/30 py-2.5 text-primary-500 dark:text-primary-400`}
           >
             {loadingCert ? <Loader2 className="w-4 h-4 animate-spin" /> : <FileText className="w-4 h-4" />}
             Generate certificate draft
@@ -198,13 +193,9 @@ export function AfcftaToolsPanel({
       )}
 
       {certificate && (
-        <div
-          className={`rounded-xl border p-5 space-y-4 ${
-            darkMode ? "border-gray-700 bg-[#101828]" : "border-gray-200 bg-gray-50"
-          }`}
-        >
+        <div className={`${platform.cardNested(darkMode)} space-y-4 p-5`}>
           <div className="text-center border-b border-dashed pb-4">
-            <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest">AfCFTA / ZLECAf</p>
+            <p className="text-primary-500 text-[10px] font-bold uppercase tracking-widest">AfCFTA</p>
             <p className={`font-bold text-base mt-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
               {certificate.title}
             </p>

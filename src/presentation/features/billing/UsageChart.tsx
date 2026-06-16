@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import type { UsageDayPoint } from "@/infrastructure/http/regtechApiTypes";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface UsageChartProps {
   yearMonth: string;
@@ -68,9 +69,7 @@ export function UsageChart({ yearMonth, points, darkMode = true }: UsageChartPro
 
   return (
     <div
-      className={`rounded-xl border p-5 ${
-        darkMode ? "bg-[#101828]/60 border-gray-800" : "bg-white border-gray-200 shadow-sm"
-      }`}
+      className={`${platform.cardNested(darkMode)} p-5`}
       id="usage_chart"
     >
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">

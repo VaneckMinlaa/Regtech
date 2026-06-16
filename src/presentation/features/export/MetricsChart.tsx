@@ -71,7 +71,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
         <h4 className={`text-xs font-bold uppercase tracking-wider font-display ${
           darkMode ? "text-gray-400" : "text-gray-500"
         }`}>
-          Évolution de la taxe douanière ZLECAf (2025 – 2030)
+          AfCFTA customs duty trend (2025 – 2030)
         </h4>
         <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
           darkMode ? "bg-primary-500/20 text-primary-400 border-primary-500/30" : "bg-primary-100 text-primary-800 border-primary-200"
@@ -185,7 +185,7 @@ export const MetricsChart: React.FC<MetricsChartProps> = ({
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-0.5 bg-primary-500 inline-block"></span>
-          <span>Taux Préférentiel ZLECAf (Cible 0% en 2030)</span>
+          <span>AfCFTA preferential rate (target 0% by 2030)</span>
         </div>
       </div>
     </div>

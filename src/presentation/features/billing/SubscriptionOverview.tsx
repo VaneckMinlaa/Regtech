@@ -6,6 +6,7 @@ import { UsageMeterCard } from "./UsageMeterCard";
 import { getPlanById } from "@/domain/billing/plans";
 import { regtechApi } from "@/infrastructure/http/regtechApi";
 import type { AnalyticsSummaryResponse } from "@/infrastructure/http/regtechApiTypes";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface SubscriptionOverviewProps {
   darkMode?: boolean;
@@ -64,9 +65,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
 
   return (
     <div
-      className={`rounded-xl border p-5 ${
-        darkMode ? "bg-gradient-to-br from-dark-primary to-gray-900 border-gray-800" : "bg-white border-gray-200 shadow-sm"
-      }`}
+      className={`${platform.panel(darkMode)} ${platform.panelPadding}`}
       id="subscription_overview"
     >
       {returnStatus === "success" && (

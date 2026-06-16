@@ -61,7 +61,7 @@ export async function downloadBatchExcelTemplate(): Promise<void> {
   const url = URL.createObjectURL(zipBlob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = "RegTech_Simulation_ZLECAf.zip";
+  link.download = "RegTech_Simulation_AfCFTA.zip";
   link.click();
   URL.revokeObjectURL(url);
 }

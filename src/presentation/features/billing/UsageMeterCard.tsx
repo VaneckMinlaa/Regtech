@@ -1,4 +1,5 @@
 import React from "react";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface UsageMeterCardProps {
   label: string;
@@ -25,9 +26,7 @@ export function UsageMeterCard({
 
   return (
     <div
-      className={`rounded-xl border p-4 ${
-        darkMode ? "bg-[#101828]/80 border-gray-800" : "bg-white border-gray-200 shadow-sm"
-      }`}
+      className={`${platform.cardNested(darkMode)} p-4`}
     >
       <div className="flex items-center justify-between gap-2">
         <p className={`text-[10px] uppercase font-bold tracking-wider ${darkMode ? "text-gray-500" : "text-gray-500"}`}>

@@ -154,3 +154,25 @@
 .regtech-user-profile [class*="cl-drawerRoot"] {
   position: absolute !important;
 }
+
+/* Platform dashboard — shared with landing visual language */
+.platform-page .gradient-btn {
+  background-image: linear-gradient(97deg, #725cff 0%, #b5b1ff 140.21%);
+  color: white;
+  background-size: 200% auto;
+  background-position: 0% center;
+  transition:
+    background-position 0.6s ease-in-out,
+    transform 0.3s ease;
+}
+
+.platform-page .gradient-btn:hover {
+  background-image: linear-gradient(97deg, #b5b1ff 0%, #725cff 140.21%);
+  background-position: 100% center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-page .gradient-btn {
+    transition: none;
+  }
+}

@@ -47,9 +47,21 @@ import {
 } from "@/presentation/layout/dashboardTabs";
 
 interface RegTechShellProps {
-  /** Onglet initial (ex. depuis landing). */
   initialTab?: string;
 }
+
+const NAV_MAIN: { tab: DashboardTab; id: string; icon: React.ElementType; label: string }[] = [
+  { tab: "SIM", id: "tab_simulator", icon: Compass, label: "Tariff simulator" },
+  { tab: "IA", id: "tab_ai_classifier", icon: Sparkles, label: "HS classification" },
+  { tab: "AFT", id: "tab_afcfta_rules", icon: Scale, label: "AfCFTA rules" },
+  { tab: "CSV", id: "tab_batch_csv", icon: Table, label: "Batch processing" },
+  { tab: "HIST", id: "tab_history", icon: History, label: "History" },
+];
+
+const NAV_CAMEROON: { tab: DashboardTab; id: string; icon: React.ElementType; label: string }[] = [
+  { tab: "CMR", id: "tab_cameroon_fiscal", icon: Landmark, label: "Cameroon taxation" },
+  { tab: "CHECKLIST", id: "tab_checklist", icon: ClipboardList, label: "Import checklist" },
+];
 
 function resolveInitialTab(initialTab?: string): DashboardTab {
   if (initialTab && isDashboardTab(initialTab)) {
@@ -58,20 +70,47 @@ function resolveInitialTab(initialTab?: string): DashboardTab {
   return readDashboardTabFromUrl();
 }
 
+function NavButton({
+  active,
+  darkMode,
+  id,
+  icon: Icon,
+  label,
+  onClick,
+}: {
+  active: boolean;
+  darkMode: boolean;
+  id: string;
+  icon: React.ElementType;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      id={id}
+      className={`${platform.navItem} ${
+        active ? platform.navActive(darkMode) : platform.navInactive(darkMode)
+      }`}
+    >
+      <Icon className="w-4 h-4 shrink-0" aria-hidden />
+      <span>{label}</span>
+    </button>
+  );
+}
+
 export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
-  const { countries, products, apiOnline, isLoading: refLoading } = useReferenceData();
+  const { countries, products, isLoading: refLoading } = useReferenceData();
   const { darkMode, toggleDarkMode } = useTheme();
 
   const [activeTab, setActiveTab] = useState<DashboardTab>(() => resolveInitialTab(initialTab));
   const [billingReturnStatus, setBillingReturnStatus] = useState<string | null>(null);
-  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
-  const [utcClock, setUtcClock] = useState<string>("");
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const [passedHSCode, setPassedHSCode] = useState<string>("");
-  const [passedDesc, setPassedDesc] = useState<string>("");
-
-  const [currentSelectedSimulation, setCurrentSelectedSimulation] =
-    useState<SimulationResult | null>(null);
+  const [passedHSCode, setPassedHSCode] = useState("");
+  const [passedDesc, setPassedDesc] = useState("");
+  const [currentSelectedSimulation, setCurrentSelectedSimulation] = useState<SimulationResult | null>(null);
 
   const { confirmPaymentReturn, quotaAlert, dismissQuotaAlert } = useSubscription();
 
@@ -81,13 +120,8 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
     writeDashboardTabToUrl(tab);
   }, []);
 
-  const goToPricing = useCallback(() => {
-    navigateToTab("PRICING");
-  }, [navigateToTab]);
-
-  const goToHistory = useCallback(() => {
-    navigateToTab("HIST");
-  }, [navigateToTab]);
+  const goToPricing = useCallback(() => navigateToTab("PRICING"), [navigateToTab]);
+  const goToHistory = useCallback(() => navigateToTab("HIST"), [navigateToTab]);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -100,353 +134,192 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
       sessionStorage.setItem(PENDING_DEPOSIT_STORAGE_KEY, id);
       setBillingReturnStatus("pending");
       void confirmPaymentReturn(id).then((txStatus) => {
-        if (txStatus === "COMPLETED") {
-          setBillingReturnStatus("success");
-        } else if (txStatus === "FAILED") {
-          setBillingReturnStatus("failed");
-        } else {
-          setBillingReturnStatus("pending");
-        }
+        if (txStatus === "COMPLETED") setBillingReturnStatus("success");
+        else if (txStatus === "FAILED") setBillingReturnStatus("failed");
+        else setBillingReturnStatus("pending");
         localStorage.removeItem("regtech_pending_plan");
       });
     };
 
     if (billing === "return" || depositId) {
       navigateToTab("PRICING");
-      if (depositId) {
-        handlePaymentReturn(depositId);
-      } else if (status === "success" || status === "pending" || status === "failed") {
+      if (depositId) handlePaymentReturn(depositId);
+      else if (status === "success" || status === "pending" || status === "failed") {
         setBillingReturnStatus(status);
       }
     }
   }, [confirmPaymentReturn, navigateToTab]);
 
-  useEffect(() => {
-    const tick = () => {
-      setUtcClock(
-        new Date().toISOString().replace("T", " ").slice(0, 16) + " UTC",
-      );
-    };
-    tick();
-    const id = window.setInterval(tick, 60_000);
-    return () => window.clearInterval(id);
-  }, []);
-
-  const handleSimulationLogged = (result: SimulationResult) => {
-    setCurrentSelectedSimulation(result);
-  };
-
   return (
-    <div className={`platform-page min-h-screen flex flex-col md:flex-row font-sans transition-colors duration-300 ${platform.page(darkMode)}`} id="main_app_workspace">
-          {/* Mobile sidebar black overlay backdrop */}
+    <div
+      className={`platform-page min-h-screen flex flex-col md:flex-row font-sans transition-colors duration-300 ${platform.page(darkMode)}`}
+      id="main_app_workspace"
+    >
       {isMobileSidebarOpen && (
-        <div 
-          className={`fixed inset-0 ${platform.overlay} backdrop-blur-sm z-40 md:hidden animate-fadeIn`}
+        <div
+          className={`fixed inset-0 z-40 md:hidden ${platform.overlay} backdrop-blur-sm`}
           onClick={() => setIsMobileSidebarOpen(false)}
+          aria-hidden
         />
       )}
 
-      {/* Sidebar - Desktop persistent, Mobile toggleable drawer */}
-      <aside className={`
-        fixed inset-y-0 left-0 z-50 flex flex-col w-64 border-r transition-transform duration-300 transform shrink-0
-        md:translate-x-0 md:static md:h-screen md:sticky md:top-0
-        ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        ${platform.sidebar(darkMode)}
-      `} id="left_sidebar_panel">
-        
-        {/* Brand / Header inside sidebar */}
-        <div className={`p-4 border-b flex items-center justify-between ${platform.borderSubtle(darkMode)}`}>
-          <div className="flex items-center gap-2.5">
+      <aside
+        className={`
+          fixed inset-y-0 left-0 z-50 flex w-60 flex-col border-r transition-transform duration-300
+          md:static md:h-screen md:translate-x-0 md:sticky md:top-0
+          ${isMobileSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          ${platform.sidebar(darkMode)}
+        `}
+        id="left_sidebar_panel"
+      >
+        <div className={`flex items-center justify-between border-b px-5 py-4 ${platform.borderSubtle(darkMode)}`}>
+          <a href="#" className="flex items-center gap-2.5" onClick={(e) => e.preventDefault()}>
             <DynamicLogo size="sm" darkMode={darkMode} />
-            <div>
-              <div className="flex items-center gap-1">
-                <span className={`text-[9px] uppercase font-bold px-1 py-0.5 rounded border ${
-                    darkMode 
-                      ? "text-gray-400 bg-dark-secondary border-gray-700" 
-                      : "text-gray-600 bg-gray-100 border-gray-200"
-                }`}>
-                  RegTech
-                </span>
-              </div>
-              <h1 className={`text-xs sm:text-xs font-bold tracking-tight font-display ${platform.textPrimary(darkMode)}`}>
-                ZLECAf customs assistant
-              </h1>
-            </div>
-          </div>
-          
-          {/* Close button for mobile inside drawer */}
-          <button 
+            <span className={`font-bold text-base tracking-tight ${platform.textPrimary(darkMode)}`}>RegTech</span>
+            <span className="inline-block rounded-lg rounded-bl-none bg-primary-500/90 px-1.5 py-0.5 text-[10px] font-medium text-white">
+              AfCFTA
+            </span>
+          </a>
+          <button
+            type="button"
             onClick={() => setIsMobileSidebarOpen(false)}
-            className={`md:hidden p-1.5 rounded-lg transition-colors ${platform.buttonGhost(darkMode)}`}
+            className={`md:hidden rounded-full p-1.5 transition-colors ${platform.buttonGhost(darkMode)}`}
+            aria-label="Close menu"
           >
-            <X className="w-5 h-5" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Navigation list */}
-        <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-          <span className={`${platform.sectionLabel(darkMode)} block px-2 mb-2`}>
-            Navigation
-          </span>
-          
-          <button
-            onClick={() => navigateToTab("SIM")}
-            id="tab_simulator"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "SIM" 
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <Compass className="w-4 h-4 shrink-0" />
-            <span>Tariff simulator</span>
-          </button>
+        <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
+          {NAV_MAIN.map((item) => (
+            <NavButton
+              key={item.tab}
+              active={activeTab === item.tab}
+              darkMode={darkMode}
+              id={item.id}
+              icon={item.icon}
+              label={item.label}
+              onClick={() => navigateToTab(item.tab)}
+            />
+          ))}
 
-          <button
-            onClick={() => navigateToTab("IA")}
-            id="tab_ai_classifier"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "IA" 
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <Sparkles className="w-4 h-4 shrink-0" />
-            <span>HS classification</span>
-          </button>
+          <div className={`my-4 border-t ${platform.borderSubtle(darkMode)}`} />
 
-          <button
-            onClick={() => navigateToTab("AFT")}
-            id="tab_afcfta_rules"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "AFT" 
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <Scale className="w-4 h-4 shrink-0" />
-            <span>ZLECAf trade zone</span>
-          </button>
+          {NAV_CAMEROON.map((item) => (
+            <NavButton
+              key={item.tab}
+              active={activeTab === item.tab}
+              darkMode={darkMode}
+              id={item.id}
+              icon={item.icon}
+              label={item.label}
+              onClick={() => navigateToTab(item.tab)}
+            />
+          ))}
 
-          <button
-            onClick={() => navigateToTab("CSV")}
-            id="tab_batch_csv"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "CSV" 
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <Table className="w-4 h-4 shrink-0" />
-            <span>Batch processing</span>
-          </button>
+          <div className={`my-4 border-t ${platform.borderSubtle(darkMode)}`} />
 
-          <button
-            onClick={() => navigateToTab("HIST")}
-            id="tab_history"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "HIST"
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <History className="w-4 h-4 shrink-0" />
-            <span>History</span>
-          </button>
-
-          <span className={`${platform.sectionLabel(darkMode)} block px-2 mb-2 mt-4`}>
-            Cameroon
-          </span>
-
-          <button
-            onClick={() => navigateToTab("CMR")}
-            id="tab_cameroon_fiscal"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "CMR"
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <Landmark className="w-4 h-4 shrink-0" />
-            <span>Cameroon taxation</span>
-          </button>
-
-          <button
-            onClick={() => navigateToTab("CHECKLIST")}
-            id="tab_checklist"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "CHECKLIST"
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <ClipboardList className="w-4 h-4 shrink-0" />
-            <span>Import checklist</span>
-          </button>
-
-          <span className={`${platform.sectionLabel(darkMode)} block px-2 mb-2 mt-4`}>
-            Monetization
-          </span>
-
-          <button
-            onClick={() => navigateToTab("PRICING")}
+          <NavButton
+            active={activeTab === "PRICING"}
+            darkMode={darkMode}
             id="tab_pricing"
-            className={`w-full flex items-center gap-3 px-3 py-2 text-xs font-semibold rounded-lg transition-colors ${
-              activeTab === "PRICING"
-                ? platform.navActive
-                : platform.navInactive(darkMode)
-            }`}
-          >
-            <CreditCard className="w-4 h-4 shrink-0" />
-            <span>Subscriptions</span>
-          </button>
-
+            icon={CreditCard}
+            label="Pricing"
+            onClick={() => navigateToTab("PRICING")}
+          />
         </nav>
-
-        {/* Sidebar Footer with Clock, System State & Theme Toggle */}
-        <div className={`p-4 border-t space-y-3 ${platform.border(darkMode)}`}>
-          <div className="flex items-center justify-between">
-            <span className={`${platform.sectionLabel(darkMode)}`}>Theme</span>
-            <button
-              onClick={toggleDarkMode}
-              id="btn_toggle_theme"
-              className={`p-1.5 rounded-lg border transition-colors ${platform.buttonGhost(darkMode)}`}
-              title="Change theme"
-            >
-              {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
-            </button>
-          </div>
-
-          <div className={`text-[10px] font-mono px-2 py-1 rounded border text-center ${platform.textMuted(darkMode)} ${platform.cardNested(darkMode)}`} id="clock_time_utc">
-            {utcClock}
-          </div>
-
-          <div className={`flex font-mono text-[10px] items-center justify-center gap-1.5 px-2 py-1 rounded border ${
-            apiOnline
-              ? darkMode
-                ? `${platform.success(darkMode)} ${platform.cardNested(darkMode)}`
-                : "text-primary-700 bg-primary-50 border-primary-100"
-              : darkMode
-                ? "text-rose-400 bg-dark-secondary border-rose-500/20"
-                : "text-rose-700 bg-rose-50 border-rose-200"
-          }`}>
-            <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${apiOnline ? "bg-primary-500" : "bg-rose-500"}`} />
-            <span>{apiOnline ? "API connected" : "API unavailable"}</span>
-          </div>
-        </div>
       </aside>
 
-      {/* Main Viewport Content Block */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-        
-        {/* Unified Top Header Bar - fixe sur mobile, sticky sur desktop */}
+      <div className="flex h-screen min-w-0 flex-1 flex-col overflow-hidden">
         <header
-          className={`flex h-16 shrink-0 items-center justify-between border-b px-4 sm:px-6 transition-colors duration-300
-            fixed top-0 left-0 right-0 z-40 backdrop-blur
-            md:relative md:sticky md:top-0 md:left-auto md:right-auto
-            ${platform.header(darkMode)}`}
+          className={`fixed top-0 right-0 left-0 z-40 flex h-14 shrink-0 items-center justify-between border-b px-5 sm:px-7 md:relative md:sticky md:top-0 ${platform.header(darkMode)}`}
         >
-          <div className="flex items-center gap-3">
-            {/* Hamburger button - only on mobile */}
-            <button 
-              onClick={() => setIsMobileSidebarOpen(true)}
-              className={`md:hidden p-1.5 rounded-lg ${platform.textMuted(darkMode)} hover:text-primary-500 focus:outline-none`}
-              id="mobile_hamburger_menu"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <div className="flex items-center gap-2">
-              <DynamicLogo size="sm" darkMode={darkMode} className="hidden sm:flex" />
-              <span className={`font-bold text-sm sm:text-base tracking-tight font-display transition-colors ${platform.textPrimary(darkMode)}`}>
-                ZLECAf customs assistant
-              </span>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={() => setIsMobileSidebarOpen(true)}
+            className={`rounded-full p-2 md:hidden ${platform.textMuted(darkMode)} hover:text-primary-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40`}
+            id="mobile_hamburger_menu"
+            aria-label="Open menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+
+          <div className="hidden flex-1 md:block" aria-hidden />
 
           <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={toggleDarkMode}
+              className={`rounded-full border p-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500/40 ${platform.buttonGhost(darkMode)}`}
+              aria-label="Change theme"
+              id="btn_toggle_theme"
+            >
+              {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
             <PlanBadge onClick={goToPricing} darkMode={darkMode} />
             <ClerkAuthButton />
           </div>
         </header>
 
-        <div className="flex min-h-0 flex-1 flex-col pt-16 md:pt-0">
-        <ApiStatusBanner darkMode={darkMode} />
+        <div className="flex min-h-0 flex-1 flex-col pt-14 md:pt-0">
+          <ApiStatusBanner darkMode={darkMode} />
 
-        <main className="flex-1 overflow-y-auto py-8 px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className={`border rounded-lg p-6 relative overflow-hidden transition-all ${platform.hero(darkMode)}`}>
-            <h2 className={`text-xl font-bold tracking-tight font-display mb-1.5 ${platform.heroTitle(darkMode)}`}>
-              AfCFTA customs assistant
-            </h2>
-            <p className={`text-xs leading-relaxed max-w-4xl ${platform.heroSubtitle(darkMode)}`}>
-              Estimate duties and taxes, check AfCFTA eligibility, classify your products, and compare multiple destinations — in a single workspace.
-            </p>
-          </div>
+          <main className={platform.main}>
+            <div className={platform.content} id="active_workspace_canvas">
+              {activeTab === "SIM" && (
+                <SimulatorPage
+                  darkMode={darkMode}
+                  initialHSCode={passedHSCode}
+                  initialProductDesc={passedDesc}
+                  selectedSimulation={currentSelectedSimulation}
+                  onSimulationRun={setCurrentSelectedSimulation}
+                  onUpgrade={goToPricing}
+                  onOpenHistory={goToHistory}
+                />
+              )}
 
-          {/* Active Canvas Frame */}
-          <div id="active_workspace_canvas">
-          {activeTab === "SIM" && (
-            <SimulatorPage
-              darkMode={darkMode}
-              initialHSCode={passedHSCode}
-              initialProductDesc={passedDesc}
-              selectedSimulation={currentSelectedSimulation}
-              onSimulationRun={handleSimulationLogged}
-              onUpgrade={goToPricing}
-              onOpenHistory={goToHistory}
-            />
-          )}
+              {activeTab === "IA" && (
+                <ClassifierPage
+                  darkMode={darkMode}
+                  onSelectHSCode={(code, desc) => {
+                    setPassedHSCode(code);
+                    setPassedDesc(desc);
+                    navigateToTab("SIM");
+                  }}
+                  onUpgrade={goToPricing}
+                />
+              )}
 
-          {activeTab === "IA" && (
-            <ClassifierPage
-              darkMode={darkMode}
-              onSelectHSCode={(code, desc) => {
-                setPassedHSCode(code);
-                setPassedDesc(desc);
-                navigateToTab("SIM");
-              }}
-              onUpgrade={goToPricing}
-            />
-          )}
+              {activeTab === "AFT" && (
+                <AfcftaPage
+                  countries={countries}
+                  products={products}
+                  refLoading={refLoading}
+                  darkMode={darkMode}
+                />
+              )}
 
-          {activeTab === "AFT" && (
-            <AfcftaPage
-              countries={countries}
-              products={products}
-              refLoading={refLoading}
-              darkMode={darkMode}
-            />
-          )}
+              {activeTab === "CSV" && <BatchPage darkMode={darkMode} onUpgrade={goToPricing} />}
 
-          {activeTab === "CSV" && (
-            <BatchPage darkMode={darkMode} onUpgrade={goToPricing} />
-          )}
+              {activeTab === "HIST" && <HistoryPage darkMode={darkMode} />}
 
-          {activeTab === "HIST" && (
-            <HistoryPage darkMode={darkMode} />
-          )}
+              {activeTab === "CMR" && <CameroonPage darkMode={darkMode} />}
 
-          {activeTab === "CMR" && (
-            <CameroonPage darkMode={darkMode} />
-          )}
+              {activeTab === "PRICING" && (
+                <PricingPage darkMode={darkMode} returnStatus={billingReturnStatus} />
+              )}
 
-          {activeTab === "PRICING" && (
-            <PricingPage darkMode={darkMode} returnStatus={billingReturnStatus} />
-          )}
+              {activeTab === "CHECKLIST" && (
+                <CameroonChecklist darkMode={darkMode} onUpgrade={goToPricing} />
+              )}
+            </div>
+          </main>
 
-          {activeTab === "CHECKLIST" && (
-            <CameroonChecklist darkMode={darkMode} onUpgrade={goToPricing} />
-          )}
+          <footer className={`shrink-0 border-t py-4 text-center text-xs ${platform.footer(darkMode)}`}>
+            <div className="px-5 sm:px-7">&copy; 2026 RegTech</div>
+          </footer>
         </div>
-      </main>
-
-      <footer className={`border-t py-3 shrink-0 leading-relaxed text-[10px] ${platform.footer(darkMode)}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center font-sans">
-          &copy; 2026 RegTech — AfCFTA customs assistant. All rights reserved.
-        </div>
-      </footer>
-
       </div>
-      </div> {/* viewport wrapper */}
 
       <QuotaToast
         alert={quotaAlert}

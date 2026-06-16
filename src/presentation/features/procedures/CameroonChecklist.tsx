@@ -7,6 +7,7 @@ import {
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { getPlanById } from "@/domain/billing/plans";
 import { UpgradeRequiredPanel } from "@/presentation/features/billing/UpgradeRequiredPanel";
+import { platform } from "@/presentation/theme/platformStyles";
 
 const STORAGE_KEY = "regtech_checklist_cm_v1";
 
@@ -51,20 +52,14 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
   };
 
   return (
-    <div className="space-y-6 animate-fadeIn" id="checklist_cameroon_page">
-      <div
-        className={`rounded-xl border p-5 ${
-          darkMode ? "bg-dark-primary border-gray-800" : "bg-white border-gray-200 shadow-sm"
-        }`}
-      >
+    <div className="animate-fadeIn space-y-8" id="checklist_cameroon_page">
+      <div className={`${platform.panel(darkMode)} ${platform.panelPadding}`}>
         <div className="flex items-start gap-3">
           <ClipboardList className="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h2 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Cameroon import checklist
-            </h2>
-            <p className={`text-xs mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              e-GUCE / CAMCIS journey — 12 steps to guide your SME through import.
+            <h2 className={platform.pageTitle(darkMode)}>Cameroon import checklist</h2>
+            <p className={platform.pageSubtitle(darkMode)}>
+              e-GUCE / CAMCIS journey — 12 steps for your import.
             </p>
             <div className="mt-4">
               <div className="flex justify-between text-[10px] font-mono mb-1">
@@ -88,7 +83,7 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
           return (
             <li
               key={step.id}
-              className={`rounded-lg border p-4 transition-colors ${
+              className={`rounded-2xl border p-4 transition-colors ${
                 isDone
                   ? darkMode
                     ? "border-primary-500/30 bg-primary-950/20"

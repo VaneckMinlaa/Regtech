@@ -11,10 +11,10 @@ export function ApiStatusBanner({ darkMode }: ApiStatusBannerProps) {
   if (isLoading) {
     return (
       <div
-        className={`flex items-center gap-2 px-4 py-2 text-xs border-b ${
+        className={`flex items-center gap-2 px-5 py-2 text-xs border-b ${
           darkMode
-            ? "bg-dark-primary border-gray-800 text-gray-400"
-            : "bg-gray-50 border-gray-200 text-gray-600"
+            ? "bg-dark-primary/80 border-gray-800 text-gray-400"
+            : "bg-white/90 border-gray-100 text-gray-600"
         }`}
       >
         <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -26,10 +26,10 @@ export function ApiStatusBanner({ darkMode }: ApiStatusBannerProps) {
   if (productsLoading) {
     return (
       <div
-        className={`flex items-center gap-2 px-4 py-2 text-xs border-b ${
+        className={`flex items-center gap-2 px-5 py-2 text-xs border-b ${
           darkMode
-            ? "bg-dark-primary border-gray-800 text-gray-400"
-            : "bg-gray-50 border-gray-200 text-gray-600"
+            ? "bg-dark-primary/80 border-gray-800 text-gray-400"
+            : "bg-white/90 border-gray-100 text-gray-600"
         }`}
       >
         <RefreshCw className="w-3.5 h-3.5 animate-spin" />

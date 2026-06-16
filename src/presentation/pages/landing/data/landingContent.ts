@@ -15,7 +15,7 @@ export const CORE_FEATURES = [
   {
     title: "Smart rules of origin",
     description:
-      "Check ZLECAf eligibility and the local value-added threshold for your products.",
+      "Check AfCFTA eligibility and the local value-added threshold for your products.",
     iconUrl: bulbIcon,
   },
   {
@@ -65,7 +65,7 @@ export const TOOL_TABS = [
   },
   {
     id: "afcfta",
-    label: "ZLECAf rules",
+    label: "AfCFTA rules",
     lightImage: "/landing/tab-image/tab-image-3.jpg",
     darkImage: "/landing/tab-image/tab-image-3-dark.jpg",
     title: "Check preferential eligibility",

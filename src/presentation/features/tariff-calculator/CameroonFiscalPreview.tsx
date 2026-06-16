@@ -146,7 +146,7 @@ export function CameroonFiscalPreview({
           <p className={`text-[10px] mt-2 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
             ~{data.totalEstimatedCostPctCif.toFixed(0)} % de la valeur CIF
             {data.zlecafAppliedRate != null && (
-              <> · ZLECAf { (data.zlecafAppliedRate * 100).toFixed(1)}%</>
+              <> · AfCFTA {(data.zlecafAppliedRate * 100).toFixed(1)}%</>
             )}
           </p>
           {data.disclaimer && (

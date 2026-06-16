@@ -2,6 +2,7 @@ import React from "react";
 import { Zap, ArrowRight } from "lucide-react";
 import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { getPlanById } from "@/domain/billing/plans";
+import { platform } from "@/presentation/theme/platformStyles";
 
 interface QuotaBannerProps {
   darkMode?: boolean;
@@ -22,7 +23,7 @@ export function QuotaBanner({ darkMode = true, onUpgrade }: QuotaBannerProps) {
 
   return (
     <div
-      className={`flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border px-4 py-3 ${
+      className={`flex flex-col justify-between gap-3 rounded-2xl border px-5 py-4 sm:flex-row sm:items-center ${
         lowQuota
           ? darkMode
             ? "border-rose-500/30 bg-rose-950/20"
@@ -62,7 +63,7 @@ export function QuotaBanner({ darkMode = true, onUpgrade }: QuotaBannerProps) {
         <button
           type="button"
           onClick={onUpgrade}
-          className="inline-flex items-center gap-1.5 self-start sm:self-center px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-500 text-white text-xs font-bold transition-colors"
+          className={`${platform.buttonPrimary} gap-1.5 self-start px-4 py-2 text-xs sm:self-center`}
           id="btn_quota_upgrade"
         >
           View plans

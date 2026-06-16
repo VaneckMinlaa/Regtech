@@ -14,6 +14,7 @@ import type {
   PhoneImportPackResponse,
   PortFeesResponse,
 } from "@/infrastructure/http/regtechApiTypes";
+import { platform } from "@/presentation/theme/platformStyles";
 
 type ToolTab = "port" | "camcis" | "phones" | "landed";
 
@@ -44,15 +45,11 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
   const [origin, setOrigin] = useState("CHN");
   const [landedResult, setLandedResult] = useState<LandedCostResponse | null>(null);
 
-  const cardClass = `rounded-xl border p-5 ${
-    darkMode ? "bg-dark-primary border-gray-800" : "bg-white border-gray-200 shadow-sm"
-  }`;
-  const inputClass = `w-full rounded px-2 py-1.5 text-xs font-mono ${
-    darkMode ? "bg-dark-secondary border-gray-800 text-gray-100" : "bg-white border-gray-300"
-  }`;
+  const cardClass = `${platform.panel(darkMode)} ${platform.panelPadding}`;
+  const inputClass = platform.input(darkMode);
   const tabClass = (active: boolean) =>
-    `px-3 py-1.5 rounded-md text-[10px] font-bold ${
-      active ? "bg-primary-500 text-white" : darkMode ? "text-gray-400" : "text-gray-600"
+    `rounded-full px-4 py-2 text-xs font-medium transition-colors ${
+      active ? platform.navActive(darkMode) : platform.navInactive(darkMode)
     }`;
 
   const run = async (fn: () => Promise<void>) => {
@@ -122,7 +119,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
                 setPortResult(await regtechApi.estimatePortFees({ port, containerType }));
               })
             }
-            className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
+            className={`${platform.buttonPrimary} px-4 py-2 text-xs`}
           >
             {loading ? <Loader2 className="w-4 h-4 animate-spin inline" /> : "Estimate port fees"}
           </button>
@@ -166,7 +163,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
                 setCamcisResult(await regtechApi.suggestCamcisRegime({ nature, valueLocal }));
               })
             }
-            className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
+            className={`${platform.buttonPrimary} px-4 py-2 text-xs`}
           >
             Suggest CAMCIS regime
           </button>
@@ -208,7 +205,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
                 }));
               })
             }
-            className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
+            className={`${platform.buttonPrimary} px-4 py-2 text-xs`}
           >
             Phone import pack 2026
           </button>
@@ -258,7 +255,7 @@ export function CameroonApiTools({ darkMode = true }: CameroonApiToolsProps) {
                 }));
               })
             }
-            className="py-2 px-4 rounded-lg text-xs font-bold bg-primary-500 text-white"
+            className={`${platform.buttonPrimary} px-4 py-2 text-xs`}
           >
             Calculer landed cost
           </button>
