@@ -18,7 +18,6 @@ import { useSubscription } from "@/presentation/providers/SubscriptionProvider";
 import { formatPlanAmount } from "./formatPlanAmount";
 import { SubscriptionOverview } from "./SubscriptionOverview";
 import { SubscriptionPageSkeleton } from "./SubscriptionPageSkeleton";
-import { ReferenceVersionsFooter } from "./ReferenceVersionsFooter";
 import { platform } from "@/presentation/theme/platformStyles";
 
 interface PricingPageProps {
@@ -342,8 +341,6 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
             API docs <ExternalLink className="w-3 h-3" />
           </a>
         </div>
-
-        <ReferenceVersionsFooter darkMode={darkMode} />
       </div>
     </div>
   );

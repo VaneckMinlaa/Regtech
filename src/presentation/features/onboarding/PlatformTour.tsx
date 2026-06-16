@@ -88,8 +88,6 @@ function TourCard({
       style={style}
       id="platform_tour_card"
     >
-      <div className="h-1 bg-gradient-to-r from-primary-600 via-primary-500 to-primary-400" aria-hidden />
-
       <div className="p-5">
       <div className="mb-4 flex items-start justify-between gap-3">
         <div>
@@ -116,7 +114,7 @@ function TourCard({
         <ul className={`mt-4 space-y-2 text-sm ${platform.textMuted(darkMode)}`}>
           {step.tips.map((tip) => (
             <li key={tip} className="flex gap-2">
-              <span className="text-primary-500" aria-hidden>
+              <span className={platform.textMuted(darkMode)} aria-hidden>
                 •
               </span>
               <span>{tip}</span>
@@ -161,7 +159,7 @@ function TourCard({
             key={i}
             className={`h-1.5 rounded-full transition-all ${
               i === stepIndex
-                ? "w-6 bg-primary-500"
+                ? `w-6 ${darkMode ? "bg-gray-300" : "bg-gray-700"}`
                 : `w-1.5 ${darkMode ? "bg-gray-600" : "bg-gray-300"}`
             }`}
             aria-hidden
@@ -267,20 +265,6 @@ export function PlatformTour({
         onClick={() => onClose()}
         aria-hidden
       />
-
-      {rect && (
-        <div
-          className="pointer-events-none absolute rounded-xl ring-4 ring-primary-500 transition-all duration-300"
-          style={{
-            left: rect.left - 4,
-            top: rect.top - 4,
-            width: rect.width + 8,
-            height: rect.height + 8,
-            zIndex: 115,
-          }}
-          aria-hidden
-        />
-      )}
 
       <TourCard
         step={step}

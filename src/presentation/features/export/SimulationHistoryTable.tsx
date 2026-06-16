@@ -38,7 +38,7 @@ interface SimulationHistoryTableProps {
   onRefresh: () => void;
 }
 
-const PAGE_SIZES = [10, 25, 50] as const;
+const PAGE_SIZES = [5, 10, 25, 50] as const;
 
 function statusOf(sim: SimulationResult): StatusFilter {
   if (sim.sensitiveExclusion) return "excluded";
@@ -126,7 +126,7 @@ export function SimulationHistoryTable({
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("date");
   const [sortOpen, setSortOpen] = useState(false);
-  const [pageSize, setPageSize] = useState<(typeof PAGE_SIZES)[number]>(25);
+  const [pageSize, setPageSize] = useState<(typeof PAGE_SIZES)[number]>(5);
   const [page, setPage] = useState(0);
   const [checked, setChecked] = useState<Set<string>>(new Set());
 

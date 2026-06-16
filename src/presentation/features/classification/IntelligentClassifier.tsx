@@ -117,10 +117,10 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
   }
 
   return (
-    <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-2" id="ai_classification_panel">
-      <SectionPanel darkMode={darkMode} id="classifier_input_panel">
-        <div className="space-y-4">
-          <div>
+    <div className="grid grid-cols-1 items-stretch gap-5 lg:grid-cols-2" id="ai_classification_panel">
+      <SectionPanel darkMode={darkMode} id="classifier_input_panel" className="flex h-full flex-col">
+        <div className="flex h-full flex-col space-y-4">
+          <div className="flex min-h-0 flex-1 flex-col">
             <label className={`text-[11px] font-bold uppercase tracking-wider block mb-1.5 ${
               darkMode ? "text-gray-400" : "text-gray-500"
             }`}>
@@ -131,7 +131,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
               rows={4}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className={`${platform.input(darkMode)} resize-y min-h-[100px]`}
+              className={`${platform.input(darkMode)} min-h-[100px] flex-1 resize-y`}
               placeholder="Ex: import of 50 i7 core laptop computers with accessories for resale..."
             />
           </div>
@@ -164,8 +164,8 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
         </div>
       </SectionPanel>
 
-      <SectionPanel darkMode={darkMode} id="classifier_results_panel">
-        <div className="space-y-4 min-h-[280px]">
+      <SectionPanel darkMode={darkMode} id="classifier_results_panel" className="flex h-full flex-col">
+        <div className="flex h-full flex-col space-y-4">
             {isLoading ? (
               <ClassifierResultSkeleton darkMode={darkMode} />
             ) : result ? (
@@ -317,7 +317,7 @@ export const IntelligentClassifier: React.FC<IntelligentClassifierProps> = ({
                 )}
               </div>
             ) : (
-              <p className={`py-12 text-center text-sm ${platform.textMuted(darkMode)}`}>
+              <p className={`flex flex-1 items-center justify-center py-12 text-center text-sm ${platform.textMuted(darkMode)}`}>
                 Enter a product description and run classification.
               </p>
             )}
