@@ -27,7 +27,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
   }, [subscription.plan]);
 
   const periodEndLabel = subscription.periodEnd
-    ? new Date(subscription.periodEnd).toLocaleDateString("fr-FR", {
+    ? new Date(subscription.periodEnd).toLocaleDateString("en-US", {
         day: "numeric",
         month: "long",
         year: "numeric",
@@ -40,7 +40,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
         {returnStatus === "pending" && (
           <div className="mb-4 flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2">
             <AlertCircle className="w-4 h-4" />
-            Paiement en cours de validation…
+            Payment pending…
           </div>
         )}
         <SubscriptionOverviewSkeleton darkMode={darkMode} />
@@ -58,26 +58,26 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
       {returnStatus === "success" && (
         <div className="mb-4 flex items-center gap-2 text-xs text-primary-400 bg-primary-950/40 border border-primary-500/30 rounded-lg px-3 py-2">
           <CheckCircle2 className="w-4 h-4" />
-          Paiement confirmé — votre plan est actif.
+          Payment confirmed — your plan is active.
         </div>
       )}
       {returnStatus === "pending" && (
         <div className="mb-4 flex items-center gap-2 text-xs text-amber-300 bg-amber-950/40 border border-amber-500/30 rounded-lg px-3 py-2">
           <AlertCircle className="w-4 h-4" />
-          Paiement en cours de validation…
+          Payment pending…
         </div>
       )}
       {returnStatus === "failed" && (
         <div className="mb-4 flex items-center gap-2 text-xs text-rose-300 bg-rose-950/40 border border-rose-500/30 rounded-lg px-3 py-2">
           <AlertCircle className="w-4 h-4" />
-          Le paiement n&apos;a pas pu être confirmé. Réessayez ou contactez le support.
+          Payment could not be confirmed. Please try again or contact support.
         </div>
       )}
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <p className={`text-[10px] uppercase font-bold tracking-wider ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-            Abonnement actuel
+            Current subscription
           </p>
           <h2 className={`text-xl font-bold font-display mt-1 ${darkMode ? "text-white" : "text-gray-900"}`}>
             Plan {plan.name}
@@ -103,7 +103,7 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
           {periodEndLabel && (
             <div className="flex items-center gap-2">
               <Calendar className="w-3.5 h-3.5 text-primary-500" />
-              <span>Renouvellement {periodEndLabel}</span>
+              <span>Renewal {periodEndLabel}</span>
             </div>
           )}
         </div>
@@ -133,21 +133,21 @@ export function SubscriptionOverview({ darkMode = true, returnStatus }: Subscrip
             <BarChart3 className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
             <div>
               <p className="font-bold">{analytics.simulationsCount} simulations</p>
-              <p className={darkMode ? "text-gray-500" : "text-gray-500"}>ce mois</p>
+              <p className={darkMode ? "text-gray-500" : "text-gray-500"}>this month</p>
             </div>
           </div>
           <div>
             <p className="font-bold text-primary-400">
               {analytics.afcftaSavingsEstimateLocal.toLocaleString("fr-FR")} XAF
             </p>
-            <p className={darkMode ? "text-gray-500" : "text-gray-500"}>économies AfCFTA estimées</p>
+            <p className={darkMode ? "text-gray-500" : "text-gray-500"}>estimated AfCFTA savings</p>
           </div>
           <div>
             <p className="font-bold">
               {analytics.topCorridors[0]?.route ?? "—"}
             </p>
             <p className={darkMode ? "text-gray-500" : "text-gray-500"}>
-              corridor principal ({analytics.topCorridors[0]?.count ?? 0} sim.)
+              main corridor ({analytics.topCorridors[0]?.count ?? 0} sims.)
             </p>
           </div>
         </div>

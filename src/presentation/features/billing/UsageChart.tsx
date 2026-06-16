@@ -76,10 +76,10 @@ export function UsageChart({ yearMonth, points, darkMode = true }: UsageChartPro
       <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
         <div>
           <h3 className={`text-sm font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-            Votre usage
+            Your usage
           </h3>
           <p className={`text-[11px] mt-0.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-            Simulations cumulées — période {yearMonth}
+            Cumulative simulations — {yearMonth}
           </p>
         </div>
         <span
@@ -89,11 +89,11 @@ export function UsageChart({ yearMonth, points, darkMode = true }: UsageChartPro
               : "border-primary-200 text-primary-700 bg-primary-50"
           }`}
         >
-          Ce mois
+          This month
         </span>
       </div>
 
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" role="img" aria-label="Graphique d'usage">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" role="img" aria-label="Usage chart">
         {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
           const y = paddingTop + chartHeight * (1 - ratio);
           return (

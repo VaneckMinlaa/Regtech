@@ -199,7 +199,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <Compass className="w-4 h-4 shrink-0" />
-            <span>Simulateur tarifaire</span>
+            <span>Tariff simulator</span>
           </button>
 
           <button
@@ -212,7 +212,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <Sparkles className="w-4 h-4 shrink-0" />
-            <span>Classification HS</span>
+            <span>HS classification</span>
           </button>
 
           <button
@@ -225,7 +225,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <Scale className="w-4 h-4 shrink-0" />
-            <span>Zone d'Échanges ZLECAf</span>
+            <span>ZLECAf trade zone</span>
           </button>
 
           <button
@@ -238,7 +238,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <Table className="w-4 h-4 shrink-0" />
-            <span>Traitement par lot</span>
+            <span>Batch processing</span>
           </button>
 
           <button
@@ -251,11 +251,11 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <History className="w-4 h-4 shrink-0" />
-            <span>Historique</span>
+            <span>History</span>
           </button>
 
           <span className={`${platform.sectionLabel(darkMode)} block px-2 mb-2 mt-4`}>
-            Cameroun
+            Cameroon
           </span>
 
           <button
@@ -268,7 +268,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <Landmark className="w-4 h-4 shrink-0" />
-            <span>Fiscalité CM</span>
+            <span>Cameroon taxation</span>
           </button>
 
           <button
@@ -281,11 +281,11 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <ClipboardList className="w-4 h-4 shrink-0" />
-            <span>Checklist import</span>
+            <span>Import checklist</span>
           </button>
 
           <span className={`${platform.sectionLabel(darkMode)} block px-2 mb-2 mt-4`}>
-            Monétisation
+            Monetization
           </span>
 
           <button
@@ -298,7 +298,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
             }`}
           >
             <CreditCard className="w-4 h-4 shrink-0" />
-            <span>Abonnements</span>
+            <span>Subscriptions</span>
           </button>
 
         </nav>
@@ -306,12 +306,12 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
         {/* Sidebar Footer with Clock, System State & Theme Toggle */}
         <div className={`p-4 border-t space-y-3 ${platform.border(darkMode)}`}>
           <div className="flex items-center justify-between">
-            <span className={`${platform.sectionLabel(darkMode)}`}>Thème</span>
+            <span className={`${platform.sectionLabel(darkMode)}`}>Theme</span>
             <button
               onClick={toggleDarkMode}
               id="btn_toggle_theme"
               className={`p-1.5 rounded-lg border transition-colors ${platform.buttonGhost(darkMode)}`}
-              title="Changer de thème"
+              title="Change theme"
             >
               {darkMode ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
             </button>

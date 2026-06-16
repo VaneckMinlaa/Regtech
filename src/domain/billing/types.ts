@@ -44,6 +44,7 @@ export interface SubscriptionState {
 export interface CheckoutRequest {
   plan: Exclude<PlanId, "free" | "enterprise">;
   countryIso: string;
+  billingPeriod: "monthly" | "annual";
   msisdn?: string;
 }
 

@@ -36,14 +36,14 @@ export function UsageMeterCard({
         {unlimited ? used.toLocaleString("fr-FR") : remaining?.toLocaleString("fr-FR") ?? "0"}
         {!unlimited && (
           <span className={`text-sm font-normal ml-1 ${darkMode ? "text-gray-400" : "text-gray-500"}`}>
-            restant{remaining !== 1 ? "s" : ""}
+            remaining{remaining !== 1 ? "s" : ""}
           </span>
         )}
       </p>
       <p className={`text-[11px] mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-        {used.toLocaleString("fr-FR")} utilisé{used > 1 ? "s" : ""}
-        {!unlimited && ` · ${formatLimit(limit)} inclus / mois`}
-        {unlimited && " · illimité"}
+        {used.toLocaleString("fr-FR")} used{used > 1 ? "" : ""}
+        {!unlimited && ` · ${formatLimit(limit)} included / month`}
+        {unlimited && " · unlimited"}
       </p>
       {!unlimited && (
         <div className={`mt-3 h-1.5 rounded-full overflow-hidden ${darkMode ? "bg-gray-800" : "bg-gray-100"}`}>

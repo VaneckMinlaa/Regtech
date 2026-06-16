@@ -15,11 +15,10 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
       <div className="wrapper">
         <div className="max-w-2xl mx-auto mb-12 text-center">
           <h2 className="mb-3 font-bold text-center text-gray-800 text-3xl dark:text-white/90 md:text-title-lg">
-            Des offres adaptées à chaque étape de croissance
+            Offers tailored to every stage of growth
           </h2>
           <p className="max-w-xl mx-auto leading-6 text-gray-500 dark:text-gray-400">
-            Du plan gratuit à l&apos;offre Business, choisissez le niveau de quotas et de fonctionnalités
-            qui correspond à votre volume d&apos;opérations.
+            From the Free plan to the Business offer, choose the level of quotas and features that matches your operation volume.
           </p>
         </div>
 
@@ -32,7 +31,7 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                 !yearly ? "bg-gray-800 dark:bg-white/[0.05] text-white" : "text-gray-700 dark:text-gray-400"
               }`}
             >
-              Mensuel
+              Monthly
             </button>
             <button
               type="button"
@@ -41,7 +40,7 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                 yearly ? "bg-gray-800 dark:bg-white/[0.05] text-white" : "text-gray-700 dark:text-gray-400"
               }`}
             >
-              Annuel
+              Annual
               <span className="bg-orange-400 text-white text-xs px-2 py-0.5 rounded-full">−20 %</span>
             </button>
           </div>
@@ -64,17 +63,17 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                       <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-400">{plan.name}</h2>
                       {plan.highlighted && (
                         <span className="px-2 py-1 text-xs font-medium rounded-full dark:bg-primary-500/15 bg-primary-50 text-primary-500">
-                          Populaire
+                          Popular
                         </span>
                       )}
                     </div>
                     <p className="flex items-baseline mt-4">
                       <span className="text-4xl font-semibold text-gray-800 dark:text-white/90">
-                        {isFree ? "Gratuit" : formatLocalPrice(priceXaf, "XAF")}
+                        {isFree ? "Free" : formatLocalPrice(priceXaf, "XAF")}
                       </span>
                       {!isFree && (
                         <span className="ml-1 text-sm text-gray-500 dark:text-gray-400">
-                          /{yearly ? "an" : "mois"}
+                          /{yearly ? "year" : "month"}
                         </span>
                       )}
                     </p>
@@ -90,7 +89,7 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                             : "dark:hover:bg-primary-500 dark:bg-white/[0.03] hover:bg-gray-900 text-white bg-gray-700"
                       }`}
                     >
-                      {isFree ? "Essayer gratuitement" : "Choisir ce plan"}
+                      {isFree ? "Try it free" : "Choose this plan"}
                     </button>
                   </div>
                   <div className="px-8 pb-7">
@@ -98,13 +97,13 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                       <li className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
                         <p className="text-sm text-gray-800 dark:text-white/90">
-                          {plan.quotas.simulationsPerMonth ?? "∞"} simulations / mois
+                          {plan.quotas.simulationsPerMonth ?? "∞"} simulations / month
                         </p>
                       </li>
                       <li className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
                         <p className="text-sm text-gray-800 dark:text-white/90">
-                          {plan.quotas.classificationsPerMonth ?? "∞"} classifications IA
+                          {plan.quotas.classificationsPerMonth ?? "∞"} AI classifications
                         </p>
                       </li>
                       <li className="flex items-start gap-2">
@@ -116,7 +115,7 @@ export function PricingSection({ onGetStarted }: PricingSectionProps) {
                       <li className="flex items-start gap-2">
                         <Check className="w-4 h-4 text-primary-500 shrink-0 mt-0.5" />
                         <p className="text-sm text-gray-800 dark:text-white/90">
-                          {plan.quotas.checklist ? "Checklist Cameroun" : "—"}
+                          {plan.quotas.checklist ? "Cameroon checklist" : "—"}
                         </p>
                       </li>
                     </ul>

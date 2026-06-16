@@ -99,14 +99,14 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
     if (planId === "free" || planId === "enterprise") return;
     if (!selectedCountry.pawapaySupported) {
       setCheckoutError(
-        `${selectedCountry.name} n'est pas couvert par PawaPay. Choisissez un autre pays de facturation.`,
+        `${selectedCountry.name} is not covered by PawaPay. Choose another billing country.`,
       );
       return;
     }
     if (!checkoutAllowed) {
       setCheckoutError(
-        `Les paiements depuis ${selectedCountry.name} ne sont pas encore activés sur le compte marchand PawaPay. ` +
-          "Demandez l'activation du pays dans le dashboard PawaPay, ou choisissez un autre pays (ex. Cameroun, Ghana, Kenya).",
+        `Payments from ${selectedCountry.name} are not yet enabled on your PawaPay merchant account. ` +
+          "Request country enablement in the PawaPay dashboard, or pick another enabled country (e.g., Cameroon, Ghana, Kenya).",
       );
       return;
     }
@@ -117,12 +117,13 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
       const response = await startCheckout({
         plan: planId,
         countryIso: selectedCountry.code,
+        billingPeriod: yearly ? "annual" : "monthly",
       });
 
       localStorage.setItem("regtech_pending_plan", planId);
       window.location.href = response.paymentPageUrl;
     } catch (err) {
-      setCheckoutError(err instanceof Error ? err.message : "Erreur checkout");
+      setCheckoutError(err instanceof Error ? err.message : "Checkout error");
     } finally {
       setLoadingPlan(null);
     }
@@ -144,16 +145,16 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
           <div>
             <h2 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Offres RegTech
+              RegTech offers
             </h2>
             <p className={`text-xs mt-1 max-w-xl ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Paiement Mobile Money via <strong>PawaPay</strong> — 20 pays Afrique (MoMo).
+              Mobile Money payments via <strong>PawaPay</strong> — 20 African countries (MoMo).
             </p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <label className={`text-[10px] font-bold uppercase ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-              Pays de facturation
+              Billing country
             </label>
             <select
               value={billingCountry.code}
@@ -168,7 +169,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
               {billingCountries.map((c) => (
                 <option key={c.code} value={c.code}>
                   {c.name} ({c.currency})
-                  {c.checkoutEnabled === false ? " — activation requise" : ""}
+                  {c.checkoutEnabled === false ? " — activation required" : ""}
                 </option>
               ))}
             </select>
@@ -183,14 +184,14 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                 onClick={() => setYearly(false)}
                 className={`px-3 py-1.5 rounded-md ${!yearly ? "bg-primary-500 text-white" : darkMode ? "text-gray-400" : "text-gray-600"}`}
               >
-                Mensuel
+                Monthly
               </button>
               <button
                 type="button"
                 onClick={() => setYearly(true)}
                 className={`px-3 py-1.5 rounded-md ${yearly ? "bg-primary-500 text-white" : darkMode ? "text-gray-400" : "text-gray-600"}`}
               >
-                Annuel −20 %
+                Annual −20%
               </button>
             </div>
           </div>
@@ -202,17 +203,17 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
               darkMode ? "border-amber-500/30 bg-amber-950/30 text-amber-200" : "border-amber-200 bg-amber-50 text-amber-900"
             }`}
           >
-            {selectedCountry.name} n&apos;est pas encore activé sur le compte marchand PawaPay.
-            Activez ce pays dans le{" "}
+            {selectedCountry.name} is not yet enabled on your PawaPay merchant account.
+            Enable this country in the{" "}
             <a
               href="https://dashboard.pawapay.io/"
               target="_blank"
               rel="noreferrer"
               className="underline hover:text-primary-400"
             >
-              dashboard PawaPay
+              PawaPay dashboard
             </a>{" "}
-            (section Providers), ou choisissez un pays déjà activé.
+            (Providers section), or pick another enabled country.
           </div>
         )}
 
@@ -250,7 +251,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
               >
                 {isHighlighted && (
                   <span className="absolute -top-2.5 left-4 px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-primary-500 text-white">
-                    Populaire
+                    Popular
                   </span>
                 )}
                 <h3 className={`text-base font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
@@ -269,10 +270,10 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   ) : localAmount != null && apiPrice ? (
                     formatPlanAmount(localAmount, apiPrice.currency)
                   ) : (
-                    <span className="text-base font-semibold text-rose-400">Prix indisponible</span>
+                    <span className="text-base font-semibold text-rose-400">Price unavailable</span>
                   )}
                   <span className={`text-xs font-normal ml-1 ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                    /{yearly ? "an" : "mois"}
+                    /{yearly ? "year" : "month"}
                   </span>
                 </p>
                 <p className={`text-[10px] font-mono mt-1 ${darkMode ? "text-gray-500" : "text-gray-400"}`}>
@@ -282,11 +283,11 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                 <ul className={`mt-4 space-y-2 text-[11px] flex-1 ${darkMode ? "text-gray-300" : "text-gray-700"}`}>
                   <li className="flex gap-2">
                     <Check className="w-3.5 h-3.5 text-primary-500 shrink-0" />
-                    {plan.quotas.simulationsPerMonth ?? "∞"} simulations / mois
+                    {plan.quotas.simulationsPerMonth ?? "∞"} simulations / month
                   </li>
                   <li className="flex gap-2">
                     <Check className="w-3.5 h-3.5 text-primary-500 shrink-0" />
-                    {plan.quotas.classificationsPerMonth ?? "∞"} classifications IA
+                    {plan.quotas.classificationsPerMonth ?? "∞"} AI classifications
                   </li>
                   <li className="flex gap-2">
                     <Check className="w-3.5 h-3.5 text-primary-500 shrink-0" />
@@ -294,7 +295,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   </li>
                   <li className="flex gap-2">
                     <Check className="w-3.5 h-3.5 text-primary-500 shrink-0" />
-                    {plan.quotas.checklist ? "Checklist Cameroun" : "—"}
+                    {plan.quotas.checklist ? "Cameroon checklist" : "—"}
                   </li>
                 </ul>
 
@@ -316,11 +317,11 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
                   {loadingPlan === plan.id ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : isCurrent ? (
-                    "Plan actif"
+                    "Active plan"
                   ) : (
                     <>
                       <Smartphone className="w-4 h-4" />
-                      Payer en MoMo
+                      Pay via MoMo
                     </>
                   )}
                 </button>
@@ -333,10 +334,10 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
           className={`mt-6 flex flex-wrap gap-4 text-[10px] ${darkMode ? "text-gray-500" : "text-gray-500"}`}
         >
           <span className="inline-flex items-center gap-1">
-            <Globe className="w-3.5 h-3.5" /> 20 pays PawaPay
+            <Globe className="w-3.5 h-3.5" /> 20 PawaPay countries
           </span>
           <span className="inline-flex items-center gap-1">
-            <Shield className="w-3.5 h-3.5" /> Paiement sécurisé
+            <Shield className="w-3.5 h-3.5" /> Secure payment
           </span>
           <a
             href="https://docs.pawapay.io/"
@@ -344,7 +345,7 @@ export function PricingPage({ darkMode = true, returnStatus }: PricingPageProps)
             rel="noreferrer"
             className="inline-flex items-center gap-1 hover:text-primary-500"
           >
-            Docs API <ExternalLink className="w-3 h-3" />
+            API docs <ExternalLink className="w-3 h-3" />
           </a>
         </div>
 

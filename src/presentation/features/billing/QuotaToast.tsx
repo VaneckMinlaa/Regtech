@@ -61,7 +61,7 @@ export function QuotaToast({ alert, darkMode = true, onDismiss, onUpgrade }: Quo
                 className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-500 hover:bg-primary-600 text-white text-xs font-semibold transition-colors"
                 id="btn_quota_toast_upgrade"
               >
-                Voir les offres
+                View plans
                 <ArrowRight className="w-3.5 h-3.5" />
               </button>
             ) : null}
@@ -73,7 +73,7 @@ export function QuotaToast({ alert, darkMode = true, onDismiss, onUpgrade }: Quo
             className={`shrink-0 p-1 rounded-lg transition-colors ${
               darkMode ? "text-gray-400 hover:text-white hover:bg-white/10" : "text-gray-500 hover:text-gray-900 hover:bg-gray-100"
             }`}
-            aria-label="Fermer la notification"
+            aria-label="Close notification"
           >
             <X className="w-4 h-4" />
           </button>

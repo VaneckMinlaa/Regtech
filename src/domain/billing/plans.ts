@@ -75,7 +75,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "free",
     name: "Free",
-    description: "Découverte, étudiants",
+    description: "Discovery for students",
     priceXafMonthly: 0,
     priceXafYearly: 0,
     quotas: FREE_QUOTAS,
@@ -83,7 +83,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "starter",
     name: "Starter",
-    description: "Commerçant occasionnel",
+    description: "Occasional merchant",
     priceXafMonthly: PLAN_PRICES_XAF.starter,
     priceXafYearly: PLAN_PRICES_XAF_YEARLY.starter,
     quotas: {
@@ -101,7 +101,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "pro",
     name: "Pro",
-    description: "PME export / import",
+    description: "SME export / import",
     priceXafMonthly: PLAN_PRICES_XAF.pro,
     priceXafYearly: PLAN_PRICES_XAF_YEARLY.pro,
     highlighted: true,
@@ -120,7 +120,7 @@ export const PRICING_PLANS: PricingPlan[] = [
   {
     id: "business",
     name: "Business",
-    description: "Transitaire, API légère",
+    description: "Freight forwarder, lightweight API",
     priceXafMonthly: PLAN_PRICES_XAF.business,
     priceXafYearly: PLAN_PRICES_XAF_YEARLY.business,
     quotas: {

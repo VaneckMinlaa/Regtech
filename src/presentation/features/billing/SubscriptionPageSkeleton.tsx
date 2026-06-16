@@ -33,7 +33,7 @@ export function SubscriptionOverviewSkeleton({
       }`}
       id="subscription_overview_skeleton"
       aria-busy="true"
-      aria-label="Chargement de l'abonnement"
+      aria-label="Loading subscription"
     >
       <Block darkMode={darkMode} className="h-3 w-28 mb-3" />
       <Block darkMode={darkMode} className="h-7 w-40 mb-2" />

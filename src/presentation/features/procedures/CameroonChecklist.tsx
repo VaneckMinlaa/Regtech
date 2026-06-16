@@ -35,8 +35,8 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
   if (!plan.quotas.checklist) {
     return (
       <UpgradeRequiredPanel
-        feature="Checklist import Cameroun"
-        message="Disponible à partir du plan Starter. Paiement MoMo via PawaPay dans tous les pays couverts."
+        feature="Cameroon import checklist"
+        message="Available starting from the Starter plan. Pay via MoMo using PawaPay in all supported countries."
         darkMode={darkMode}
         onUpgrade={onUpgrade}
       />
@@ -61,14 +61,14 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
           <ClipboardList className="w-5 h-5 text-primary-500 shrink-0 mt-0.5" />
           <div className="flex-1">
             <h2 className={`text-lg font-bold font-display ${darkMode ? "text-white" : "text-gray-900"}`}>
-              Checklist import Cameroun
+              Cameroon import checklist
             </h2>
             <p className={`text-xs mt-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
-              Parcours e-GUCE / CAMCIS — 12 étapes pour guider votre PME à l&apos;import.
+              e-GUCE / CAMCIS journey — 12 steps to guide your SME through import.
             </p>
             <div className="mt-4">
               <div className="flex justify-between text-[10px] font-mono mb-1">
-                <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Progression</span>
+                <span className={darkMode ? "text-gray-400" : "text-gray-600"}>Progress</span>
                 <span className="text-primary-500">{progress}%</span>
               </div>
               <div className={`h-2 rounded-full overflow-hidden ${darkMode ? "bg-dark-secondary" : "bg-gray-100"}`}>
@@ -125,7 +125,7 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
                     {step.detail}
                   </p>
                   <p className={`text-[10px] mt-2 font-mono ${darkMode ? "text-gray-500" : "text-gray-500"}`}>
-                    Docs : {step.docs.join(" · ")} · ~{step.duration}
+                    Docs: {step.docs.join(" · ")} · ~{step.duration}
                   </p>
                   {"link" in step && step.link && (
                     <a
@@ -135,7 +135,7 @@ export function CameroonChecklist({ darkMode = true, onUpgrade }: CameroonCheckl
                       className="inline-flex items-center gap-1 text-[10px] text-primary-500 hover:underline mt-2"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      Ouvrir le portail <ExternalLink className="w-3 h-3" />
+                      Open portal <ExternalLink className="w-3 h-3" />
                     </a>
                   )}
                 </div>

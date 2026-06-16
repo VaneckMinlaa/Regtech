@@ -30,11 +30,11 @@ export function UpgradeRequiredPanel({
       </div>
       <div>
         <h3 className={`text-sm font-bold ${darkMode ? "text-white" : "text-gray-900"}`}>
-          Quota atteint — {feature}
+          Quota reached — {feature}
         </h3>
         <p className={`text-xs mt-2 max-w-sm mx-auto ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
           {message ??
-            "Passez à un plan supérieur pour continuer. Paiement Mobile Money via PawaPay dans tous les pays couverts."}
+            "Upgrade to a higher plan to continue. Mobile Money payments via PawaPay in all supported countries."}
         </p>
       </div>
       <button
@@ -42,7 +42,7 @@ export function UpgradeRequiredPanel({
         onClick={onUpgrade}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-500 hover:bg-primary-500 text-white text-xs font-bold"
       >
-        Choisir un plan
+      Choose a plan
         <ArrowRight className="w-4 h-4" />
       </button>
     </div>

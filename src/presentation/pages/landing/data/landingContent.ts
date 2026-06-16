@@ -7,39 +7,39 @@ import robotIcon from "../assets/robot.svg";
 
 export const CORE_FEATURES = [
   {
-    title: "Simulation tarifaire AfCFTA",
+    title: "AfCFTA tariff simulation",
     description:
-      "Estimez droits, TVA et taxes préférentielles en quelques clics selon l'origine et la destination.",
+      "Estimate duties, VAT, and preferential taxes in just a few clicks based on origin and destination.",
     iconUrl: pencilIcon,
   },
   {
-    title: "Règles d'origine intelligentes",
+    title: "Smart rules of origin",
     description:
-      "Vérifiez l'éligibilité ZLECAf et le seuil de valeur ajoutée locale pour vos produits.",
+      "Check ZLECAf eligibility and the local value-added threshold for your products.",
     iconUrl: bulbIcon,
   },
   {
-    title: "Classification HS assistée",
+    title: "AI-assisted HS classification",
     description:
-      "Identifiez le bon code douanier grâce à l'IA, avec un indice de confiance transparent.",
+      "Find the right customs code with AI, with a clear confidence indicator.",
     iconUrl: robotIcon,
   },
   {
-    title: "Comparaison multi-destinations",
+    title: "Multi-destination comparison",
     description:
-      "Comparez le coût fiscal de vos expéditions vers plusieurs pays africains en un seul écran.",
+      "Compare the fiscal cost of your shipments to multiple African countries on a single screen.",
     iconUrl: chatIcon,
   },
   {
-    title: "Exports et certificats pro-forma",
+    title: "Exports & pro-forma certificates",
     description:
-      "Générez des synthèses PDF et TXT prêtes à partager avec vos partenaires logistiques.",
+      "Generate PDF and TXT summaries ready to share with your logistics partners.",
     iconUrl: crownIcon,
   },
   {
-    title: "Traitement par lot",
+    title: "Batch processing",
     description:
-      "Importez vos catalogues CSV ou Excel pour simuler des centaines de lignes en une passe.",
+      "Import your CSV or Excel catalogs to simulate hundreds of lines in one run.",
     iconUrl: lightningIcon,
   },
 ];
@@ -47,81 +47,81 @@ export const CORE_FEATURES = [
 export const TOOL_TABS = [
   {
     id: "simulator",
-    label: "Simulateur tarifaire",
+    label: "Tariff simulator",
     lightImage: "/landing/tab-image/tab-image-1.jpg",
     darkImage: "/landing/tab-image/tab-image-1-dark.jpg",
-    title: "Le moyen le plus simple d'estimer vos droits",
+    title: "The easiest way to estimate your duties",
     description:
-      "Saisissez origine, destination, valeur et code HS pour obtenir une ventilation claire des taxes applicables.",
+      "Enter origin, destination, value, and HS code to get a clear breakdown of applicable taxes.",
   },
   {
     id: "classifier",
-    label: "Classification HS",
+    label: "HS classification",
     lightImage: "/landing/tab-image/tab-image-2.jpg",
     darkImage: "/landing/tab-image/tab-image-2-dark.jpg",
-    title: "Classifiez vos produits avec l'IA",
+    title: "Classify your products with AI",
     description:
-      "Décrivez votre marchandise en langage naturel et obtenez une proposition de nomenclature harmonisée.",
+      "Describe your goods in natural language and get a proposal for the harmonized classification.",
   },
   {
     id: "afcfta",
-    label: "Règles ZLECAf",
+    label: "ZLECAf rules",
     lightImage: "/landing/tab-image/tab-image-3.jpg",
     darkImage: "/landing/tab-image/tab-image-3-dark.jpg",
-    title: "Vérifiez l'éligibilité préférentielle",
+    title: "Check preferential eligibility",
     description:
-      "Analysez les calendiers de démantèlement tarifaire et les exclusions sensibles par année.",
+      "Analyze tariff dismantling schedules and sensitive exclusions by year.",
   },
   {
     id: "batch",
-    label: "Traitement par lot",
+    label: "Batch processing",
     lightImage: "/landing/tab-image/tab-image-4.jpg",
     darkImage: "/landing/tab-image/tab-image-4-dark.jpg",
-    title: "Traitez vos catalogues en masse",
+    title: "Process your catalogs in bulk",
     description:
-      "Chargez un fichier structuré et lancez des simulations groupées pour toute votre gamme produits.",
+      "Upload a structured file and run grouped simulations for your entire product range.",
   },
   {
     id: "checklist",
-    label: "Checklist Cameroun",
+    label: "Cameroon import checklist",
     lightImage: "/landing/tab-image/tab-image-5.jpg",
     darkImage: "/landing/tab-image/tab-image-5-dark.jpg",
-    title: "Guidez vos imports étape par étape",
+    title: "Guide your imports step by step",
     description:
-      "Suivez le parcours e-GUCE / CAMCIS avec une checklist interactive adaptée aux PME.",
+      "Follow the e-GUCE / CAMCIS journey with an interactive checklist built for SMEs.",
   },
 ];
 
 export const FAQ_ITEMS = [
   {
     id: 1,
-    question: "RegTech remplace-t-il CAMCIS ou SIMPA ?",
+    question: "Does RegTech replace CAMCIS or SIMPA?",
     answer:
-      "Non. RegTech fournit des estimations et des analyses d'aide à la décision. Seule la liquidation effectuée sur les systèmes douaniers officiels fait foi.",
+      "No. RegTech provides estimates and decision-support analysis. Only the final settlement performed on official customs systems is authoritative.",
   },
   {
     id: 2,
-    question: "Quels pays sont couverts ?",
+    question: "Which countries are covered?",
     answer:
-      "La plateforme couvre les marchés AfCFTA avec des données de référence multi-pays, des comparaisons multi-destinations et un module fiscal dédié au Cameroun.",
+      "The platform covers AfCFTA markets with multi-country reference data, multi-destination comparisons, and a dedicated tax module for Cameroon.",
   },
   {
     id: 3,
-    question: "Puis-je changer de plan à tout moment ?",
+    question: "Can I change my plan at any time?",
     answer:
-      "Oui. Vous pouvez passer à un plan supérieur depuis l'espace Abonnements. Le paiement Mobile Money via PawaPay est disponible dans les pays couverts.",
+      "Yes. You can upgrade from the Subscriptions area. Mobile Money payments via PawaPay are available in supported countries.",
   },
   {
     id: 4,
-    question: "Que comprend le plan gratuit ?",
+    question: "What does the Free plan include?",
     answer:
-      "Le plan Free permet de découvrir le simulateur et la classification HS avec des quotas mensuels limités, idéal pour tester l'outil avant de s'abonner.",
+      "The Free plan lets you try the simulator and HS classification with limited monthly quotas—perfect to test the tool before subscribing.",
   },
   {
     id: 5,
-    question: "Mes données sont-elles sécurisées ?",
+    question: "Is my data secure?",
     answer:
-      "L'authentification est gérée par Clerk. Les simulations et l'historique sont associés à votre compte et les échanges API sont chiffrés en transit.",
+      "Authentication is handled by Clerk. Simulations and history are tied to your account, and API communication is encrypted in transit.",
   },
 ];
 
@@ -132,7 +132,7 @@ export const TESTIMONIALS = [
     company: "AgroExport Sénégal",
     image: "/landing/users/user-1.png",
     testimonial:
-      "Nous comparons trois destinations en quelques minutes. RegTech nous fait gagner un temps précieux avant chaque expédition.",
+      "We compare three destinations in a few minutes. RegTech saves us precious time before every shipment.",
   },
   {
     id: 2,
@@ -140,7 +140,7 @@ export const TESTIMONIALS = [
     company: "Accra Trade Hub",
     image: "/landing/users/user-2.png",
     testimonial:
-      "La classification HS assistée nous a permis de corriger des codes erronés sur tout notre catalogue textile.",
+      "AI-assisted HS classification helped us fix incorrect codes across our entire textile catalog.",
   },
   {
     id: 3,
@@ -148,7 +148,7 @@ export const TESTIMONIALS = [
     company: "Dakar Logistics",
     image: "/landing/users/user-3.png",
     testimonial:
-      "Le traitement par lot est devenu indispensable pour nos devis clients. Interface claire et résultats exploitables.",
+      "Batch processing has become essential for our customer quotes. Clear interface and actionable results.",
   },
   {
     id: 4,
@@ -156,7 +156,7 @@ export const TESTIMONIALS = [
     company: "Douala Import PME",
     image: "/landing/users/user-4.png",
     testimonial:
-      "La checklist Cameroun structure notre équipe sur le parcours e-GUCE. Un vrai assistant pour les premiers imports.",
+      "The Cameroon import checklist structures our team along the e-GUCE journey. A real assistant for our first imports.",
   },
   {
     id: 5,
@@ -164,7 +164,7 @@ export const TESTIMONIALS = [
     company: "Lagos Commodities Ltd",
     image: "/landing/users/user-1.png",
     testimonial:
-      "Les certificats pro-forma facilitent nos échanges avec la banque et nos transitaires partenaires.",
+      "Pro-forma certificates make it easier to work with the bank and our logistics partners.",
   },
   {
     id: 6,
@@ -172,6 +172,6 @@ export const TESTIMONIALS = [
     company: "CEMAC Freight",
     image: "/landing/users/user-2.png",
     testimonial:
-      "Enfin un outil AfCFTA pensé pour les PME africaines, avec des tarifs accessibles en Mobile Money.",
+      "Finally, an AfCFTA tool designed for African SMEs, with pricing accessible via Mobile Money.",
   },
 ];

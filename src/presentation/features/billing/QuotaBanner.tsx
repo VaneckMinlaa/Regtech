@@ -45,16 +45,16 @@ export function QuotaBanner({ darkMode = true, onUpgrade }: QuotaBannerProps) {
           <p className={`text-[11px] mt-0.5 ${darkMode ? "text-gray-400" : "text-gray-600"}`}>
             {simLeft !== null && (
               <span>
-                {simLeft} simulation{simLeft > 1 ? "s" : ""} restante{simLeft > 1 ? "s" : ""} ce mois
+                {simLeft} simulation{simLeft > 1 ? "s" : ""} remaining this month
               </span>
             )}
             {simLeft !== null && classLeft !== null && " · "}
             {classLeft !== null && (
               <span>
-                {classLeft} classification{classLeft > 1 ? "s" : ""} IA restante{classLeft > 1 ? "s" : ""}
+                {classLeft} AI classification{classLeft > 1 ? "s" : ""} remaining
               </span>
             )}
-            {simLeft === null && "Quotas illimités sur votre plan actuel."}
+            {simLeft === null && "Unlimited quotas on your current plan."}
           </p>
         </div>
       </div>
@@ -65,7 +65,7 @@ export function QuotaBanner({ darkMode = true, onUpgrade }: QuotaBannerProps) {
           className="inline-flex items-center gap-1.5 self-start sm:self-center px-3 py-1.5 rounded-lg bg-primary-500 hover:bg-primary-500 text-white text-xs font-bold transition-colors"
           id="btn_quota_upgrade"
         >
-          Voir les offres
+          View plans
           <ArrowRight className="w-3.5 h-3.5" />
         </button>
       )}

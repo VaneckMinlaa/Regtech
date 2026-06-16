@@ -3,9 +3,9 @@ import type { UsageCounters } from "@/domain/billing/types";
 export type QuotaUsageField = keyof Omit<UsageCounters, "yearMonth">;
 
 export const QUOTA_MODULE_LABELS: Record<QuotaUsageField, string> = {
-  simulations: "Simulateur tarifaire",
-  classifications: "Classification HS",
-  batchRows: "Traitement par lot",
+  simulations: "Tariff simulator",
+  classifications: "HS classification",
+  batchRows: "Batch processing",
   pdfExports: "Export PDF",
 };
 
@@ -19,7 +19,7 @@ export function buildQuotaExhaustedAlert(field: QuotaUsageField): QuotaAlert {
   const module = QUOTA_MODULE_LABELS[field];
   return {
     field,
-    title: "Essais terminés",
-    message: `Vous avez utilisé tous vos essais du module « ${module} » pour ce mois. Passez à un plan supérieur pour continuer.`,
+    title: "All attempts used",
+    message: `You have used all your attempts for the module “${module}” this month. Upgrade to a higher plan to continue.`,
   };
 }
