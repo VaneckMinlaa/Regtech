@@ -26,7 +26,7 @@ export const PAGE_INTROS: Record<
   },
   HIST: {
     title: "Simulation history",
-    description: "Browse saved runs and export declaration sheets or print certificates.",
+    description: "Browse saved runs. Open a row to view the full declaration, export, or print.",
   },
   CMR: {
     title: "Cameroon taxation",

@@ -1,38 +1,79 @@
 import React, { useMemo, useState } from "react";
 import {
-  ChevronDown,
-  ChevronUp,
-  ChevronsUpDown,
+  ArrowUpDown,
+  Calendar,
+  ChevronRight,
   Download,
-  Eye,
   Loader2,
+  MapPin,
   RefreshCw,
   Search,
+  SlidersHorizontal,
 } from "lucide-react";
 import type { SimulationResult } from "@/domain/reference/types";
 import type { Country } from "@/domain/reference/types";
+import {
+  TaskListEmpty,
+  TaskListFooter,
+  TaskListGroup,
+  TaskListHeader,
+  TaskListItem,
+  TaskListMeta,
+  TaskListShell,
+  TaskListTab,
+  TaskListTag,
+} from "@/presentation/components/shared/PlatformTaskList";
 import { platform } from "@/presentation/theme/platformStyles";
 
-type SortKey = "product" | "route" | "year" | "totalTax" | "hsCode" | "status" | "date";
-type SortDir = "asc" | "desc";
+type StatusFilter = "all" | "preferential" | "standard" | "excluded";
+type SortKey = "date" | "product" | "totalTax";
 
 interface SimulationHistoryTableProps {
   items: SimulationResult[];
   countries: Country[];
-  selectedId: string | null;
   loading?: boolean;
   darkMode?: boolean;
-  onSelect: (sim: SimulationResult) => void;
+  onViewDetail: (sim: SimulationResult) => void;
   onRefresh: () => void;
 }
 
 const PAGE_SIZES = [10, 25, 50] as const;
 
-function statusLabel(sim: SimulationResult): { text: string; tone: "ok" | "neutral" } {
-  if (sim.sensitiveExclusion) return { text: "Excluded", tone: "neutral" };
-  return sim.isEligiblePrefAfCFTA
-    ? { text: "Preferential", tone: "ok" }
-    : { text: "Standard", tone: "neutral" };
+function statusOf(sim: SimulationResult): StatusFilter {
+  if (sim.sensitiveExclusion) return "excluded";
+  return sim.isEligiblePrefAfCFTA ? "preferential" : "standard";
+}
+
+function statusLabel(sim: SimulationResult): { text: string; tone: "success" | "warning" | "neutral" } {
+  const s = statusOf(sim);
+  if (s === "preferential") return { text: "Preferential", tone: "success" };
+  if (s === "excluded") return { text: "Excluded", tone: "neutral" };
+  return { text: "Standard", tone: "warning" };
+}
+
+function formatRelativeDate(iso: string): string {
+  const date = new Date(iso);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+  if (diffDays < 7) return `${diffDays} days ago`;
+  return date.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function groupLabel(iso: string): string {
+  const date = new Date(iso);
+  const now = new Date();
+  const startOfWeek = new Date(now);
+  startOfWeek.setDate(now.getDate() - now.getDay());
+  startOfWeek.setHours(0, 0, 0, 0);
+
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
+  if (date >= startOfWeek) return "This week";
+  if (date >= startOfMonth) return "Earlier this month";
+  return "Older";
 }
 
 function downloadCsv(rows: SimulationResult[], countries: Country[]) {
@@ -72,56 +113,39 @@ function downloadCsv(rows: SimulationResult[], countries: Country[]) {
   URL.revokeObjectURL(url);
 }
 
-function SortButton({
-  label,
-  active,
-  dir,
-  onClick,
-  darkMode,
-}: {
-  label: string;
-  active: boolean;
-  dir: SortDir;
-  onClick: () => void;
-  darkMode: boolean;
-}) {
-  const Icon = active ? (dir === "asc" ? ChevronUp : ChevronDown) : ChevronsUpDown;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide ${
-        darkMode ? "text-gray-400 hover:text-gray-200" : "text-gray-500 hover:text-gray-800"
-      }`}
-    >
-      {label}
-      <Icon className="h-3.5 w-3.5 opacity-70" />
-    </button>
-  );
-}
-
 export function SimulationHistoryTable({
   items,
   countries,
-  selectedId,
   loading = false,
   darkMode = true,
-  onSelect,
+  onViewDetail,
   onRefresh,
 }: SimulationHistoryTableProps) {
   const [search, setSearch] = useState("");
-  const [pageSize, setPageSize] = useState<(typeof PAGE_SIZES)[number]>(10);
-  const [page, setPage] = useState(0);
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [sortKey, setSortKey] = useState<SortKey>("date");
-  const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [sortOpen, setSortOpen] = useState(false);
+  const [pageSize, setPageSize] = useState<(typeof PAGE_SIZES)[number]>(25);
+  const [page, setPage] = useState(0);
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   const countryName = (code: string) => countries.find((c) => c.code === code)?.name ?? code;
 
+  const counts = useMemo(
+    () => ({
+      all: items.length,
+      preferential: items.filter((s) => statusOf(s) === "preferential").length,
+      standard: items.filter((s) => statusOf(s) === "standard").length,
+      excluded: items.filter((s) => statusOf(s) === "excluded").length,
+    }),
+    [items],
+  );
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    if (!q) return items;
     return items.filter((sim) => {
+      if (statusFilter !== "all" && statusOf(sim) !== statusFilter) return false;
+      if (!q) return true;
       const origin = countryName(sim.origin).toLowerCase();
       const dest = countryName(sim.destination).toLowerCase();
       return (
@@ -133,291 +157,269 @@ export function SimulationHistoryTable({
         String(sim.year).includes(q)
       );
     });
-  }, [items, search, countries]);
+  }, [items, search, statusFilter, countries]);
 
   const sorted = useMemo(() => {
     const list = [...filtered];
     list.sort((a, b) => {
-      let cmp = 0;
       switch (sortKey) {
         case "product":
-          cmp = a.productDescription.localeCompare(b.productDescription);
-          break;
-        case "route":
-          cmp = `${a.origin}${a.destination}`.localeCompare(`${b.origin}${b.destination}`);
-          break;
-        case "year":
-          cmp = a.year - b.year;
-          break;
+          return a.productDescription.localeCompare(b.productDescription);
         case "totalTax":
-          cmp = a.totalTaxLocal - b.totalTaxLocal;
-          break;
-        case "hsCode":
-          cmp = a.hsCode.localeCompare(b.hsCode);
-          break;
-        case "status":
-          cmp = Number(a.isEligiblePrefAfCFTA) - Number(b.isEligiblePrefAfCFTA);
-          break;
+          return b.totalTaxLocal - a.totalTaxLocal;
         case "date":
         default:
-          cmp = new Date(a.date).getTime() - new Date(b.date).getTime();
-          break;
+          return new Date(b.date).getTime() - new Date(a.date).getTime();
       }
-      return sortDir === "asc" ? cmp : -cmp;
     });
     return list;
-  }, [filtered, sortKey, sortDir]);
+  }, [filtered, sortKey]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const safePage = Math.min(page, totalPages - 1);
   const paginated = sorted.slice(safePage * pageSize, safePage * pageSize + pageSize);
 
-  const toggleSort = (key: SortKey) => {
-    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else {
-      setSortKey(key);
-      setSortDir("desc");
+  const groups = useMemo(() => {
+    const map = new Map<string, SimulationResult[]>();
+    const order = ["This week", "Earlier this month", "Older"];
+    for (const sim of paginated) {
+      const key = groupLabel(sim.date);
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(sim);
     }
-  };
+    return order.filter((k) => map.has(k)).map((k) => ({ label: k, items: map.get(k)! }));
+  }, [paginated]);
 
-  const allPageChecked =
-    paginated.length > 0 && paginated.every((sim) => checked.has(sim.id));
-
-  const toggleAllOnPage = () => {
-    setChecked((prev) => {
-      const next = new Set(prev);
-      if (allPageChecked) paginated.forEach((sim) => next.delete(sim.id));
-      else paginated.forEach((sim) => next.add(sim.id));
-      return next;
-    });
-  };
-
-  const thClass = `px-4 py-3 text-left ${darkMode ? "border-gray-800" : "border-gray-100"}`;
-  const tdClass = `px-4 py-4 align-middle ${darkMode ? "border-gray-800" : "border-gray-100"}`;
-
-  const statusPill = (tone: "ok" | "neutral", text: string) =>
-    tone === "ok"
-      ? darkMode
-        ? "bg-primary-500/15 text-primary-300"
-        : "bg-primary-50 text-primary-700"
-      : darkMode
-        ? "bg-amber-500/15 text-amber-300"
-        : "bg-amber-50 text-amber-700";
+  const tabs: { key: StatusFilter; label: string }[] = [
+    { key: "all", label: "All simulations" },
+    { key: "preferential", label: "Preferential" },
+    { key: "standard", label: "Standard" },
+    { key: "excluded", label: "Excluded" },
+  ];
 
   return (
     <div className="space-y-4" id="simulation_history_table">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <label className={`flex items-center gap-2 text-sm ${platform.textSecondary(darkMode)}`}>
-          Show
-          <select
-            value={pageSize}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative min-w-[220px] flex-1 sm:max-w-sm">
+          <Search
+            className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${platform.textMuted(darkMode)}`}
+          />
+          <input
+            type="search"
+            value={search}
             onChange={(e) => {
-              setPageSize(Number(e.target.value) as (typeof PAGE_SIZES)[number]);
+              setSearch(e.target.value);
               setPage(0);
             }}
-            className={`${platform.input(darkMode)} !w-auto py-1.5 text-sm`}
-          >
-            {PAGE_SIZES.map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
-          </select>
-          entries
-        </label>
+            placeholder="Search simulations…"
+            className={`${platform.input(darkMode)} pl-9 text-sm`}
+          />
+        </div>
+      </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="relative min-w-[200px] flex-1 sm:flex-none">
-            <Search
-              className={`pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 ${platform.textMuted(darkMode)}`}
-            />
-            <input
-              type="search"
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
+      <TaskListShell darkMode={darkMode}>
+        <TaskListHeader
+          darkMode={darkMode}
+          tabs={tabs.map((tab) => (
+            <TaskListTab
+              key={tab.key}
+              label={tab.label}
+              count={counts[tab.key]}
+              active={statusFilter === tab.key}
+              darkMode={darkMode}
+              onClick={() => {
+                setStatusFilter(tab.key);
                 setPage(0);
               }}
-              placeholder="Search…"
-              className={`${platform.input(darkMode)} pl-9 text-sm`}
             />
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              const rows =
-                checked.size > 0 ? sorted.filter((sim) => checked.has(sim.id)) : sorted;
-              downloadCsv(rows, countries);
-            }}
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
-          >
-            <Download className="h-4 w-4" />
-            Download
-          </button>
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={loading}
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
-          >
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-            Refresh
-          </button>
-        </div>
-      </div>
-
-      <div className={`overflow-x-auto rounded-xl border ${platform.border(darkMode)}`}>
-        <table className="w-full min-w-[720px] text-sm">
-          <thead className={darkMode ? "bg-dark-secondary/50" : "bg-gray-50"}>
-            <tr className={`border-b ${platform.borderSubtle(darkMode)}`}>
-              <th className={`${thClass} w-10`}>
-                <input
-                  type="checkbox"
-                  checked={allPageChecked}
-                  onChange={toggleAllOnPage}
-                  className="rounded border-gray-400 text-primary-600 focus:ring-primary-500"
-                  aria-label="Select all on page"
-                />
-              </th>
-              <th className={thClass}>
-                <SortButton label="Product" active={sortKey === "product"} dir={sortDir} onClick={() => toggleSort("product")} darkMode={darkMode} />
-              </th>
-              <th className={thClass}>
-                <SortButton label="Route" active={sortKey === "route"} dir={sortDir} onClick={() => toggleSort("route")} darkMode={darkMode} />
-              </th>
-              <th className={thClass}>
-                <SortButton label="Year" active={sortKey === "year"} dir={sortDir} onClick={() => toggleSort("year")} darkMode={darkMode} />
-              </th>
-              <th className={thClass}>
-                <SortButton label="Total tax" active={sortKey === "totalTax"} dir={sortDir} onClick={() => toggleSort("totalTax")} darkMode={darkMode} />
-              </th>
-              <th className={thClass}>
-                <SortButton label="HS code" active={sortKey === "hsCode"} dir={sortDir} onClick={() => toggleSort("hsCode")} darkMode={darkMode} />
-              </th>
-              <th className={thClass}>
-                <SortButton label="Status" active={sortKey === "status"} dir={sortDir} onClick={() => toggleSort("status")} darkMode={darkMode} />
-              </th>
-              <th className={`${thClass} w-16 text-right`}>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {paginated.map((sim) => {
-              const isSelected = selectedId === sim.id;
-              const { text: statusText, tone } = statusLabel(sim);
-              const originName = countryName(sim.origin);
-              const destName = countryName(sim.destination);
-              return (
-                <tr
-                  key={sim.id}
-                  className={`border-b last:border-b-0 transition-colors cursor-pointer ${
-                    platform.borderSubtle(darkMode)
-                  } ${
-                    isSelected
-                      ? darkMode
-                        ? "bg-primary-500/10"
-                        : "bg-primary-50/80"
-                      : darkMode
-                        ? "hover:bg-white/5"
-                        : "hover:bg-gray-50"
-                  }`}
-                  onClick={() => onSelect(sim)}
+          ))}
+          actions={
+            <>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setSortOpen((o) => !o)}
+                  className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
                 >
-                  <td className={tdClass} onClick={(e) => e.stopPropagation()}>
-                    <input
-                      type="checkbox"
-                      checked={checked.has(sim.id)}
-                      onChange={() => {
-                        setChecked((prev) => {
-                          const next = new Set(prev);
-                          if (next.has(sim.id)) next.delete(sim.id);
-                          else next.add(sim.id);
-                          return next;
-                        });
-                      }}
-                      className="rounded border-gray-400 text-primary-600 focus:ring-primary-500"
-                      aria-label={`Select ${sim.id}`}
-                    />
-                  </td>
-                  <td className={tdClass}>
-                    <p className={`font-semibold ${platform.textPrimary(darkMode)}`}>
-                      {sim.productDescription}
-                    </p>
-                    <p className={`mt-0.5 truncate max-w-[220px] font-mono text-xs ${platform.textMuted(darkMode)}`}>
-                      {sim.id}
-                    </p>
-                  </td>
-                  <td className={`${tdClass} ${platform.textSecondary(darkMode)}`}>
-                    {originName} → {destName}
-                  </td>
-                  <td className={`${tdClass} font-mono ${platform.textSecondary(darkMode)}`}>{sim.year}</td>
-                  <td className={`${tdClass} font-mono font-semibold text-primary-500`}>
-                    {sim.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 2 })}
-                  </td>
-                  <td className={`${tdClass} font-mono font-semibold text-primary-500`}>HS {sim.hsCode}</td>
-                  <td className={tdClass}>
-                    <span
-                      className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusPill(tone, statusText)}`}
-                    >
-                      {statusText}
-                    </span>
-                  </td>
-                  <td className={`${tdClass} text-right`}>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onSelect(sim);
-                      }}
-                      className={`rounded-lg p-2 transition-colors ${
-                        darkMode ? "text-gray-400 hover:bg-white/10 hover:text-primary-400" : "text-gray-500 hover:bg-gray-100 hover:text-primary-600"
-                      }`}
-                      aria-label="View declaration"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+                  <SlidersHorizontal className="h-4 w-4" />
+                  Sort
+                </button>
+                {sortOpen && (
+                  <div
+                    className={`absolute right-0 z-10 mt-2 min-w-[10rem] rounded-xl border py-1 shadow-lg ${
+                      darkMode ? "border-gray-700 bg-dark-secondary" : "border-gray-200 bg-white"
+                    }`}
+                  >
+                    {(
+                      [
+                        ["date", "Newest first"],
+                        ["product", "Product A–Z"],
+                        ["totalTax", "Highest tax"],
+                      ] as const
+                    ).map(([key, label]) => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => {
+                          setSortKey(key);
+                          setSortOpen(false);
+                        }}
+                        className={`flex w-full items-center gap-2 px-4 py-2 text-left text-sm ${
+                          sortKey === key
+                            ? darkMode
+                              ? "bg-primary-500/15 text-primary-300"
+                              : "bg-primary-50 text-primary-700"
+                            : darkMode
+                              ? "text-gray-300 hover:bg-white/5"
+                              : "text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        <ArrowUpDown className="h-3.5 w-3.5 opacity-60" />
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const rows =
+                    checked.size > 0 ? sorted.filter((sim) => checked.has(sim.id)) : sorted;
+                  downloadCsv(rows, countries);
+                }}
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
+              >
+                <Download className="h-4 w-4" />
+                Export CSV
+              </button>
+              <button
+                type="button"
+                onClick={onRefresh}
+                disabled={loading}
+                className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium ${platform.buttonGhost(darkMode)}`}
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+                Refresh
+              </button>
+            </>
+          }
+        />
 
-        {paginated.length === 0 && (
-          <p className={`px-4 py-10 text-center text-sm ${platform.textMuted(darkMode)}`}>
-            No simulations match your search.
-          </p>
+        {paginated.length === 0 ? (
+          <TaskListEmpty darkMode={darkMode}>No simulations match your filters.</TaskListEmpty>
+        ) : (
+          groups.map((group) => (
+            <TaskListGroup key={group.label} title={group.label} count={group.items.length} darkMode={darkMode}>
+              {group.items.map((sim) => {
+                const { text: statusText, tone } = statusLabel(sim);
+                const originName = countryName(sim.origin);
+                const destName = countryName(sim.destination);
+                return (
+                  <TaskListItem
+                    key={sim.id}
+                    darkMode={darkMode}
+                    title={sim.productDescription}
+                    subtitle={`${originName} → ${destName} · Ref. ${sim.id.slice(0, 8)}…`}
+                    checked={checked.has(sim.id)}
+                    onCheckedChange={(next) => {
+                      setChecked((prev) => {
+                        const copy = new Set(prev);
+                        if (next) copy.add(sim.id);
+                        else copy.delete(sim.id);
+                        return copy;
+                      });
+                    }}
+                    onClick={() => onViewDetail(sim)}
+                    tags={
+                      <>
+                        <TaskListTag tone={tone} darkMode={darkMode}>
+                          {statusText}
+                        </TaskListTag>
+                        <TaskListTag tone="primary" darkMode={darkMode}>
+                          HS {sim.hsCode}
+                        </TaskListTag>
+                      </>
+                    }
+                    meta={
+                      <>
+                        <TaskListMeta
+                          icon={<Calendar className="h-3.5 w-3.5" />}
+                          darkMode={darkMode}
+                        >
+                          {formatRelativeDate(sim.date)}
+                        </TaskListMeta>
+                        <TaskListMeta icon={<MapPin className="h-3.5 w-3.5" />} darkMode={darkMode}>
+                          {sim.year}
+                        </TaskListMeta>
+                        <TaskListMeta darkMode={darkMode}>
+                          {sim.totalTaxLocal.toLocaleString("en-US", { maximumFractionDigits: 0 })} tax
+                        </TaskListMeta>
+                      </>
+                    }
+                    trailing={
+                      <span
+                        className={`inline-flex h-8 w-8 items-center justify-center rounded-full transition-colors ${
+                          darkMode
+                            ? "text-gray-500 group-hover:bg-primary-500/15 group-hover:text-primary-400"
+                            : "text-gray-400 group-hover:bg-primary-50 group-hover:text-primary-600"
+                        }`}
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </span>
+                    }
+                  />
+                );
+              })}
+            </TaskListGroup>
+          ))
         )}
-      </div>
 
-      {sorted.length > 0 && (
-        <div className={`flex flex-wrap items-center justify-between gap-3 text-sm ${platform.textMuted(darkMode)}`}>
-          <p>
-            Showing {safePage * pageSize + 1}–{Math.min((safePage + 1) * pageSize, sorted.length)} of{" "}
-            {sorted.length} simulations
-          </p>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              disabled={safePage === 0}
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium disabled:opacity-40 ${platform.buttonGhost(darkMode)}`}
-            >
-              Previous
-            </button>
-            <span className="font-mono text-xs">
-              {safePage + 1} / {totalPages}
-            </span>
-            <button
-              type="button"
-              disabled={safePage >= totalPages - 1}
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium disabled:opacity-40 ${platform.buttonGhost(darkMode)}`}
-            >
-              Next
-            </button>
-          </div>
-        </div>
-      )}
+        {sorted.length > 0 && (
+          <TaskListFooter darkMode={darkMode}>
+            <label className="flex items-center gap-2">
+              Show
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(Number(e.target.value) as (typeof PAGE_SIZES)[number]);
+                  setPage(0);
+                }}
+                className={`${platform.input(darkMode)} !w-auto py-1 text-xs`}
+              >
+                {PAGE_SIZES.map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+              per page
+            </label>
+            <div className="flex items-center gap-2">
+              <span>
+                {safePage * pageSize + 1}–{Math.min((safePage + 1) * pageSize, sorted.length)} of{" "}
+                {sorted.length}
+              </span>
+              <button
+                type="button"
+                disabled={safePage === 0}
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                className={`rounded-full border px-3 py-1 text-xs font-medium disabled:opacity-40 ${platform.buttonGhost(darkMode)}`}
+              >
+                Previous
+              </button>
+              <button
+                type="button"
+                disabled={safePage >= totalPages - 1}
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                className={`rounded-full border px-3 py-1 text-xs font-medium disabled:opacity-40 ${platform.buttonGhost(darkMode)}`}
+              >
+                Next
+              </button>
+            </div>
+          </TaskListFooter>
+        )}
+      </TaskListShell>
     </div>
   );
 }

@@ -116,10 +116,13 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
   const { confirmPaymentReturn, quotaAlert, dismissQuotaAlert } = useSubscription();
 
+  const [histNavKey, setHistNavKey] = useState(0);
+
   const navigateToTab = useCallback((tab: DashboardTab) => {
     setActiveTab(tab);
     setIsMobileSidebarOpen(false);
     writeDashboardTabToUrl(tab);
+    if (tab === "HIST") setHistNavKey((k) => k + 1);
   }, []);
 
   const goToPricing = useCallback(() => navigateToTab("PRICING"), [navigateToTab]);
@@ -268,7 +271,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
           <main className={platform.main}>
             <div className={platform.content} id="active_workspace_canvas">
-              {activeTab !== "AFT" && (
+              {activeTab !== "AFT" && activeTab !== "HIST" && (
                 <PlatformPageIntro
                   title={PAGE_INTROS[activeTab].title}
                   description={PAGE_INTROS[activeTab].description}
@@ -325,7 +328,7 @@ export function RegTechShell({ initialTab }: RegTechShellProps = {}) {
 
               {activeTab === "CSV" && <BatchPage darkMode={darkMode} onUpgrade={goToPricing} />}
 
-              {activeTab === "HIST" && <HistoryPage darkMode={darkMode} />}
+              {activeTab === "HIST" && <HistoryPage key={histNavKey} darkMode={darkMode} />}
 
               {activeTab === "CMR" && <CameroonPage darkMode={darkMode} />}
 
