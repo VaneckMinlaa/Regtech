@@ -53,6 +53,9 @@ export function AfcftaPage({
   const [compLoading, setCompLoading] = useState(false);
 
   const inputClass = platform.input(darkMode);
+  const selectedProduct = products.find((p) => p.code === compProduct);
+  const projectionDutyRate = selectedProduct?.baseTariffRate ?? 0.2;
+  const projectionSensitive = selectedProduct?.sensitive ?? false;
 
   useEffect(() => {
     if (countries.length === 0) return;
@@ -177,6 +180,8 @@ export function AfcftaPage({
           <AfcftaDutyProjection
             originCountryIso={compOrigin}
             hsCode={compProduct}
+            initialDutyRate={projectionDutyRate}
+            sensitive={projectionSensitive}
             darkMode={darkMode}
           />
         </SectionPanel>

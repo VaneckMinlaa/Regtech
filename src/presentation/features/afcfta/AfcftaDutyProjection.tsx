@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { regtechApi } from "@/infrastructure/http/regtechApi";
+import React, { useMemo } from "react";
+import { buildAfcftaDutyProjection } from "@/domain/afcfta/buildDutyProjection";
 import type { ZlecafDutyResponse } from "@/infrastructure/http/regtechApiTypes";
 import { platform } from "@/presentation/theme/platformStyles";
-import { ProjectionListSkeleton } from "@/presentation/components/shared/PlatformSkeletons";
 
 interface AfcftaDutyProjectionProps {
   originCountryIso: string;
@@ -22,7 +21,7 @@ function formatReduction(p: ZlecafDutyResponse): string {
   return `Reduction of −${pct}%`;
 }
 
-/** AfCFTA duty projection 2025–2030 via `GET /afcfta/duty/projection`. */
+/** AfCFTA duty projection 2025–2030 (calendrier indicatif local). */
 export function AfcftaDutyProjection({
   originCountryIso,
   hsCode,
@@ -30,40 +29,16 @@ export function AfcftaDutyProjection({
   sensitive = false,
   darkMode = true,
 }: AfcftaDutyProjectionProps) {
-  const [projections, setProjections] = useState<ZlecafDutyResponse[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
   const ready = Boolean(originCountryIso && hsCode);
 
-  useEffect(() => {
-    if (!ready) {
-      setProjections([]);
-      return;
-    }
-
-    let cancelled = false;
-    setLoading(true);
-    setError("");
-
-    void regtechApi
-      .getZlecafProjection({ hsCode, originCountryIso, initialDutyRate, sensitive })
-      .then((res) => {
-        if (!cancelled) setProjections(res.projections);
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(err instanceof Error ? err.message : "Projection error");
-          setProjections([]);
-        }
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
-
-    return () => {
-      cancelled = true;
-    };
+  const projections = useMemo<ZlecafDutyResponse[]>(() => {
+    if (!ready) return [];
+    return buildAfcftaDutyProjection({
+      hsCode,
+      originCountryIso,
+      initialDutyRate,
+      sensitive,
+    });
   }, [originCountryIso, hsCode, initialDutyRate, sensitive, ready]);
 
   return (
@@ -82,15 +57,11 @@ export function AfcftaDutyProjection({
       <div className={`mt-4 space-y-3 text-sm leading-relaxed ${platform.textSecondary(darkMode)}`}>
         {!ready && (
           <p className={platform.textMuted(darkMode)}>
-            Select an origin country and an HS code to load the projection from the API.
+            Select an origin country and an HS code to view the phased tariff schedule.
           </p>
         )}
 
-        {error && <p className="text-rose-500">{error}</p>}
-
-        {ready && loading && <ProjectionListSkeleton darkMode={darkMode} items={5} />}
-
-        {ready && projections.length > 0 && !loading && (
+        {ready && projections.length > 0 && (
           <ul className="space-y-2">
             {projections.map((p) => {
               const isActive = p.calculationYear === CURRENT_YEAR;
@@ -112,9 +83,6 @@ export function AfcftaDutyProjection({
           </ul>
         )}
 
-        {ready && !loading && !error && projections.length === 0 && (
-          <p className={platform.textMuted(darkMode)}>No projection data available for this corridor.</p>
-        )}
       </div>
     </div>
   );
